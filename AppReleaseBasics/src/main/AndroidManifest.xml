@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===========================================================================
+     AndroidManifest.xml — the app's "declaration of intent" to the OS.
+     CONCEPT FOCUS (release basics): which permissions the app uses, the app
+     label/icon/theme, and which activity is the LAUNCHER entry point.
+     ======================================================================== -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- RUNTIME PERMISSION DECLARATION (step 1 of the two-step model).
+         Declaring POST_NOTIFICATIONS here tells Android the app MAY post
+         notifications. On Android 13+ (API 33) this is a *dangerous* permission,
+         so declaring it is NOT enough — MainActivity.kt must also REQUEST it at
+         run time and the user must approve it. (On API 32 and below this line is
+         harmless and notifications are allowed without a runtime prompt.) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- <application> holds app-wide settings and declares every component.
+         Key release-relevant attributes to inspect:
+           android:icon       — the launcher icon shipped in the APK/AAB.
+           android:roundIcon  — the round icon variant (some launchers use it).
+           android:label      — the app NAME shown under the icon (from strings.xml).
+           android:theme      — the app-wide Material theme (see res/values/themes.xml).
+         Android only knows a component exists if it is declared here; an
+         undeclared Activity crashes with ActivityNotFoundException. -->
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppReleaseBasics">
+
+        <!-- MainActivity: the app's entry-point screen.
+             exported="true" is REQUIRED here because it is launched from outside
+             the app (by the Android launcher / home screen). Any activity with an
+             intent-filter the system uses must be exported. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppReleaseBasics"
+            android:windowSoftInputMode="adjustResize">
+
+            <!-- This intent-filter marks the activity as the app's LAUNCHER:
+                   action MAIN       = this is the starting point of the app, and
+                   category LAUNCHER = show its icon in the device's app drawer.
+                 Together they tell Android "open this activity when the icon is
+                 tapped". Removing this filter would hide the app from the drawer. -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

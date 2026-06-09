@@ -5,9 +5,10 @@ progression for Android navigation. They start from a single static screen and
 build up to a full set of **Navigation 3** patterns — one concept per project, so
 each app stays small enough to read top-to-bottom.
 
-Most projects share the same **"planets" domain** (`Category` → `Item`) and the
-same heavy, line-by-line teaching comments, so you can diff any two projects to
-see exactly what a feature adds.
+The **navigation** projects share a **"planets" domain** (`Category` → `Item`); a
+second set of **Android-concept** demos (lists, networking, MVVM, persistence,
+release) shares a **"notes" domain**. All use the same heavy, line-by-line teaching
+comments, so you can diff any two projects to see exactly what a feature adds.
 
 > 📚 For the navigation curriculum in depth — suggested teaching order, the exact
 > `file:line` where each concept lives, and run/test notes — see
@@ -47,6 +48,23 @@ see exactly what a feature adds.
 
 ---
 
+## Android concepts (beyond navigation)
+
+A separate set of standalone demos, each isolating **one core Android skill** on a
+shared **"notes" domain** (`Note(id, title, body, …)`) so you can compare them.
+Same Kotlin / Compose / Material 3 / Gradle-KTS stack; each has its own README.
+
+| Project | Concept |
+|---|---|
+| [`ComposeModernUI`](./ComposeModernUI) | Compose fundamentals: composables, Material 3 theme, layout, **state hoisting**, reusable components, previews. |
+| [`ComposeLists`](./ComposeLists) | `LazyColumn` + `LazyVerticalGrid`, stable item keys, multi-selection, empty states, filtering. |
+| [`NetworkParsing`](./NetworkParsing) | Retrofit + kotlinx.serialization against a no-auth API (JSONPlaceholder) — loading / success / error states, with an offline fake. |
+| [`MvvmState`](./MvvmState) | MVVM: `ViewModel`, `StateFlow`, immutable `UiState`, UI events, unidirectional data flow (fake data). |
+| [`RoomAndPreferences`](./RoomAndPreferences) | Local persistence: **Room** (via KSP) for structured data + **DataStore Preferences** for settings. |
+| [`AppReleaseBasics`](./AppReleaseBasics) | Release basics: manifest, runtime permissions, version/build types, signing concepts, App Bundle (README). |
+
+---
+
 ## Running a project
 
 Each folder is an independent Android project.
@@ -73,6 +91,11 @@ Jetpack Compose · **Navigation 3** (`androidx.navigation3`) · Material 3 ·
 Kotlin `2.2.10` · AGP `9.2.1` · `compileSdk 37` / `minSdk 24` · Compose BOM `2026.02.01`.
 `NavViewModelState` and `NavDataLayer` additionally use
 `lifecycle-viewmodel-compose` + `lifecycle-runtime-compose`.
+
+The Android-concept demos add only what each concept needs: Retrofit +
+kotlinx.serialization (`NetworkParsing`), Room via KSP + DataStore Preferences
+(`RoomAndPreferences`), and ViewModel/lifecycle (`MvvmState`, `NetworkParsing`,
+`RoomAndPreferences`).
 
 ## Cloning notes
 

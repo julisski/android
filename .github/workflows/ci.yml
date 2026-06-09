@@ -52,6 +52,13 @@ jobs:
           - { name: NavViewModelState, dir: NavViewModelState }
           - { name: NavTransitions,    dir: NavTransitions }
           - { name: NavDataLayer,      dir: NavDataLayer }
+          # --- Android concept demos (notes domain) ---
+          - { name: ComposeModernUI,    dir: ComposeModernUI }
+          - { name: ComposeLists,       dir: ComposeLists }
+          - { name: NetworkParsing,     dir: NetworkParsing }
+          - { name: MvvmState,          dir: MvvmState }
+          - { name: RoomAndPreferences, dir: RoomAndPreferences }
+          - { name: AppReleaseBasics,   dir: AppReleaseBasics }
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -110,6 +117,13 @@ jobs:
           - { name: NavViewModelState, dir: NavViewModelState }
           - { name: NavTransitions,    dir: NavTransitions }
           - { name: NavDataLayer,      dir: NavDataLayer }
+          # --- Android concept demos (notes domain) ---
+          - { name: ComposeModernUI,    dir: ComposeModernUI }
+          - { name: ComposeLists,       dir: ComposeLists }
+          - { name: NetworkParsing,     dir: NetworkParsing }
+          - { name: MvvmState,          dir: MvvmState }
+          - { name: RoomAndPreferences, dir: RoomAndPreferences }
+          - { name: AppReleaseBasics,   dir: AppReleaseBasics }
     steps:
       - name: Checkout
         uses: actions/checkout@v4

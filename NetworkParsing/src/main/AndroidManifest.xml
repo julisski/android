@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- INTERNET permission: REQUIRED for the REAL (Retrofit) repository to reach
+         https://jsonplaceholder.typicode.com/posts. We declare it ACTIVE so that
+         flipping useFake = false in NoteRepository.kt works immediately — no manifest
+         edit needed. INTERNET is a NORMAL (install-time, not "dangerous") permission, so
+         there is no runtime request to make; declaring it here is enough. It is harmless
+         when the app runs in its default offline FAKE mode, so we always declare it. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- <application> holds app-wide settings (icon, label, theme, backup rules) and
+         declares every component. Android only knows an Activity exists if it is
+         declared here; an undeclared Activity will crash with ActivityNotFoundException. -->
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.NetworkParsing">
+
+        <!-- MainActivity: the app's entry-point screen.
+             exported="true" is REQUIRED here because it is launched from outside the app
+             (by the Android launcher / home screen). Any activity with an intent-filter
+             that the system uses must be exported. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.NetworkParsing"
+            android:windowSoftInputMode="adjustResize">
+
+            <!-- This intent-filter marks the activity as the app's launch screen:
+                 action MAIN     = this is the starting point of the app, and
+                 category LAUNCHER = show its icon in the device's app drawer.
+                 Together they tell Android "open this activity when the icon is tapped". -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
