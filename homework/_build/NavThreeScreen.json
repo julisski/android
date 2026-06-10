@@ -99,15 +99,15 @@
     {
       "title": "ItemsScreen: a static header over a scrolling list",
       "file": "NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt",
-      "start": 344,
-      "end": 382,
+      "start": 352,
+      "end": 390,
       "explain": "The middle level combines a non-scrolling header Column (the category name plus a 'Back to categories' Button wired to onBack) with a LazyColumn of clickable item rows. Each row's .clickable { onOpen(item.id) } reports the tapped planet's id upward so the navigation host can push a DetailKey. The screen itself stays navigation-agnostic - it only renders data and fires callbacks."
     },
     {
       "title": "Previewing every screen with @PreviewParameter",
       "file": "NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt",
-      "start": 479,
-      "end": 493,
+      "start": 487,
+      "end": 501,
       "explain": "ItemPreviewProvider implements PreviewParameterProvider<Item> and exposes sampleItems as a Sequence. The @PreviewParameter(ItemPreviewProvider::class) annotation on DetailScreenPreview then makes Android Studio render the detail screen once per planet - all six - using no-op {} callbacks. Because the provider reads the same sample data the app uses, the preview set updates automatically when you add a planet."
     }
   ],

@@ -226,9 +226,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     // deep: [CategoriesKey, ItemsKey, DetailKey, FactKey].
     val backStack = rememberNavBackStack(CategoriesKey)
 
-    // A debug breadcrumb visible in Logcat (filter by "L4") confirming this
-    // composable was entered.
-    Log.d(TAG, "Entered AppNavigation")
+
 
     // NavDisplay renders whatever key is on top of the back stack, animating the
     // transition when the top changes.
@@ -278,17 +276,26 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                     // key by its TYPE to the matching entry<...> { } block above and runs it; the
                     // id inside the key only chooses WHICH data that screen shows, not WHICH screen
                     // — so every key of this type lands on the same entry block.
-                    onOpen = { categoryId -> backStack.add(ItemsKey(categoryId)) }
+                    onOpen = { categoryId ->
+                        Log.d("LT", "In entry<CategoriesKey>, categoryId = ${categoryId}")
+//                        Log.d("LT", "tapped category = ${categoryById(categoryId).name}")
+                        backStack.add(ItemsKey(categoryId))
+                    }
+
                 )
             }
             // LEVEL 2 — when an ItemsKey is on top, show that category's planets.
             entry<ItemsKey> { key ->
+//                Log.d("LT", "category = ${categoryById(key.categoryId).name}")
+                Log.d("LT", "categoryId = ${key.categoryId}")
                 ItemsScreen(
                     // Resolve the category (for the header) and its items (the rows).
                     category = categoryById(key.categoryId),
                     items = itemsInCategory(key.categoryId),
                     // Tapping a planet pushes a DetailKey carrying THAT item's id.
-                    onOpen = { itemId -> backStack.add(DetailKey(itemId)) },
+                    onOpen = { itemId ->
+                        Log.d("LT", "In entry<ItemsKey>, categoryId = ${key.categoryId}")
+                        backStack.add(DetailKey(itemId)) },
                     // The on-screen back button pops one level (back to categories).
                     onBack = { backStack.removeLastOrNull() }
                 )
@@ -345,6 +352,14 @@ fun CategoriesScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()                         // row spans the full width...
+                    // OS vs COMPOSE vs YOUR CODE — what a tap really is:
+                    //   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows
+                    //     nothing about rows, items, names, or ids.
+                    //   • Compose hit-tests that pixel to find WHICH composable sits there (this
+                    //     one) and invokes its click lambda.
+                    //   • YOUR code gives the tap its MEANING: the click lambda passes the exact
+                    //     value you wired here (e.g. this row's id). "What was selected" is meaning
+                    //     your code attaches to a raw touch — the OS never knows about it.
                     .clickable { onOpen(category.id) }      // ...and the WHOLE row is tappable -> navigate
                     .padding(16.dp)                         // breathing room inside the row
             ) {

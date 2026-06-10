@@ -586,13 +586,21 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">HomeScreen is a plain Composable with a callback</span>
-        <span class="codemeta"><code title="Intent/app/src/main/java/com/example/intent/MainActivity.kt">MainActivity.kt</code> · lines 120–128</span>
+        <span class="codemeta"><code title="Intent/app/src/main/java/com/example/intent/MainActivity.kt">MainActivity.kt</code> · lines 120–136</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code><span class="a">@Composable</span>                                               <span class="c">// Compose UI function.</span>
 <span class="k">fun</span> <span class="t">HomeScreen</span>(onOpenDetail: () -&gt; <span class="t">Unit</span>, modifier: <span class="t">Modifier</span> = <span class="t">Modifier</span>) {  <span class="c">// Takes a click callback and an optional Modifier.</span>
     <span class="t">Column</span>(modifier = modifier) {                         <span class="c">// Stack the children vertically.</span>
         <span class="t">Text</span>(text = <span class="s">"Hello Android!"</span>)                     <span class="c">// Show a greeting label.</span>
+        <span class="c">// OS vs COMPOSE vs YOUR CODE — what a tap really is:</span>
+        <span class="c">//   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows</span>
+        <span class="c">//     nothing about rows, items, names, or ids.</span>
+        <span class="c">//   • Compose hit-tests that pixel to find WHICH composable sits there (this</span>
+        <span class="c">//     one) and invokes its click lambda.</span>
+        <span class="c">//   • YOUR code gives the tap its MEANING: the click lambda passes the exact</span>
+        <span class="c">//     value you wired here (e.g. this row's id). "What was selected" is meaning</span>
+        <span class="c">//     your code attaches to a raw touch — the OS never knows about it.</span>
         <span class="t">Button</span>(onClick = onOpenDetail) {                  <span class="c">// A button; tapping it runs onOpenDetail (navigates forward).</span>
             <span class="t">Text</span>(<span class="s">"Open Detail"</span>)                           <span class="c">// The button's label.</span>
         }                                                 <span class="c">// End Button.</span>
@@ -603,7 +611,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">DetailScreen renders the key's argument</span>
-        <span class="codemeta"><code title="Intent/app/src/main/java/com/example/intent/MainActivity.kt">MainActivity.kt</code> · lines 131–139</span>
+        <span class="codemeta"><code title="Intent/app/src/main/java/com/example/intent/MainActivity.kt">MainActivity.kt</code> · lines 139–147</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code><span class="a">@Composable</span>                                               <span class="c">// Compose UI function.</span>
@@ -766,7 +774,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">A tappable list that triggers navigation</span>
-        <span class="codemeta"><code title="NavDetailList/app/src/main/java/com/example/navdetaillist/MainActivity.kt">MainActivity.kt</code> · lines 147–167</span>
+        <span class="codemeta"><code title="NavDetailList/app/src/main/java/com/example/navdetaillist/MainActivity.kt">MainActivity.kt</code> · lines 147–175</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code><span class="a">@Composable</span>
@@ -780,6 +788,14 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
             <span class="t">Column</span>(
                 modifier = <span class="t">Modifier</span>
                     .fillMaxWidth()
+                    <span class="c">// OS vs COMPOSE vs YOUR CODE — what a tap really is:</span>
+                    <span class="c">//   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows</span>
+                    <span class="c">//     nothing about rows, items, names, or ids.</span>
+                    <span class="c">//   • Compose hit-tests that pixel to find WHICH composable sits there (this</span>
+                    <span class="c">//     one) and invokes its click lambda.</span>
+                    <span class="c">//   • YOUR code gives the tap its MEANING: the click lambda passes the exact</span>
+                    <span class="c">//     value you wired here (e.g. this row's id). "What was selected" is meaning</span>
+                    <span class="c">//     your code attaches to a raw touch — the OS never knows about it.</span>
                     .clickable { onOpen(item.id) }          <span class="c">// whole row is tappable -&gt; navigate</span>
                     .padding(<span class="n">16</span>.dp)
             ) {
@@ -795,7 +811,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">The detail screen with a back action</span>
-        <span class="codemeta"><code title="NavDetailList/app/src/main/java/com/example/navdetaillist/MainActivity.kt">MainActivity.kt</code> · lines 170–185</span>
+        <span class="codemeta"><code title="NavDetailList/app/src/main/java/com/example/navdetaillist/MainActivity.kt">MainActivity.kt</code> · lines 178–193</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code><span class="a">@Composable</span>
@@ -998,7 +1014,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">The stateless list screen</span>
-        <span class="codemeta"><code title="NavListDetail/app/src/main/java/com/example/navlistdetail/MainActivity.kt">MainActivity.kt</code> · lines 253–280</span>
+        <span class="codemeta"><code title="NavListDetail/app/src/main/java/com/example/navlistdetail/MainActivity.kt">MainActivity.kt</code> · lines 253–288</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code><span class="a">@Composable</span>
@@ -1016,6 +1032,14 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
             <span class="t">Column</span>(
                 modifier = <span class="t">Modifier</span>
                     .fillMaxWidth()                         <span class="c">// row spans the full width...</span>
+                    <span class="c">// OS vs COMPOSE vs YOUR CODE — what a tap really is:</span>
+                    <span class="c">//   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows</span>
+                    <span class="c">//     nothing about rows, items, names, or ids.</span>
+                    <span class="c">//   • Compose hit-tests that pixel to find WHICH composable sits there (this</span>
+                    <span class="c">//     one) and invokes its click lambda.</span>
+                    <span class="c">//   • YOUR code gives the tap its MEANING: the click lambda passes the exact</span>
+                    <span class="c">//     value you wired here (e.g. this row's id). "What was selected" is meaning</span>
+                    <span class="c">//     your code attaches to a raw touch — the OS never knows about it.</span>
                     .clickable { onOpen(item.id) }          <span class="c">// ...and the WHOLE row is tappable -&gt; navigate</span>
                     .padding(<span class="n">16</span>.dp)                         <span class="c">// breathing room inside the row</span>
             ) {
@@ -1219,7 +1243,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">ItemsScreen: a static header over a scrolling list</span>
-        <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 344–382</span>
+        <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 352–390</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code><span class="a">@Composable</span>
@@ -1266,7 +1290,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">Previewing every screen with @PreviewParameter</span>
-        <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 479–493</span>
+        <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 487–501</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code><span class="k">class</span> <span class="t">ItemPreviewProvider</span> : <span class="t">PreviewParameterProvider</span>&lt;<span class="t">Item</span>&gt; {
@@ -1387,9 +1411,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       </figcaption>
       <pre class="src"><code>    <span class="k">val</span> backStack = rememberNavBackStack(<span class="t">CategoriesKey</span>)
 
-    <span class="c">// A debug breadcrumb visible in Logcat (filter by "L4") confirming this</span>
-    <span class="c">// composable was entered.</span>
-    <span class="t">Log</span>.d(<span class="t">TAG</span>, <span class="s">"Entered AppNavigation"</span>)
+
 
     <span class="c">// NavDisplay renders whatever key is on top of the back stack, animating the</span>
     <span class="c">// transition when the top changes.</span>
@@ -1399,7 +1421,9 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
         <span class="c">// Called for system back gestures / the hardware back button. Popping the</span>
         <span class="c">// top key returns to the previous screen; removeLastOrNull is a no-op (and</span>
         <span class="c">// safe) if the stack is somehow already empty.</span>
-        onBack = { backStack.removeLastOrNull() },          <span class="c">// back = pop the top key</span></code></pre>
+        onBack = { backStack.removeLastOrNull() },          <span class="c">// back = pop the top key</span>
+        <span class="c">// entryProvider is a DSL (a small "language" for one job): it builds the</span>
+        <span class="c">// map of "which key type -&gt; which screen". You call entry&lt;...&gt; once per</span></code></pre>
       <p class="codeexplain">rememberNavBackStack(CategoriesKey) seeds the stack at the categories screen and preserves it across recomposition and config changes. NavDisplay renders whichever key is on top and animates transitions. The onBack lambda pops the top with backStack.removeLastOrNull(), which is what makes the system Back button walk up the chain one level at a time.</p>
     </figure>
     <figure class="code">
@@ -1408,9 +1432,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
         <span class="codemeta"><code title="NavFourScreen/src/main/java/com/example/navfourscreen/MainActivity.kt">MainActivity.kt</code> · lines 269–318</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
-      <pre class="src"><code>        entryProvider = entryProvider {
-            <span class="c">// LEVEL 1 — when CategoriesKey is on top, show the list of categories.</span>
-            entry&lt;<span class="t">CategoriesKey</span>&gt; {
+      <pre class="src"><code>            entry&lt;<span class="t">CategoriesKey</span>&gt; {
                 <span class="t">CategoriesScreen</span>(
                     categories = sampleCategories,
                     <span class="c">// Tapping a category pushes an ItemsKey carrying THAT category's</span>
@@ -1420,17 +1442,26 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
                     <span class="c">// key by its TYPE to the matching entry&lt;...&gt; { } block above and runs it; the</span>
                     <span class="c">// id inside the key only chooses WHICH data that screen shows, not WHICH screen</span>
                     <span class="c">// — so every key of this type lands on the same entry block.</span>
-                    onOpen = { categoryId -&gt; backStack.add(<span class="t">ItemsKey</span>(categoryId)) }
+                    onOpen = { categoryId -&gt;
+                        <span class="t">Log</span>.d(<span class="s">"LT"</span>, <span class="s">"In entry&lt;CategoriesKey&gt;, categoryId = ${categoryId}"</span>)
+<span class="c">//                        Log.d("LT", "tapped category = ${categoryById(categoryId).name}")</span>
+                        backStack.add(<span class="t">ItemsKey</span>(categoryId))
+                    }
+
                 )
             }
             <span class="c">// LEVEL 2 — when an ItemsKey is on top, show that category's planets.</span>
             entry&lt;<span class="t">ItemsKey</span>&gt; { key -&gt;
+<span class="c">//                Log.d("LT", "category = ${categoryById(key.categoryId).name}")</span>
+                <span class="t">Log</span>.d(<span class="s">"LT"</span>, <span class="s">"categoryId = ${key.categoryId}"</span>)
                 <span class="t">ItemsScreen</span>(
                     <span class="c">// Resolve the category (for the header) and its items (the rows).</span>
                     category = categoryById(key.categoryId),
                     items = itemsInCategory(key.categoryId),
                     <span class="c">// Tapping a planet pushes a DetailKey carrying THAT item's id.</span>
-                    onOpen = { itemId -&gt; backStack.add(<span class="t">DetailKey</span>(itemId)) },
+                    onOpen = { itemId -&gt;
+                        <span class="t">Log</span>.d(<span class="s">"LT"</span>, <span class="s">"In entry&lt;ItemsKey&gt;, categoryId = ${key.categoryId}"</span>)
+                        backStack.add(<span class="t">DetailKey</span>(itemId)) },
                     <span class="c">// The on-screen back button pops one level (back to categories).</span>
                     onBack = { backStack.removeLastOrNull() }
                 )
@@ -1450,23 +1481,23 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
             entry&lt;<span class="t">FactKey</span>&gt; { key -&gt;
                 <span class="t">FactScreen</span>(
                     item = itemById(key.itemId),
-                    <span class="c">// "Back" pops one level (back to the detail screen).</span>
-                    onBack = { backStack.removeLastOrNull() },
-                    <span class="c">// "Start over" pops EVERY key except the first, returning to the</span>
-                    <span class="c">// categories screen at the root of the stack.</span>
-                    onStartOver = { <span class="k">while</span> (backStack.size &gt; <span class="n">1</span>) backStack.removeLastOrNull() }
-                )
-            }
-        }</code></pre>
+                    <span class="c">// "Back" pops one level (back to the detail screen).</span></code></pre>
       <p class="codeexplain">entryProvider is a DSL with one entry&lt;KeyType&gt; { } block per screen. Tapping a category runs backStack.add(ItemsKey(categoryId)); tapping a planet adds DetailKey(itemId); 'View fun fact' adds FactKey(itemId) for the same planet (level 4). The entry&lt;ItemsKey&gt; { key -&gt; } form exposes the typed key so the screen can read key.categoryId. This is where all forward navigation lives.</p>
     </figure>
     <figure class="code">
       <figcaption>
         <span class="codetitle">Detail screen with a forward button to screen four</span>
-        <span class="codemeta"><code title="NavFourScreen/src/main/java/com/example/navfourscreen/MainActivity.kt">MainActivity.kt</code> · lines 424–453</span>
+        <span class="codemeta"><code title="NavFourScreen/src/main/java/com/example/navfourscreen/MainActivity.kt">MainActivity.kt</code> · lines 432–461</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
-      <pre class="src"><code><span class="k">fun</span> <span class="t">DetailScreen</span>(
+      <pre class="src"><code> *
+ * <span class="a">@param</span> item       the fully-resolved item to display.
+ * <span class="a">@param</span> onOpenFact invoked with the item's id <span class="k">when</span> <span class="s">"View fun fact"</span> <span class="k">is</span> tapped.
+ * <span class="a">@param</span> onBack     invoked <span class="k">when</span> the user taps <span class="s">"Back to list"</span>.
+ * <span class="a">@param</span> modifier   optional layout modifier supplied <span class="k">by</span> the caller.
+ */
+<span class="a">@Composable</span>
+<span class="k">fun</span> <span class="t">DetailScreen</span>(
     item: <span class="t">Item</span>,
     onOpenFact: (<span class="t">Int</span>) -&gt; <span class="t">Unit</span>,
     onBack: () -&gt; <span class="t">Unit</span>,
@@ -1488,23 +1519,23 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
             <span class="t">Text</span>(<span class="s">"View fun fact"</span>)
         }
         <span class="c">// Small gap between the two buttons.</span>
-        <span class="t">Spacer</span>(modifier = <span class="t">Modifier</span>.height(<span class="n">8</span>.dp))
-        <span class="c">// Secondary action: pop back to the items list. (System back does the</span>
-        <span class="c">// same thing — see AppNavigation's onBack.)</span>
-        <span class="t">Button</span>(onClick = onBack) {                          <span class="c">// pop back to the list</span>
-            <span class="t">Text</span>(<span class="s">"Back to list"</span>)
-        }
-    }
-}</code></pre>
+        <span class="t">Spacer</span>(modifier = <span class="t">Modifier</span>.height(<span class="n">8</span>.dp))</code></pre>
       <p class="codeexplain">DetailScreen is the level-3 screen and the bridge to the new fourth screen. It is fully stateless: it shows the resolved item and reports taps via two callbacks. 'View fun fact' calls onOpenFact(item.id) to drill forward, while 'Back to list' calls onBack to pop. Notice the screen never touches the back stack itself.</p>
     </figure>
     <figure class="code">
       <figcaption>
         <span class="codetitle">The new Fact screen and Start over</span>
-        <span class="codemeta"><code title="NavFourScreen/src/main/java/com/example/navfourscreen/MainActivity.kt">MainActivity.kt</code> · lines 465–491</span>
+        <span class="codemeta"><code title="NavFourScreen/src/main/java/com/example/navfourscreen/MainActivity.kt">MainActivity.kt</code> · lines 473–499</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
-      <pre class="src"><code><span class="k">fun</span> <span class="t">FactScreen</span>(
+      <pre class="src"><code> *
+ * <span class="a">@param</span> item        the fully-resolved item whose fact <span class="k">is</span> shown.
+ * <span class="a">@param</span> onBack      invoked <span class="k">when</span> the user taps <span class="s">"Back"</span> (pops one level).
+ * <span class="a">@param</span> onStartOver invoked <span class="k">when</span> the user taps <span class="s">"Start over"</span> (returns to the root).
+ * <span class="a">@param</span> modifier    optional layout modifier supplied <span class="k">by</span> the caller.
+ */
+<span class="a">@Composable</span>
+<span class="k">fun</span> <span class="t">FactScreen</span>(
     item: <span class="t">Item</span>,
     onBack: () -&gt; <span class="t">Unit</span>,
     onStartOver: () -&gt; <span class="t">Unit</span>,
@@ -1523,14 +1554,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
         <span class="c">// The Button the user asked for: pops one level back to the detail screen.</span>
         <span class="t">Button</span>(onClick = onBack) {
             <span class="t">Text</span>(<span class="s">"Back"</span>)
-        }
-        <span class="t">Spacer</span>(modifier = <span class="t">Modifier</span>.height(<span class="n">8</span>.dp))
-        <span class="c">// A second Button that clears the whole stack back to the first screen.</span>
-        <span class="t">Button</span>(onClick = onStartOver) {
-            <span class="t">Text</span>(<span class="s">"Start over"</span>)
-        }
-    }
-}</code></pre>
+        }</code></pre>
       <p class="codeexplain">FactScreen is the fourth screen this project adds. It shows the planet's fact field and offers two buttons: 'Back' (onBack pops one level to Detail) and 'Start over' (onStartOver, wired to a while-loop that pops every key until only the root remains). This demonstrates both single-step popping and clearing the whole stack to the root.</p>
     </figure>
 
@@ -2427,7 +2451,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">rememberSaveable counter contrasts local state with the ViewModel</span>
-        <span class="codemeta"><code title="NavViewModelState/src/main/java/com/example/navviewmodelstate/MainActivity.kt">MainActivity.kt</code> · lines 551–571</span>
+        <span class="codemeta"><code title="NavViewModelState/src/main/java/com/example/navviewmodelstate/MainActivity.kt">MainActivity.kt</code> · lines 559–579</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code>    <span class="k">var</span> count <span class="k">by</span> rememberSaveable { mutableStateOf(<span class="n">0</span>) }     <span class="c">// survives rotation; resets on a fresh launch</span>
@@ -2833,7 +2857,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">Exhaustive state rendering and row taps</span>
-        <span class="codemeta"><code title="NavDataLayer/src/main/java/com/example/navdatalayer/MainActivity.kt">MainActivity.kt</code> · lines 294–337</span>
+        <span class="codemeta"><code title="NavDataLayer/src/main/java/com/example/navdatalayer/MainActivity.kt">MainActivity.kt</code> · lines 294–345</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code>        <span class="k">when</span> (uiState) {
@@ -2870,6 +2894,14 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
                     <span class="t">Column</span>(
                         modifier = <span class="t">Modifier</span>
                             .fillMaxWidth()
+                            <span class="c">// OS vs COMPOSE vs YOUR CODE — what a tap really is:</span>
+                            <span class="c">//   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows</span>
+                            <span class="c">//     nothing about rows, items, names, or ids.</span>
+                            <span class="c">//   • Compose hit-tests that pixel to find WHICH composable sits there (this</span>
+                            <span class="c">//     one) and invokes its click lambda.</span>
+                            <span class="c">//   • YOUR code gives the tap its MEANING: the click lambda passes the exact</span>
+                            <span class="c">//     value you wired here (e.g. this row's id). "What was selected" is meaning</span>
+                            <span class="c">//     your code attaches to a raw touch — the OS never knows about it.</span>
                             .clickable { onOpen(planet.id) }  <span class="c">// whole row tappable -&gt; open detail</span>
                             .padding(<span class="n">16</span>.dp)
                     ) {

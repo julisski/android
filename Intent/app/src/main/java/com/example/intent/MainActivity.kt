@@ -121,6 +121,14 @@ fun AppNavigation(modifier: Modifier = Modifier) {        // Accepts a Modifier 
 fun HomeScreen(onOpenDetail: () -> Unit, modifier: Modifier = Modifier) {  // Takes a click callback and an optional Modifier.
     Column(modifier = modifier) {                         // Stack the children vertically.
         Text(text = "Hello Android!")                     // Show a greeting label.
+        // OS vs COMPOSE vs YOUR CODE — what a tap really is:
+        //   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows
+        //     nothing about rows, items, names, or ids.
+        //   • Compose hit-tests that pixel to find WHICH composable sits there (this
+        //     one) and invokes its click lambda.
+        //   • YOUR code gives the tap its MEANING: the click lambda passes the exact
+        //     value you wired here (e.g. this row's id). "What was selected" is meaning
+        //     your code attaches to a raw touch — the OS never knows about it.
         Button(onClick = onOpenDetail) {                  // A button; tapping it runs onOpenDetail (navigates forward).
             Text("Open Detail")                           // The button's label.
         }                                                 // End Button.

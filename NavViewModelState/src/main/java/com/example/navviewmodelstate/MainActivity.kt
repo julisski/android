@@ -429,6 +429,14 @@ fun CategoriesScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()                         // row spans the full width...
+                    // OS vs COMPOSE vs YOUR CODE — what a tap really is:
+                    //   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows
+                    //     nothing about rows, items, names, or ids.
+                    //   • Compose hit-tests that pixel to find WHICH composable sits there (this
+                    //     one) and invokes its click lambda.
+                    //   • YOUR code gives the tap its MEANING: the click lambda passes the exact
+                    //     value you wired here (e.g. this row's id). "What was selected" is meaning
+                    //     your code attaches to a raw touch — the OS never knows about it.
                     .clickable { onOpen(category.id) }      // ...and the WHOLE row is tappable -> navigate
                     .padding(16.dp)                         // breathing room inside the row
             ) {

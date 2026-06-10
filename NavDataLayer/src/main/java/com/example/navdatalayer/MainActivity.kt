@@ -325,6 +325,14 @@ fun PlanetListScreenBody(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
+                            // OS vs COMPOSE vs YOUR CODE — what a tap really is:
+                            //   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows
+                            //     nothing about rows, items, names, or ids.
+                            //   • Compose hit-tests that pixel to find WHICH composable sits there (this
+                            //     one) and invokes its click lambda.
+                            //   • YOUR code gives the tap its MEANING: the click lambda passes the exact
+                            //     value you wired here (e.g. this row's id). "What was selected" is meaning
+                            //     your code attaches to a raw touch — the OS never knows about it.
                             .clickable { onOpen(planet.id) }  // whole row tappable -> open detail
                             .padding(16.dp)
                     ) {

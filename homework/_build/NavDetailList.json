@@ -85,14 +85,14 @@
       "title": "A tappable list that triggers navigation",
       "file": "NavDetailList/app/src/main/java/com/example/navdetaillist/MainActivity.kt",
       "start": 147,
-      "end": 167,
+      "end": 175,
       "explain": "'ListScreen' uses 'LazyColumn' with 'items(items)' to draw one row per planet. Each row is a 'Column' made tappable by 'Modifier.clickable { onOpen(item.id) }'. Notice the screen does not know about navigation - it just calls the 'onOpen' lambda passed in, keeping the Composable reusable and testable."
     },
     {
       "title": "The detail screen with a back action",
       "file": "NavDetailList/app/src/main/java/com/example/navdetaillist/MainActivity.kt",
-      "start": 170,
-      "end": 185,
+      "start": 178,
+      "end": 193,
       "explain": "'DetailScreen' receives an already-resolved 'item' and an 'onBack' lambda. It renders the title and blurb, then a Button whose 'onClick = onBack' pops the stack. Like ListScreen, it stays ignorant of the back stack - the wiring in AppNavigation supplies 'onBack' as 'backStack.removeLastOrNull()'."
     }
   ],

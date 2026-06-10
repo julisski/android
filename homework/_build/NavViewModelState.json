@@ -110,8 +110,8 @@
     {
       "title": "rememberSaveable counter contrasts local state with the ViewModel",
       "file": "NavViewModelState/src/main/java/com/example/navviewmodelstate/MainActivity.kt",
-      "start": 551,
-      "end": 571,
+      "start": 559,
+      "end": 579,
       "explain": "'var count by rememberSaveable { mutableStateOf(0) }' is deliberately placed next to the favorite toggle. The counter survives rotation by writing into the saved-instance Bundle but is local to this one composable and resets on a fresh launch, whereas the favorite (held in the ViewModel) is shared across screens and survives navigation too. Comparing the two side by side is the lesson."
     }
   ],

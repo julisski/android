@@ -111,7 +111,7 @@
       "title": "Exhaustive state rendering and row taps",
       "file": "NavDataLayer/src/main/java/com/example/navdatalayer/MainActivity.kt",
       "start": 294,
-      "end": 337,
+      "end": 345,
       "explain": "A single 'when (uiState)' renders each branch: Loading shows a spinner, Empty a note, Error smart-casts to read 'uiState.message' plus a Retry 'Button(onClick = onRetry)', and Success smart-casts to '.planets' and builds a LazyColumn. Each row is '.clickable { onOpen(planet.id) }', which pushes a DetailKey carrying only the id, so navigation never carries the whole object."
     }
   ],

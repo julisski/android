@@ -99,7 +99,7 @@
       "title": "The stateless list screen",
       "file": "NavListDetail/app/src/main/java/com/example/navlistdetail/MainActivity.kt",
       "start": 253,
-      "end": 280,
+      "end": 288,
       "explain": "'ListScreen' renders items in a 'LazyColumn' (Compose's RecyclerView equivalent that only composes visible rows). Each row is a 'Column' made tappable by '.clickable { onOpen(item.id) }', so the whole row reports the id upward. The screen takes no navigation dependency, which is why it stays reusable and easy to preview."
     }
   ],

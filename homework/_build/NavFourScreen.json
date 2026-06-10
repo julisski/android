@@ -95,15 +95,15 @@
     {
       "title": "Detail screen with a forward button to screen four",
       "file": "NavFourScreen/src/main/java/com/example/navfourscreen/MainActivity.kt",
-      "start": 424,
-      "end": 453,
+      "start": 432,
+      "end": 461,
       "explain": "DetailScreen is the level-3 screen and the bridge to the new fourth screen. It is fully stateless: it shows the resolved item and reports taps via two callbacks. 'View fun fact' calls onOpenFact(item.id) to drill forward, while 'Back to list' calls onBack to pop. Notice the screen never touches the back stack itself."
     },
     {
       "title": "The new Fact screen and Start over",
       "file": "NavFourScreen/src/main/java/com/example/navfourscreen/MainActivity.kt",
-      "start": 465,
-      "end": 491,
+      "start": 473,
+      "end": 499,
       "explain": "FactScreen is the fourth screen this project adds. It shows the planet's fact field and offers two buttons: 'Back' (onBack pops one level to Detail) and 'Start over' (onStartOver, wired to a while-loop that pops every key until only the root remains). This demonstrates both single-step popping and clearing the whole stack to the root."
     }
   ],
