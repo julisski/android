@@ -127,6 +127,15 @@ fun NotesScreen(
     // STATE DOWN: subscribe to the StateFlow. collectAsStateWithLifecycle() emits
     // a new value on every ViewModel update, triggering recomposition (UDF step 6),
     // and stops collecting while the screen is not visible.
+    // THREE ideas in one line —  val X by someStateFlow.collectAsStateWithLifecycle():
+    //   1. someStateFlow                  — a StateFlow the ViewModel exposes (its live value).
+    //   2. .collectAsStateWithLifecycle() — SUBSCRIBES to it and wraps the latest value in a
+    //        Compose State, so this composable RECOMPOSES whenever the flow emits a new value.
+    //        "WithLifecycle" = collect only while the screen is visible (lifecycle >= STARTED)
+    //        and PAUSE off-screen; the Android-safe version of a plain collectAsState().
+    //   3. `by`                           — a property delegate that unwraps the State's .value,
+    //        so X reads as the plain value directly (no .value). Reading X also registers this
+    //        composable as a reader, which is what makes Compose recompose it on the next emit.
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // Render the stateless UI with the current snapshot, and route every action to

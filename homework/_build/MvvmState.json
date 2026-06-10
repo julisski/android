@@ -6,35 +6,125 @@
   "domain": "notes",
   "estTime": "15-25 min",
   "screens": [
-    {"name": "MainActivity", "role": "The single Activity; installs the Compose tree, applies MvvmStateTheme, and wraps the screen in a Scaffold."},
-    {"name": "NotesScreen", "role": "The STATEFUL screen: obtains the NotesViewModel, collects its uiState, and forwards events to onEvent."},
-    {"name": "NotesScreenContent", "role": "The STATELESS screen: a pure function of a NotesUiState plus an onEvent sink that draws the title field, Add button, and the loading spinner or note list."},
-    {"name": "NoteRow", "role": "Renders one Note with a done-checkbox (strike-through when done) and a Delete button, reporting taps via callbacks."}
+    {
+      "name": "MainActivity",
+      "role": "The single Activity; installs the Compose tree, applies MvvmStateTheme, and wraps the screen in a Scaffold."
+    },
+    {
+      "name": "NotesScreen",
+      "role": "The STATEFUL screen: obtains the NotesViewModel, collects its uiState, and forwards events to onEvent."
+    },
+    {
+      "name": "NotesScreenContent",
+      "role": "The STATELESS screen: a pure function of a NotesUiState plus an onEvent sink that draws the title field, Add button, and the loading spinner or note list."
+    },
+    {
+      "name": "NoteRow",
+      "role": "Renders one Note with a done-checkbox (strike-through when done) and a Delete button, reporting taps via callbacks."
+    }
   ],
   "concepts": [
-    {"term": "ViewModel", "plain": "NotesViewModel extends androidx.lifecycle.ViewModel, a holder that the framework keeps alive across configuration changes like rotation, so the state it owns is not destroyed and recreated with the Activity."},
-    {"term": "Immutable UiState", "plain": "NotesUiState is a data class whose every property (notes, isLoading, newNoteTitle) is a 'val'. It is never edited in place; the ViewModel always builds a brand-new instance with .copy(...) so the screen always renders one consistent snapshot."},
-    {"term": "StateFlow exposure", "plain": "The ViewModel keeps a private writable MutableStateFlow named _uiState and exposes it publicly only as a read-only StateFlow named uiState via asStateFlow(). The UI can read but never write the state, which enforces one-way data flow."},
-    {"term": "collectAsStateWithLifecycle", "plain": "In NotesScreen, 'val uiState by viewModel.uiState.collectAsStateWithLifecycle()' subscribes to the StateFlow, turns each emission into Compose State so the screen recomposes, and pauses collecting while the screen is not visible."},
-    {"term": "Sealed event interface", "plain": "NotesEvent is a sealed interface listing every user intention (NewTitleChanged, AddNote, ToggleDone, DeleteNote). Because it is sealed, the 'when (event)' in onEvent is exhaustive at compile time and needs no 'else'."},
-    {"term": "Unidirectional data flow (UDF)", "plain": "State flows DOWN (uiState -> composables) and events flow UP (callbacks -> onEvent). The UI never mutates state; it only sends a NotesEvent, the ViewModel computes a new state, and Compose redraws."},
-    {"term": "viewModelScope + suspend repository", "plain": "Async work runs in viewModelScope.launch and calls suspend functions on NotesRepository (loadNotes, addNote, toggleDone, deleteNote). The scope is cancelled automatically when the ViewModel is cleared, so coroutines never leak."},
-    {"term": "Stateless and previewable UI", "plain": "NotesScreenContent holds no ViewModel and no remembered state, so the @Preview functions can hand it a fabricated NotesUiState and a no-op onEvent ({}) without constructing a ViewModel."}
+    {
+      "term": "ViewModel",
+      "plain": "NotesViewModel extends androidx.lifecycle.ViewModel, a holder that the framework keeps alive across configuration changes like rotation, so the state it owns is not destroyed and recreated with the Activity."
+    },
+    {
+      "term": "Immutable UiState",
+      "plain": "NotesUiState is a data class whose every property (notes, isLoading, newNoteTitle) is a 'val'. It is never edited in place; the ViewModel always builds a brand-new instance with .copy(...) so the screen always renders one consistent snapshot."
+    },
+    {
+      "term": "StateFlow exposure",
+      "plain": "The ViewModel keeps a private writable MutableStateFlow named _uiState and exposes it publicly only as a read-only StateFlow named uiState via asStateFlow(). The UI can read but never write the state, which enforces one-way data flow."
+    },
+    {
+      "term": "collectAsStateWithLifecycle",
+      "plain": "In NotesScreen, 'val uiState by viewModel.uiState.collectAsStateWithLifecycle()' subscribes to the StateFlow, turns each emission into Compose State so the screen recomposes, and pauses collecting while the screen is not visible."
+    },
+    {
+      "term": "Sealed event interface",
+      "plain": "NotesEvent is a sealed interface listing every user intention (NewTitleChanged, AddNote, ToggleDone, DeleteNote). Because it is sealed, the 'when (event)' in onEvent is exhaustive at compile time and needs no 'else'."
+    },
+    {
+      "term": "Unidirectional data flow (UDF)",
+      "plain": "State flows DOWN (uiState -> composables) and events flow UP (callbacks -> onEvent). The UI never mutates state; it only sends a NotesEvent, the ViewModel computes a new state, and Compose redraws."
+    },
+    {
+      "term": "viewModelScope + suspend repository",
+      "plain": "Async work runs in viewModelScope.launch and calls suspend functions on NotesRepository (loadNotes, addNote, toggleDone, deleteNote). The scope is cancelled automatically when the ViewModel is cleared, so coroutines never leak."
+    },
+    {
+      "term": "Stateless and previewable UI",
+      "plain": "NotesScreenContent holds no ViewModel and no remembered state, so the @Preview functions can hand it a fabricated NotesUiState and a no-op onEvent ({}) without constructing a ViewModel."
+    }
   ],
   "files": [
-    {"path": "MvvmState/src/main/java/com/example/mvvmstate/MainActivity.kt", "role": "The UI layer: the Activity, the stateful NotesScreen, the stateless NotesScreenContent, the NoteRow, and the @Preview functions."},
-    {"path": "MvvmState/src/main/java/com/example/mvvmstate/NotesRepository.kt", "role": "The data layer: the immutable Note model and a fake in-memory repository whose suspend functions add a delay() to mimic disk/network latency."},
-    {"path": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt", "role": "The heart of the lesson: the immutable NotesUiState, the sealed NotesEvent interface, and NotesViewModel exposing uiState plus the single onEvent funnel."},
-    {"path": "MvvmState/README.md", "role": "The student-facing overview of the MVVM/UDF lesson, the key files, what to inspect, the rotation experiment, and run commands."}
+    {
+      "path": "MvvmState/src/main/java/com/example/mvvmstate/MainActivity.kt",
+      "role": "The UI layer: the Activity, the stateful NotesScreen, the stateless NotesScreenContent, the NoteRow, and the @Preview functions."
+    },
+    {
+      "path": "MvvmState/src/main/java/com/example/mvvmstate/NotesRepository.kt",
+      "role": "The data layer: the immutable Note model and a fake in-memory repository whose suspend functions add a delay() to mimic disk/network latency."
+    },
+    {
+      "path": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt",
+      "role": "The heart of the lesson: the immutable NotesUiState, the sealed NotesEvent interface, and NotesViewModel exposing uiState plus the single onEvent funnel."
+    },
+    {
+      "path": "MvvmState/README.md",
+      "role": "The student-facing overview of the MVVM/UDF lesson, the key files, what to inspect, the rotation experiment, and run commands."
+    }
   ],
   "highlights": [
-    {"title": "The immutable UiState snapshot", "file": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt", "start": 65, "end": 69, "explain": "NotesUiState bundles everything the screen needs (notes, isLoading, newNoteTitle) into ONE data class where every field is a 'val'. Because it is immutable it is never edited in place; the ViewModel replaces it wholesale with .copy(...). Bundling the fields together means the UI always sees a consistent snapshot with no half-updated window."},
-    {"title": "Sealed events: the fixed vocabulary of user intent", "file": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt", "start": 84, "end": 96, "explain": "NotesEvent is a sealed interface naming every action the UI may request. Data classes like ToggleDone(val id: Int) carry payloads, while data object AddNote carries none. Because the set is sealed, the compiler knows it is complete, so the 'when' over it can be exhaustive and adding a new event forces you to handle it."},
-    {"title": "Private writable vs public read-only state", "file": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt", "start": 120, "end": 132, "explain": "_uiState is a private MutableStateFlow seeded in the isLoading=true state, and uiState exposes it as a read-only StateFlow via asStateFlow(). This split is what physically enforces 'state down, events up': the UI can observe uiState but cannot write it. The init{} block kicks off the first loadNotes() once when the ViewModel is created, not on every rotation."},
-    {"title": "onEvent: the single funnel for all state changes", "file": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt", "start": 141, "end": 157, "explain": "onEvent is the ONLY place state mutates. The exhaustive 'when (event)' routes each NotesEvent to a state update: NewTitleChanged does a synchronous _uiState.update { it.copy(newNoteTitle = ...) }, while AddNote/ToggleDone/DeleteNote delegate to private coroutine helpers. Trace any UI action to exactly one branch here."},
-    {"title": "Async load: flip isLoading, await, emit a new state", "file": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt", "start": 168, "end": 174, "explain": "loadNotes runs inside viewModelScope.launch so the suspend repository.loadNotes() call never blocks the UI thread. The pattern to memorize: update to isLoading=true (spinner shows), await the data, then update with notes=loaded and isLoading=false. Each step is a fresh immutable NotesUiState built with copy()."},
-    {"title": "Stateful screen: wiring state DOWN and events UP", "file": "MvvmState/src/main/java/com/example/mvvmstate/MainActivity.kt", "start": 122, "end": 139, "explain": "NotesScreen is the one Composable that knows about the ViewModel. viewModel() returns one scoped to the host so it survives rotation; collectAsStateWithLifecycle() reads uiState as Compose State (state DOWN); and onEvent = viewModel::onEvent is a method reference passing every action UP. No business logic lives in the composable."},
-    {"title": "Stateless content driven entirely by uiState", "file": "MvvmState/src/main/java/com/example/mvvmstate/MainActivity.kt", "start": 157, "end": 191, "explain": "NotesScreenContent takes only a NotesUiState and an onEvent lambda. The OutlinedTextField renders uiState.newNoteTitle and fires NotesEvent.NewTitleChanged on every keystroke; the field keeps NO internal text of its own, so the ViewModel is the single source of truth. Tapping Add just emits NotesEvent.AddNote rather than building a Note itself."}
+    {
+      "title": "The immutable UiState snapshot",
+      "file": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt",
+      "start": 65,
+      "end": 69,
+      "explain": "NotesUiState bundles everything the screen needs (notes, isLoading, newNoteTitle) into ONE data class where every field is a 'val'. Because it is immutable it is never edited in place; the ViewModel replaces it wholesale with .copy(...). Bundling the fields together means the UI always sees a consistent snapshot with no half-updated window."
+    },
+    {
+      "title": "Sealed events: the fixed vocabulary of user intent",
+      "file": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt",
+      "start": 84,
+      "end": 96,
+      "explain": "NotesEvent is a sealed interface naming every action the UI may request. Data classes like ToggleDone(val id: Int) carry payloads, while data object AddNote carries none. Because the set is sealed, the compiler knows it is complete, so the 'when' over it can be exhaustive and adding a new event forces you to handle it."
+    },
+    {
+      "title": "Private writable vs public read-only state",
+      "file": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt",
+      "start": 120,
+      "end": 132,
+      "explain": "_uiState is a private MutableStateFlow seeded in the isLoading=true state, and uiState exposes it as a read-only StateFlow via asStateFlow(). This split is what physically enforces 'state down, events up': the UI can observe uiState but cannot write it. The init{} block kicks off the first loadNotes() once when the ViewModel is created, not on every rotation."
+    },
+    {
+      "title": "onEvent: the single funnel for all state changes",
+      "file": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt",
+      "start": 141,
+      "end": 157,
+      "explain": "onEvent is the ONLY place state mutates. The exhaustive 'when (event)' routes each NotesEvent to a state update: NewTitleChanged does a synchronous _uiState.update { it.copy(newNoteTitle = ...) }, while AddNote/ToggleDone/DeleteNote delegate to private coroutine helpers. Trace any UI action to exactly one branch here."
+    },
+    {
+      "title": "Async load: flip isLoading, await, emit a new state",
+      "file": "MvvmState/src/main/java/com/example/mvvmstate/NotesViewModel.kt",
+      "start": 168,
+      "end": 174,
+      "explain": "loadNotes runs inside viewModelScope.launch so the suspend repository.loadNotes() call never blocks the UI thread. The pattern to memorize: update to isLoading=true (spinner shows), await the data, then update with notes=loaded and isLoading=false. Each step is a fresh immutable NotesUiState built with copy()."
+    },
+    {
+      "title": "Stateful screen: wiring state DOWN and events UP",
+      "file": "MvvmState/src/main/java/com/example/mvvmstate/MainActivity.kt",
+      "start": 122,
+      "end": 148,
+      "explain": "NotesScreen is the one Composable that knows about the ViewModel. viewModel() returns one scoped to the host so it survives rotation; collectAsStateWithLifecycle() reads uiState as Compose State (state DOWN); and onEvent = viewModel::onEvent is a method reference passing every action UP. No business logic lives in the composable."
+    },
+    {
+      "title": "Stateless content driven entirely by uiState",
+      "file": "MvvmState/src/main/java/com/example/mvvmstate/MainActivity.kt",
+      "start": 166,
+      "end": 200,
+      "explain": "NotesScreenContent takes only a NotesUiState and an onEvent lambda. The OutlinedTextField renders uiState.newNoteTitle and fires NotesEvent.NewTitleChanged on every keystroke; the field keeps NO internal text of its own, so the ViewModel is the single source of truth. Tapping Add just emits NotesEvent.AddNote rather than building a Note itself."
+    }
   ],
   "newVsPrev": "NetworkParsing, WebSocketLive and LocationServices all moved data on and off the main thread with suspend repositories. MvvmState keeps that async/suspend habit (a fake suspend repository with delay) but adds the full MVVM architecture on top: a retained ViewModel that owns an immutable UiState, exposes it as a read-only StateFlow, and accepts a sealed set of UI events through one onEvent funnel. The new ideas here are unidirectional data flow, state surviving rotation in the ViewModel, splitting the UI into a stateful holder plus a stateless previewable Composable, and collectAsStateWithLifecycle() bridging the flow to Compose.",
   "tryThis": [
