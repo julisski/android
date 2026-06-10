@@ -1,6 +1,6 @@
 # Continuous Integration — PATH-FILTERED.
 #
-# Instead of rebuilding all 18 projects on every push, a first job ("changes")
+# Instead of rebuilding all 20 projects on every push, a first job ("changes")
 # diffs what actually changed and emits a dynamic matrix of ONLY the affected
 # projects. The build + unit-test jobs then run that smaller matrix. Rules:
 #   • a file under <Project>/ changed   -> build just that project
@@ -72,6 +72,8 @@ jobs:
             "MvvmState|MvvmState|MvvmState"
             "RoomAndPreferences|RoomAndPreferences|RoomAndPreferences"
             "AppReleaseBasics|AppReleaseBasics|AppReleaseBasics"
+            "LocationServices|LocationServices|LocationServices"
+            "WebSocketLive|WebSocketLive|WebSocketLive"
           )
 
           all=false

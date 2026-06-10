@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===========================================================================
+     AndroidManifest.xml — the app's "declaration of intent" to the OS.
+     CONCEPT FOCUS (WebSocket): the INTERNET permission the real connection needs,
+     plus the usual launcher Activity declaration.
+     ======================================================================== -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- INTERNET permission: REQUIRED for the REAL (OkHttp) WebSocket to reach
+         wss://echo.websocket.events. We declare it ACTIVE so that flipping
+         useFake = false in WebSocketClient.kt works immediately — no manifest edit
+         needed. INTERNET is a NORMAL (install-time, not "dangerous") permission, so
+         there is no runtime request to make; declaring it here is enough. It is
+         harmless in the app's default offline FAKE mode, so we always declare it. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- <application> holds app-wide settings and declares every component. -->
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.WebSocketLive">
+
+        <!-- MainActivity: the app's entry-point screen. exported="true" is REQUIRED
+             because it is launched from outside the app (the launcher). -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.WebSocketLive"
+            android:windowSoftInputMode="adjustResize">
+
+            <!-- MAIN / LAUNCHER marks this as the app's launch screen and shows its
+                 icon in the app drawer. -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

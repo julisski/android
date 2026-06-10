@@ -59,6 +59,8 @@ Same Kotlin / Compose / Material 3 / Gradle-KTS stack; each has its own README.
 | [`ComposeModernUI`](./ComposeModernUI) | Compose fundamentals: composables, Material 3 theme, layout, **state hoisting**, reusable components, previews. |
 | [`ComposeLists`](./ComposeLists) | `LazyColumn` + `LazyVerticalGrid`, stable item keys, multi-selection, empty states, filtering. |
 | [`NetworkParsing`](./NetworkParsing) | Retrofit + kotlinx.serialization against a no-auth API (JSONPlaceholder) — loading / success / error states, with an offline fake. |
+| [`WebSocketLive`](./WebSocketLive) | A **second network protocol**: full-duplex **WebSocket** (OkHttp) streaming live messages — connection status + transcript, with an offline echo fake. |
+| [`LocationServices`](./LocationServices) | Integrating a **device API**: runtime location permission + **FusedLocationProviderClient**, surfaced as idle / loading / success / error, with an offline fake. |
 | [`MvvmState`](./MvvmState) | MVVM: `ViewModel`, `StateFlow`, immutable `UiState`, UI events, unidirectional data flow (fake data). |
 | [`RoomAndPreferences`](./RoomAndPreferences) | Local persistence: **Room** (via KSP) for structured data + **DataStore Preferences** for settings. |
 | [`AppReleaseBasics`](./AppReleaseBasics) | Release basics: manifest, runtime permissions, version/build types, signing concepts, App Bundle (README). |
@@ -93,9 +95,10 @@ Kotlin `2.2.10` · AGP `9.2.1` · `compileSdk 37` / `minSdk 24` · Compose BOM `
 `lifecycle-viewmodel-compose` + `lifecycle-runtime-compose`.
 
 The Android-concept demos add only what each concept needs: Retrofit +
-kotlinx.serialization (`NetworkParsing`), Room via KSP + DataStore Preferences
-(`RoomAndPreferences`), and ViewModel/lifecycle (`MvvmState`, `NetworkParsing`,
-`RoomAndPreferences`).
+kotlinx.serialization (`NetworkParsing`), OkHttp WebSocket (`WebSocketLive`),
+Google Play services location (`LocationServices`), Room via KSP + DataStore
+Preferences (`RoomAndPreferences`), and ViewModel/lifecycle (`MvvmState`,
+`NetworkParsing`, `WebSocketLive`, `LocationServices`, `RoomAndPreferences`).
 
 ## Cloning notes
 

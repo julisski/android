@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===========================================================================
+     AndroidManifest.xml — the app's "declaration of intent" to the OS.
+     CONCEPT FOCUS (location services): the two LOCATION permissions this app may
+     use, plus the usual launcher Activity declaration.
+     ======================================================================== -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- LOCATION PERMISSION DECLARATIONS (step 1 of the two-step model).
+         Both are *dangerous*, runtime-granted permissions: declaring them here is
+         NOT enough — MainActivity.kt must REQUEST them at run time and the user
+         must approve. We declare BOTH so the user can grant either:
+           • ACCESS_FINE_LOCATION   — precise (GPS-level) location.
+           • ACCESS_COARSE_LOCATION — approximate (network/Wi-Fi) location. On
+             Android 12+ the user may grant ONLY this coarse level even when the
+             app asks for fine, so a well-behaved app requests/handles both. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- <application> holds app-wide settings and declares every component. -->
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.LocationServices">
+
+        <!-- MainActivity: the app's entry-point screen. exported="true" is REQUIRED
+             because it is launched from outside the app (the launcher). -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.LocationServices"
+            android:windowSoftInputMode="adjustResize">
+
+            <!-- MAIN / LAUNCHER marks this as the app's launch screen and shows its
+                 icon in the app drawer. -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
