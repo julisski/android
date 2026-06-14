@@ -235,11 +235,12 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
   <div class="wrap">
     <p class="eyebrow">Android · Kotlin · Jetpack Compose · Navigation 3</p>
     <h1>Android Projects, Explained</h1>
-    <p class="sub">An interactive tour of 20 small, self-contained teaching apps. Each one isolates a single idea — from the smallest possible Compose screen all the way to deep links, multiple back stacks, MVVM and on-device storage. Pick a project from the sidebar and read exactly what is going on.</p>
+    <p class="sub">An interactive tour of 22 small, self-contained teaching apps. Each one isolates a single idea — from the smallest possible Compose screen all the way to deep links, multiple back stacks, MVVM and on-device storage. Pick a project from the sidebar and read exactly what is going on. New: a live <a href="./playground.html" style="color:#fff;font-weight:800;text-decoration:underline;">Compose Playground</a> where you edit code and watch the UI update.</p>
     <div class="hmeta">
-      <span><b>20</b> projects</span>
+      <span><b>22</b> projects</span>
       <span><b>2</b> tracks · navigation &amp; Android concepts</span>
       <span>Real source · real line numbers</span>
+      <span><a href="./playground.html" style="color:inherit;text-decoration:none;">🧪 live playground</a></span>
       <span>← → to move · ⌕ to search</span>
     </div>
   </div>
@@ -252,12 +253,12 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
 
 <div class="shell">
   <aside class="sidebar" id="sidebar" aria-label="Project navigation">
-    <div class="sidetitle">20 Projects</div>
+    <div class="sidetitle">22 Projects</div>
     <div class="search">
       <input id="search" type="text" placeholder="Search…  (back stack, Room…)" autocomplete="off" />
       <div id="results" class="results"></div>
     </div>
-    <nav class="sidenav" id="sidenav" role="tablist" aria-label="Projects"><button class="navitem ov" data-proj="overview" role="tab">Overview</button><div class="navgroup"><div class="navhead">1 · Compose foundation</div><button class="navitem" data-proj="SingleActivity" role="tab"><span class="ni-n">1</span><span class="ni-t">SingleActivity</span></button></div><div class="navgroup"><div class="navhead">2 · Navigation 3 · two screens</div><button class="navitem" data-proj="Intent" role="tab"><span class="ni-n">2</span><span class="ni-t">Intent</span></button><button class="navitem" data-proj="NavDetailList" role="tab"><span class="ni-n">3</span><span class="ni-t">NavDetailList</span></button><button class="navitem" data-proj="NavListDetail" role="tab"><span class="ni-n">4</span><span class="ni-t">NavListDetail</span></button></div><div class="navgroup"><div class="navhead">3 · Growing the back stack</div><button class="navitem" data-proj="NavThreeScreen" role="tab"><span class="ni-n">5</span><span class="ni-t">NavThreeScreen</span></button><button class="navitem" data-proj="NavFourScreen" role="tab"><span class="ni-n">6</span><span class="ni-t">NavFourScreen</span></button></div><div class="navgroup"><div class="navhead">4 · One nav concept each</div><button class="navitem" data-proj="NavDeepLinks" role="tab"><span class="ni-n">7</span><span class="ni-t">NavDeepLinks</span></button><button class="navitem" data-proj="NavBottomTabs" role="tab"><span class="ni-n">8</span><span class="ni-t">NavBottomTabs</span></button><button class="navitem" data-proj="NavNestedGraphs" role="tab"><span class="ni-n">9</span><span class="ni-t">NavNestedGraphs</span></button><button class="navitem" data-proj="NavViewModelState" role="tab"><span class="ni-n">10</span><span class="ni-t">NavViewModelState</span></button><button class="navitem" data-proj="NavTransitions" role="tab"><span class="ni-n">11</span><span class="ni-t">NavTransitions</span></button><button class="navitem" data-proj="NavDataLayer" role="tab"><span class="ni-n">12</span><span class="ni-t">NavDataLayer</span></button></div><div class="navgroup"><div class="navhead">5 · Android concepts</div><button class="navitem" data-proj="ComposeModernUI" role="tab"><span class="ni-n">13</span><span class="ni-t">ComposeModernUI</span></button><button class="navitem" data-proj="ComposeLists" role="tab"><span class="ni-n">14</span><span class="ni-t">ComposeLists</span></button><button class="navitem" data-proj="NetworkParsing" role="tab"><span class="ni-n">15</span><span class="ni-t">NetworkParsing</span></button><button class="navitem" data-proj="WebSocketLive" role="tab"><span class="ni-n">16</span><span class="ni-t">WebSocketLive</span></button><button class="navitem" data-proj="LocationServices" role="tab"><span class="ni-n">17</span><span class="ni-t">LocationServices</span></button><button class="navitem" data-proj="MvvmState" role="tab"><span class="ni-n">18</span><span class="ni-t">MvvmState</span></button><button class="navitem" data-proj="RoomAndPreferences" role="tab"><span class="ni-n">19</span><span class="ni-t">RoomAndPreferences</span></button><button class="navitem" data-proj="AppReleaseBasics" role="tab"><span class="ni-n">20</span><span class="ni-t">AppReleaseBasics</span></button></div></nav>
+    <nav class="sidenav" id="sidenav" role="tablist" aria-label="Projects"><button class="navitem ov" data-proj="overview" role="tab">Overview</button><div class="navgroup"><div class="navhead">1 · Compose foundation</div><button class="navitem" data-proj="SingleActivity" role="tab"><span class="ni-n">1</span><span class="ni-t">SingleActivity</span></button></div><div class="navgroup"><div class="navhead">2 · Navigation 3 · two screens</div><button class="navitem" data-proj="Intent" role="tab"><span class="ni-n">2</span><span class="ni-t">Intent</span></button><button class="navitem" data-proj="NavDetailList" role="tab"><span class="ni-n">3</span><span class="ni-t">NavDetailList</span></button><button class="navitem" data-proj="NavListDetail" role="tab"><span class="ni-n">4</span><span class="ni-t">NavListDetail</span></button></div><div class="navgroup"><div class="navhead">3 · Growing the back stack</div><button class="navitem" data-proj="NavThreeScreen" role="tab"><span class="ni-n">5</span><span class="ni-t">NavThreeScreen</span></button><button class="navitem" data-proj="NavFourScreen" role="tab"><span class="ni-n">6</span><span class="ni-t">NavFourScreen</span></button></div><div class="navgroup"><div class="navhead">4 · One nav concept each</div><button class="navitem" data-proj="NavDeepLinks" role="tab"><span class="ni-n">7</span><span class="ni-t">NavDeepLinks</span></button><button class="navitem" data-proj="NavBottomTabs" role="tab"><span class="ni-n">8</span><span class="ni-t">NavBottomTabs</span></button><button class="navitem" data-proj="NavNestedGraphs" role="tab"><span class="ni-n">9</span><span class="ni-t">NavNestedGraphs</span></button><button class="navitem" data-proj="NavViewModelState" role="tab"><span class="ni-n">10</span><span class="ni-t">NavViewModelState</span></button><button class="navitem" data-proj="NavTransitions" role="tab"><span class="ni-n">11</span><span class="ni-t">NavTransitions</span></button><button class="navitem" data-proj="NavDataLayer" role="tab"><span class="ni-n">12</span><span class="ni-t">NavDataLayer</span></button></div><div class="navgroup"><div class="navhead">5 · Android concepts</div><button class="navitem" data-proj="ComposeModernUI" role="tab"><span class="ni-n">13</span><span class="ni-t">ComposeModernUI</span></button><button class="navitem" data-proj="ComposeCatalog" role="tab"><span class="ni-n">14</span><span class="ni-t">ComposeCatalog</span></button><button class="navitem" data-proj="ComposeModifiers" role="tab"><span class="ni-n">15</span><span class="ni-t">ComposeModifiers</span></button><button class="navitem" data-proj="ComposeLists" role="tab"><span class="ni-n">16</span><span class="ni-t">ComposeLists</span></button><button class="navitem" data-proj="NetworkParsing" role="tab"><span class="ni-n">17</span><span class="ni-t">NetworkParsing</span></button><button class="navitem" data-proj="WebSocketLive" role="tab"><span class="ni-n">18</span><span class="ni-t">WebSocketLive</span></button><button class="navitem" data-proj="LocationServices" role="tab"><span class="ni-n">19</span><span class="ni-t">LocationServices</span></button><button class="navitem" data-proj="MvvmState" role="tab"><span class="ni-n">20</span><span class="ni-t">MvvmState</span></button><button class="navitem" data-proj="RoomAndPreferences" role="tab"><span class="ni-n">21</span><span class="ni-t">RoomAndPreferences</span></button><button class="navitem" data-proj="AppReleaseBasics" role="tab"><span class="ni-n">22</span><span class="ni-t">AppReleaseBasics</span></button></div></nav>
   </aside>
   <div class="scrim" id="scrim"></div>
   <main class="content">
@@ -273,6 +274,14 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <div class="bigidea">
       <span class="bilabel">How to use this page</span>
       <p>Pick a project from the tabs at the top. Read <b>What it does</b>, study the <b>code walk-through</b> (the line numbers are real), then do the <b>Try this</b> experiments in Android Studio. Use the <b>Prev / Next</b> buttons — or the ← → arrow keys — to walk the progression in order.</p>
+    </div>
+
+    <div class="callout new" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:240px;">
+        <b>🧪 Interactive Compose Playground</b>
+        <p>Want to <i>change the code and see the effect</i>? Open the live playground: edit Jetpack&nbsp;Compose Kotlin (Column, Row, Box, Text, Button, Card, modifiers…) and watch the UI re-render as you type. It's the hands-on companion to the <b>ComposeCatalog</b> and <b>ComposeModifiers</b> projects.</p>
+      </div>
+      <a href="./playground.html" style="flex:none;background:var(--accent-deep);color:#fff;text-decoration:none;font-weight:750;padding:10px 18px;border-radius:10px;white-space:nowrap;">Open the Playground →</a>
     </div>
 
     <h3>Two learning tracks</h3>
@@ -322,26 +331,32 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
         <button class="ovcard" data-goto="ComposeModernUI">
       <span class="ovnum">13</span>
       <span class="ovbody"><b>ComposeModernUI</b><span>A single-screen notes app that teaches Compose fundamentals: layout, Material 3 theming, and state hoisting.</span></span>
-    </button><button class="ovcard" data-goto="ComposeLists">
+    </button><button class="ovcard" data-goto="ComposeCatalog">
       <span class="ovnum">14</span>
+      <span class="ovbody"><b>ComposeCatalog</b><span>A single scrolling screen that tours every common Jetpack Compose + Material 3 component as a labelled exhibit.</span></span>
+    </button><button class="ovcard" data-goto="ComposeModifiers">
+      <span class="ovnum">15</span>
+      <span class="ovbody"><b>ComposeModifiers</b><span>A scrolling set of lessons on the Modifier chain and layout — the two tools you use on every composable.</span></span>
+    </button><button class="ovcard" data-goto="ComposeLists">
+      <span class="ovnum">16</span>
       <span class="ovbody"><b>ComposeLists</b><span>Render and manage collections in Compose: LazyColumn, LazyVerticalGrid, stable keys, multi-select, filtering, empty state.</span></span>
     </button><button class="ovcard" data-goto="NetworkParsing">
-      <span class="ovnum">15</span>
+      <span class="ovnum">17</span>
       <span class="ovbody"><b>NetworkParsing</b><span>Fetch JSON from a real API with Retrofit, parse it, and render explicit Loading / Success / Error states.</span></span>
     </button><button class="ovcard" data-goto="WebSocketLive">
-      <span class="ovnum">16</span>
+      <span class="ovnum">18</span>
       <span class="ovbody"><b>WebSocketLive</b><span>Talk to a backend over a second protocol - a full-duplex WebSocket - streaming live messages instead of one request/response.</span></span>
     </button><button class="ovcard" data-goto="LocationServices">
-      <span class="ovnum">17</span>
+      <span class="ovnum">19</span>
       <span class="ovbody"><b>LocationServices</b><span>Integrate an on-device API: ask for the runtime location permission, then read the device's position from the fused location provider.</span></span>
     </button><button class="ovcard" data-goto="MvvmState">
-      <span class="ovnum">18</span>
+      <span class="ovnum">20</span>
       <span class="ovbody"><b>MvvmState</b><span>A notes screen that teaches MVVM: ViewModel + StateFlow + immutable UiState + unidirectional data flow.</span></span>
     </button><button class="ovcard" data-goto="RoomAndPreferences">
-      <span class="ovnum">19</span>
+      <span class="ovnum">21</span>
       <span class="ovbody"><b>RoomAndPreferences</b><span>Persist notes in a Room SQLite table and settings in DataStore so everything survives an app restart.</span></span>
     </button><button class="ovcard" data-goto="AppReleaseBasics">
-      <span class="ovnum">20</span>
+      <span class="ovnum">22</span>
       <span class="ovbody"><b>AppReleaseBasics</b><span>Take a notes app from 'runs on my emulator' toward 'shippable': runtime permissions plus release build config.</span></span>
     </button>
       </div>
@@ -377,7 +392,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>SingleActivity</h2>
       <p class="tagline">The bare-bones starting point: one Activity hosting a single Compose 'Hello Android!' screen.</p>
       <div class="chips">
-        <span class="chip ord">Project 1 of 20</span>
+        <span class="chip ord">Project 1 of 22</span>
         <span class="chip dom none">▫️ no data domain</span>
         <span class="chip time">⏱ 15-25 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -492,7 +507,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>Intent</h2>
       <p class="tagline">Replace Activity-and-Intent navigation with one Activity that swaps Compose screens via a Navigation 3 back stack.</p>
       <div class="chips">
-        <span class="chip ord">Project 2 of 20</span>
+        <span class="chip ord">Project 2 of 22</span>
         <span class="chip dom none">▫️ no data domain</span>
         <span class="chip time">⏱ 15-25 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -649,7 +664,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>NavDetailList</h2>
       <p class="tagline">Tap a planet in a scrolling list to open its detail screen, then go back - all in-app with Navigation 3.</p>
       <div class="chips">
-        <span class="chip ord">Project 3 of 20</span>
+        <span class="chip ord">Project 3 of 22</span>
         <span class="chip dom planets">🪐 planets domain</span>
         <span class="chip time">⏱ 15-25 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -856,7 +871,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>NavListDetail</h2>
       <p class="tagline">A one-file Navigation 3 sample: tap a planet in a list to push a detail screen, then pop back.</p>
       <div class="chips">
-        <span class="chip ord">Project 4 of 20</span>
+        <span class="chip ord">Project 4 of 22</span>
         <span class="chip dom planets">🪐 planets domain</span>
         <span class="chip time">⏱ 15-25 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -1079,7 +1094,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>NavThreeScreen</h2>
       <p class="tagline">A three-level drill-down (Categories -&gt; Items -&gt; Detail) built on Navigation 3, where the back stack can grow three keys deep.</p>
       <div class="chips">
-        <span class="chip ord">Project 5 of 20</span>
+        <span class="chip ord">Project 5 of 22</span>
         <span class="chip dom planets">🪐 planets domain</span>
         <span class="chip time">⏱ 15-25 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -1107,16 +1122,16 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
         <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 152–161</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
-      <pre class="src"><code><span class="a">@Serializable</span>
-<span class="k">data</span> <span class="k">object</span> <span class="t">CategoriesKey</span> : <span class="t">NavKey</span>                          <span class="c">// first screen (no arguments)</span>
-
-<span class="c">// `data class` because each items screen differs by which category it lists.</span>
-<span class="a">@Serializable</span>
-<span class="k">data</span> <span class="k">class</span> <span class="t">ItemsKey</span>(<span class="k">val</span> categoryId: <span class="t">Int</span>) : <span class="t">NavKey</span>          <span class="c">// second screen; which category was tapped</span>
-
-<span class="c">// `data class` because each detail screen differs by which item it shows.</span>
-<span class="a">@Serializable</span>
-<span class="k">data</span> <span class="k">class</span> <span class="t">DetailKey</span>(<span class="k">val</span> itemId: <span class="t">Int</span>) : <span class="t">NavKey</span>             <span class="c">// third screen; which item was tapped</span></code></pre>
+      <pre class="src"><code>
+    <span class="c">// NavDisplay renders whatever key is on top of the back stack, animating the</span>
+    <span class="c">// transition when the top changes.</span>
+    <span class="t">NavDisplay</span>(
+        backStack = backStack,
+        modifier = modifier,
+        <span class="c">// Called for system back gestures / the hardware back button. Popping the</span>
+        <span class="c">// top key returns to the previous screen; removeLastOrNull is a no-op (and</span>
+        <span class="c">// safe) if the stack is somehow already empty.</span>
+        onBack = { backStack.removeLastOrNull() },          <span class="c">// back = pop the top key</span></code></pre>
       <p class="codeexplain">Each screen is identified by a NavKey. CategoriesKey is a 'data object' (a singleton) because there is only one categories screen with no arguments. ItemsKey and DetailKey are 'data class' because each carries an argument - categoryId or itemId - so every instance is distinct. The @Serializable annotation lets Nav3 save and restore these keys across process death.</p>
     </figure>
     <figure class="code">
@@ -1125,15 +1140,15 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
         <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 130–138</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
-      <pre class="src"><code><span class="k">private</span> <span class="k">fun</span> categoryById(id: <span class="t">Int</span>): <span class="t">Category</span> = sampleCategories.first { <span class="k">it</span>.id == id }
+      <pre class="src"><code>}
 
-<span class="c">// Resolve a single Item by its id (used by the detail screen).</span>
-<span class="k">private</span> <span class="k">fun</span> itemById(id: <span class="t">Int</span>): <span class="t">Item</span> = sampleItems.first { <span class="k">it</span>.id == id }
-
-<span class="c">// All items belonging to one category (used by the middle/list screen). `filter`</span>
-<span class="c">// returns every match — possibly an empty list, which is also fine to render.</span>
-<span class="k">private</span> <span class="k">fun</span> itemsInCategory(categoryId: <span class="t">Int</span>): <span class="t">List</span>&lt;<span class="t">Item</span>&gt; =
-    sampleItems.filter { <span class="k">it</span>.categoryId == categoryId }</code></pre>
+/**
+ * <span class="t">AppNavigation</span> — owns the navigation back stack and maps each key to its screen.
+ *
+ * <span class="t">This</span> <span class="k">is</span> the heart of the <span class="t">Nav3</span> setup. <span class="t">It</span>:
+ *   <span class="n">1</span>. <span class="t">Creates</span>/remembers the back stack (starting at the categories screen).
+ *   <span class="n">2</span>. <span class="t">Renders</span> the top of the stack via <span class="t">NavDisplay</span>.
+ *   <span class="n">3</span>. <span class="t">Defines</span> what <span class="s">"back"</span> does and which composable each of the three keys shows.</code></pre>
       <p class="codeexplain">Keys carry only an Int id, so these helpers turn that id back into real data. categoryById and itemById use first { } (which throws if nothing matches, fine here since ids are known), and itemsInCategory uses filter to gather every planet whose categoryId matches. Passing ids instead of whole objects is what keeps the keys small and serializable.</p>
     </figure>
     <figure class="code">
@@ -1142,72 +1157,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
         <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 200–211</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
-      <pre class="src"><code><span class="a">@Composable</span>
-<span class="k">fun</span> <span class="t">AppNavigation</span>(modifier: <span class="t">Modifier</span> = <span class="t">Modifier</span>) {
-    <span class="c">// The back stack is the list of keys currently "stacked" on screen, bottom</span>
-    <span class="c">// to top. rememberNavBackStack seeds it with CategoriesKey and preserves it</span>
-    <span class="c">// across recompositions (and configuration changes). Pushing a key navigates</span>
-    <span class="c">// forward; popping a key navigates back. In this app the stack can reach</span>
-    <span class="c">// three deep: [CategoriesKey, ItemsKey, DetailKey].</span>
-    <span class="k">val</span> backStack = rememberNavBackStack(<span class="t">CategoriesKey</span>)
-
-    <span class="c">// A debug breadcrumb visible in Logcat (filter by "L3") confirming this</span>
-    <span class="c">// composable was entered.</span>
-    <span class="t">Log</span>.d(<span class="t">TAG</span>, <span class="s">"Entered AppNavigation"</span>)</code></pre>
-      <p class="codeexplain">rememberNavBackStack(CategoriesKey) seeds the stack with the first screen and preserves it across recompositions and configuration changes. This single list IS the navigation state: pushing a key moves forward, popping moves back. In this app it can reach three deep, [CategoriesKey, ItemsKey, DetailKey].</p>
-    </figure>
-    <figure class="code">
-      <figcaption>
-        <span class="codetitle">NavDisplay + entryProvider: the heart of Nav3</span>
-        <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 215–290</span>
-        <button class="copy" type="button" aria-label="Copy code">Copy</button>
-      </figcaption>
-      <pre class="src"><code>    <span class="t">NavDisplay</span>(
-        backStack = backStack,
-        modifier = modifier,
-        <span class="c">// Called for system back gestures / the hardware back button. Popping the</span>
-        <span class="c">// top key returns to the previous screen; removeLastOrNull is a no-op (and</span>
-        <span class="c">// safe) if the stack is somehow already empty.</span>
-        onBack = { backStack.removeLastOrNull() },          <span class="c">// back = pop the top key</span>
-        <span class="c">// entryProvider is a DSL: one `entry&lt;KeyType&gt; { ... }` block per screen.</span>
-        <span class="c">// Nav3 picks the block whose key type matches the current top key.</span>
-        <span class="c">// entryProvider is a DSL (a small "language" for one job): it builds the</span>
-        <span class="c">// map of "which key type -&gt; which screen". You call entry&lt;...&gt; once per</span>
-        <span class="c">// screen inside the { } block, and Nav3 runs the block whose key type</span>
-        <span class="c">// matches the key currently on top of the back stack.</span>
-        <span class="c">//</span>
-        <span class="c">// How to read one  entry&lt;KeyType&gt; { key -&gt; SomeScreen(...) }  line:</span>
-        <span class="c">//   • entry          — a Nav3 builder function (from</span>
-        <span class="c">//                      androidx.navigation3.runtime) that registers ONE</span>
-        <span class="c">//                      screen for ONE key type.</span>
-        <span class="c">//   • &lt;KeyType&gt;      — a GENERIC TYPE ARGUMENT, in angle brackets (a TYPE</span>
-        <span class="c">//                      slot, not a value in parentheses): the key type this</span>
-        <span class="c">//                      block handles. Nav3 matches it against the top key.</span>
-        <span class="c">//   • { key -&gt; ... } — the @Composable CONTENT shown while that key is on</span>
-        <span class="c">//                      top. The lambda is handed the key instance, so a</span>
-        <span class="c">//                      data-class key can read its arguments (e.g. key.itemId).</span>
-        <span class="c">//                      A data-OBJECT key carries no data, so its block can</span>
-        <span class="c">//                      omit the `key -&gt;` parameter.</span>
-        <span class="c">//</span>
-        <span class="c">// WHEN does an entry block RUN? entry&lt;...&gt; { } only REGISTERS a screen here</span>
-        <span class="c">// (like adding a `case` to a switch) — the { } body does NOT run yet. NavDisplay</span>
-        <span class="c">// runs the body whose key type matches the key currently on TOP of the back</span>
-        <span class="c">// stack: when you push that key (navigate forward), when you pop back to it, and</span>
-        <span class="c">// on recomposition while it is showing. A key in the stack but not on top is kept</span>
-        <span class="c">// (state preserved) but not drawn; popping it off removes its screen from</span>
-        <span class="c">// composition. So pushing a key turns its screen on and popping turns it off —</span>
-        <span class="c">// and `key` is the exact instance on top, so the same block runs with different</span>
-        <span class="c">// data per instance (e.g. ItemsKey(1) vs ItemsKey(5)).</span>
-        entryProvider = entryProvider {
-            <span class="c">// LEVEL 1 — when CategoriesKey is on top, show the list of categories.</span>
-            entry&lt;<span class="t">CategoriesKey</span>&gt; {
-                <span class="t">CategoriesScreen</span>(
-                    categories = sampleCategories,
-                    <span class="c">// Tapping a category pushes an ItemsKey carrying THAT category's</span>
-                    <span class="c">// id, navigating forward to its list of planets.</span>
-                    <span class="c">// THE JUMP — how a tap reaches the next screen: this line does NOT name a</span>
-                    <span class="c">// screen, it just ADDS A KEY to the back stack. NavDisplay then matches that</span>
-                    <span class="c">// key by its TYPE to the matching entry&lt;...&gt; { } block above and runs it; the</span>
+      <pre class="src"><code>                    <span class="c">// key by its TYPE to the matching entry&lt;...&gt; { } block above and runs it; the</span>
                     <span class="c">// id inside the key only chooses WHICH data that screen shows, not WHICH screen</span>
                     <span class="c">// — so every key of this type lands on the same entry block.</span>
                     onOpen = { categoryId -&gt; backStack.add(<span class="t">ItemsKey</span>(categoryId)) }
@@ -1218,11 +1168,16 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
             entry&lt;<span class="t">ItemsKey</span>&gt; { key -&gt;
                 <span class="t">ItemsScreen</span>(
                     <span class="c">// Resolve the category (for the header) and its items (the rows).</span>
-                    category = categoryById(key.categoryId),
-                    items = itemsInCategory(key.categoryId),
-                    <span class="c">// Tapping a planet pushes a DetailKey carrying THAT item's id.</span>
-                    onOpen = { itemId -&gt; backStack.add(<span class="t">DetailKey</span>(itemId)) },
-                    <span class="c">// The on-screen back button pops one level (back to categories).</span>
+                    category = categoryById(key.categoryId),</code></pre>
+      <p class="codeexplain">rememberNavBackStack(CategoriesKey) seeds the stack with the first screen and preserves it across recompositions and configuration changes. This single list IS the navigation state: pushing a key moves forward, popping moves back. In this app it can reach three deep, [CategoriesKey, ItemsKey, DetailKey].</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">NavDisplay + entryProvider: the heart of Nav3</span>
+        <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 215–290</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code>                    <span class="c">// The on-screen back button pops one level (back to categories).</span>
                     onBack = { backStack.removeLastOrNull() }
                 )
             }
@@ -1237,7 +1192,67 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
                 )
             }
         }
-    )</code></pre>
+    )
+}
+
+<span class="c">/**
+ * Categories screen (LEVEL 1): a scrolling list of categories; tapping one calls
+ * [onOpen] with its id.
+ *
+ * This composable is intentionally "dumb" — it knows nothing about navigation.
+ * It only renders the categories it's given and reports taps via [onOpen]. That
+ * keeps it reusable and easy to preview/test.
+ *
+ * @param categories the rows to render.
+ * @param onOpen     invoked with a category's id when its row is tapped.
+ * @param modifier   optional layout modifier supplied by the caller.
+ */</span>
+<span class="a">@Composable</span>
+<span class="k">fun</span> <span class="t">CategoriesScreen</span>(
+    categories: <span class="t">List</span>&lt;<span class="t">Category</span>&gt;,
+    onOpen: (<span class="t">Int</span>) -&gt; <span class="t">Unit</span>,
+    modifier: <span class="t">Modifier</span> = <span class="t">Modifier</span>,
+) {
+    <span class="t">Log</span>.d(<span class="s">"LT"</span>, <span class="s">"Entered CategoriesScreen"</span>)
+    <span class="c">// LazyColumn is the Compose equivalent of a RecyclerView: it only composes</span>
+    <span class="c">// and lays out the rows currently visible on screen, so long lists stay fast.</span>
+    <span class="t">LazyColumn</span>(modifier = modifier.fillMaxSize()) {
+        <span class="c">// `items(categories) { ... }` emits one block of UI per element.</span>
+        items(categories) { category -&gt;                    <span class="c">// draw one row per category</span>
+            <span class="t">Column</span>(
+                modifier = <span class="t">Modifier</span>
+                    .fillMaxWidth()                         <span class="c">// row spans the full width...</span>
+                    <span class="c">// OS vs COMPOSE vs YOUR CODE — what a tap really is:</span>
+                    <span class="c">//   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows</span>
+                    <span class="c">//     nothing about rows, items, names, or ids.</span>
+                    <span class="c">//   • Compose hit-tests that pixel to find WHICH composable sits there (this</span>
+                    <span class="c">//     one) and invokes its click lambda.</span>
+                    <span class="c">//   • YOUR code gives the tap its MEANING: the click lambda passes the exact</span>
+                    <span class="c">//     value you wired here (e.g. this row's id). "What was selected" is meaning</span>
+                    <span class="c">//     your code attaches to a raw touch — the OS never knows about it.</span>
+                    .clickable { onOpen(category.id) }      <span class="c">// ...and the WHOLE row is tappable -&gt; navigate</span>
+                    .padding(<span class="n">16</span>.dp)                         <span class="c">// breathing room inside the row</span>
+            ) {
+                <span class="c">// Name: emphasized text style from the theme's type scale.</span>
+                <span class="t">Text</span>(text = category.name, style = <span class="t">MaterialTheme</span>.typography.titleMedium)
+                <span class="c">// Description: smaller body text beneath the name.</span>
+                <span class="t">Text</span>(text = category.description, style = <span class="t">MaterialTheme</span>.typography.bodyMedium)
+            }
+            <span class="c">// A thin line visually separating one row from the next.</span>
+            <span class="t">HorizontalDivider</span>()                             <span class="c">// thin line between rows</span>
+        }
+    }
+}
+
+/**
+ * <span class="t">Items</span> screen (<span class="t">LEVEL</span> <span class="n">2</span>): a header naming the chosen [category] followed <span class="k">by</span> a
+ * scrolling list of its [items]. <span class="t">Tapping</span> an item calls [onOpen]; the button at
+ * the top calls [onBack].
+ *
+ * <span class="a">@param</span> category the category whose items are being shown (used <span class="k">for</span> the header).
+ * <span class="a">@param</span> items    the items belonging to [category].
+ * <span class="a">@param</span> onOpen   invoked with an item's id <span class="k">when</span> its row <span class="k">is</span> tapped.
+ * <span class="a">@param</span> onBack   invoked <span class="k">when</span> the user taps <span class="s">"Back to categories"</span>.</code></pre>
       <p class="codeexplain">NavDisplay renders whatever key is on top of backStack. onBack = { backStack.removeLastOrNull() } makes the system Back button pop one key. Inside entryProvider, one entry&lt;&gt; block per key type maps a key to a screen; entry&lt;ItemsKey&gt; { key -&gt; } and entry&lt;DetailKey&gt; { key -&gt; } receive the key instance so they can read key.categoryId / key.itemId. Tapping a row calls backStack.add(ItemsKey(...)) or backStack.add(DetailKey(...)) to drill forward.</p>
     </figure>
     <figure class="code">
@@ -1246,68 +1261,54 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
         <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 352–390</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
-      <pre class="src"><code><span class="a">@Composable</span>
-<span class="k">fun</span> <span class="t">ItemsScreen</span>(
-    category: <span class="t">Category</span>,
-    items: <span class="t">List</span>&lt;<span class="t">Item</span>&gt;,
-    onOpen: (<span class="t">Int</span>) -&gt; <span class="t">Unit</span>,
-    onBack: () -&gt; <span class="t">Unit</span>,
-    modifier: <span class="t">Modifier</span> = <span class="t">Modifier</span>,
-) {
-    <span class="c">// Outer Column: a fixed header on top, then the scrolling list below it.</span>
-    <span class="t">Column</span>(modifier = modifier.fillMaxSize()) {
-        <span class="c">// --- Header block (does not scroll) ---</span>
-        <span class="t">Column</span>(modifier = <span class="t">Modifier</span>.fillMaxWidth().padding(<span class="n">16</span>.dp)) {
-            <span class="c">// The name of the category the user drilled into.</span>
-            <span class="t">Text</span>(text = category.name, style = <span class="t">MaterialTheme</span>.typography.headlineSmall)
-            <span class="t">Spacer</span>(modifier = <span class="t">Modifier</span>.height(<span class="n">8</span>.dp))
-            <span class="c">// A back button that pops one level, returning to the categories list.</span>
-            <span class="t">Button</span>(onClick = onBack) {                      <span class="c">// pop back to categories</span>
-                <span class="t">Text</span>(<span class="s">"Back to categories"</span>)
-            }
-        }
-        <span class="t">HorizontalDivider</span>()                                 <span class="c">// separates header from the list</span>
-
-        <span class="c">// --- The list of planets in this category (scrolls) ---</span>
-        <span class="t">LazyColumn</span>(modifier = <span class="t">Modifier</span>.fillMaxSize()) {
-            items(items) { item -&gt;                          <span class="c">// draw one row per item</span>
-                <span class="t">Column</span>(
-                    modifier = <span class="t">Modifier</span>
-                        .fillMaxWidth()
-                        .clickable { onOpen(item.id) }      <span class="c">// whole row tappable -&gt; open detail</span>
-                        .padding(<span class="n">16</span>.dp)
-                ) {
-                    <span class="t">Text</span>(text = item.title, style = <span class="t">MaterialTheme</span>.typography.titleMedium)
-                    <span class="t">Text</span>(text = item.blurb, style = <span class="t">MaterialTheme</span>.typography.bodyMedium)
-                }
-                <span class="t">HorizontalDivider</span>()
-            }
+      <pre class="src"><code>    <span class="c">// A single vertical column holding the title, body, and back button, with</span>
+    <span class="c">// 16dp of padding around the whole screen.</span>
+    <span class="t">Column</span>(modifier = modifier.fillMaxSize().padding(<span class="n">16</span>.dp)) {
+        <span class="c">// Large headline showing the item's title.</span>
+        <span class="t">Text</span>(text = item.title, style = <span class="t">MaterialTheme</span>.typography.headlineSmall)
+        <span class="c">// Fixed 8dp gap between the headline and the body text.</span>
+        <span class="t">Spacer</span>(modifier = <span class="t">Modifier</span>.height(<span class="n">8</span>.dp))
+        <span class="c">// The item's longer description.</span>
+        <span class="t">Text</span>(text = item.blurb, style = <span class="t">MaterialTheme</span>.typography.bodyLarge)
+        <span class="c">// Larger 24dp gap before the action button.</span>
+        <span class="t">Spacer</span>(modifier = <span class="t">Modifier</span>.height(<span class="n">24</span>.dp))
+        <span class="c">// Tapping this pops the back stack, returning to the items list. (System</span>
+        <span class="c">// back does the same thing — see AppNavigation's onBack.)</span>
+        <span class="t">Button</span>(onClick = onBack) {                          <span class="c">// pop back to the list</span>
+            <span class="t">Text</span>(<span class="s">"Back to list"</span>)
         }
     }
-}</code></pre>
+}
+
+<span class="c">// ===========================================================================</span>
+<span class="c">// @Preview functions — render EVERY possible screen state in the design pane.</span>
+<span class="c">//</span>
+<span class="c">// These let you see each screen directly in Android Studio's design pane WITHOUT</span>
+<span class="c">// running the app on a device or emulator. Each preview wraps the screen in the</span>
+<span class="c">// app theme and passes no-op callbacks ({}), since previews don't navigate.</span>
+<span class="c">//</span>
+<span class="c">// To cover every combination without hand-writing one function per planet, the</span>
+<span class="c">// Items and Detail previews use @PreviewParameter: a PreviewParameterProvider</span>
+<span class="c">// supplies a SEQUENCE of values, and Android Studio renders the screen ONCE PER</span>
+<span class="c">// value. Because the providers read the same sampleCategories / sampleItems the</span>
+<span class="c">// app uses, the preview set updates automatically if you add data.</span>
+<span class="c">//</span>
+<span class="c">// Total renderings produced:</span>
+<span class="c">//   • Categories : 1  (there is only one possible list)</span>
+<span class="c">//   • Items      : 2  (one per Category — Rocky Planets, Gas Giants)</span>
+<span class="c">//   • Detail     : 6  (one per Item — every planet)</span>
+<span class="c">//   ───────────────────────────────────────────────────────────────</span>
+<span class="c">//   = 9 previews, i.e. every reachable screen state.</span>
+<span class="c">// ===========================================================================</span></code></pre>
       <p class="codeexplain">The middle level combines a non-scrolling header Column (the category name plus a 'Back to categories' Button wired to onBack) with a LazyColumn of clickable item rows. Each row's .clickable { onOpen(item.id) } reports the tapped planet's id upward so the navigation host can push a DetailKey. The screen itself stays navigation-agnostic - it only renders data and fires callbacks.</p>
     </figure>
     <figure class="code">
       <figcaption>
         <span class="codetitle">Previewing every screen with @PreviewParameter</span>
-        <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 487–501</span>
+        <span class="codemeta"><code title="NavThreeScreen/src/main/java/com/example/navthreescreen/MainActivity.kt">MainActivity.kt</code> · lines 487–486</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
-      <pre class="src"><code><span class="k">class</span> <span class="t">ItemPreviewProvider</span> : <span class="t">PreviewParameterProvider</span>&lt;<span class="t">Item</span>&gt; {
-    <span class="k">override</span> <span class="k">val</span> values: <span class="t">Sequence</span>&lt;<span class="t">Item</span>&gt; = sampleItems.asSequence()
-}
-
-<span class="c">// LEVEL 3 — one rendering per item, so ALL six planet details are previewed.</span>
-<span class="c">// One compact card per planet — all six details fit in a single row of cards.</span>
-<span class="a">@Preview</span>(name = <span class="s">"Detail"</span>, showBackground = <span class="k">true</span>, widthDp = <span class="n">320</span>, heightDp = <span class="n">480</span>)
-<span class="a">@Composable</span>
-<span class="k">fun</span> <span class="t">DetailScreenPreview</span>(
-    <span class="a">@PreviewParameter</span>(<span class="t">ItemPreviewProvider</span>::<span class="k">class</span>) item: <span class="t">Item</span>
-) {
-    <span class="t">NavThreeScreenTheme</span> {
-        <span class="t">DetailScreen</span>(item = item, onBack = {})
-    }
-}</code></pre>
+      <pre class="src"><code></code></pre>
       <p class="codeexplain">ItemPreviewProvider implements PreviewParameterProvider&lt;Item&gt; and exposes sampleItems as a Sequence. The @PreviewParameter(ItemPreviewProvider::class) annotation on DetailScreenPreview then makes Android Studio render the detail screen once per planet - all six - using no-op {} callbacks. Because the provider reads the same sample data the app uses, the preview set updates automatically when you add a planet.</p>
     </figure>
 
@@ -1334,7 +1335,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>NavFourScreen</h2>
       <p class="tagline">A four-deep drill-down: Categories -&gt; planets -&gt; Detail -&gt; Fun Fact, built on Navigation 3 keys.</p>
       <div class="chips">
-        <span class="chip ord">Project 6 of 20</span>
+        <span class="chip ord">Project 6 of 22</span>
         <span class="chip dom planets">🪐 planets domain</span>
         <span class="chip time">⏱ 15-25 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -1581,7 +1582,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>NavDeepLinks</h2>
       <p class="tagline">Open a planet detail screen straight from an outside URI like navdemo://planet/3, with a sensible Back stack.</p>
       <div class="chips">
-        <span class="chip ord">Project 7 of 20</span>
+        <span class="chip ord">Project 7 of 22</span>
         <span class="chip dom planets">🪐 planets domain</span>
         <span class="chip time">⏱ 20-30 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -1800,7 +1801,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>NavBottomTabs</h2>
       <p class="tagline">Three bottom tabs, three independent back stacks - switch tabs and each one remembers exactly where you left it.</p>
       <div class="chips">
-        <span class="chip ord">Project 8 of 20</span>
+        <span class="chip ord">Project 8 of 22</span>
         <span class="chip dom planets">🪐 planets domain</span>
         <span class="chip time">⏱ 20-30 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -2017,7 +2018,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>NavNestedGraphs</h2>
       <p class="tagline">Model a self-contained onboarding sub-flow on Nav3's flat back stack and pop the whole graph as one unit.</p>
       <div class="chips">
-        <span class="chip ord">Project 9 of 20</span>
+        <span class="chip ord">Project 9 of 22</span>
         <span class="chip dom planets">🪐 planets domain</span>
         <span class="chip time">⏱ 15-25 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -2259,7 +2260,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>NavViewModelState</h2>
       <p class="tagline">A 3-screen planet drill-down where 'favorite' state lives in a ViewModel and survives rotation and navigation.</p>
       <div class="chips">
-        <span class="chip ord">Project 10 of 20</span>
+        <span class="chip ord">Project 10 of 22</span>
         <span class="chip dom planets">🪐 planets domain</span>
         <span class="chip time">⏱ 20-30 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -2514,7 +2515,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>NavTransitions</h2>
       <p class="tagline">A four-screen planet drill-down whose only new trick is custom animated slide+fade screen transitions in Nav3.</p>
       <div class="chips">
-        <span class="chip ord">Project 11 of 20</span>
+        <span class="chip ord">Project 11 of 22</span>
         <span class="chip dom planets">🪐 planets domain</span>
         <span class="chip time">⏱ 20-30 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -2722,7 +2723,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>NavDataLayer</h2>
       <p class="tagline">Screens stop hardcoding data: they observe a repository through a ViewModel and render Loading/Empty/Error/Success.</p>
       <div class="chips">
-        <span class="chip ord">Project 12 of 20</span>
+        <span class="chip ord">Project 12 of 22</span>
         <span class="chip dom planets">🪐 planets domain</span>
         <span class="chip time">⏱ 20-30 min</span>
         <span class="chip track nav">Navigation track</span>
@@ -2845,13 +2846,15 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
         <span class="codemeta"><code title="NavDataLayer/src/main/java/com/example/navdatalayer/MainActivity.kt">MainActivity.kt</code> · lines 246–274</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
-      <pre class="src"><code><span class="a">@Composable</span>
+      <pre class="src"><code> */
+<span class="a">@Composable</span>
 <span class="k">fun</span> <span class="t">PlanetListScreen</span>(
     onOpen: (<span class="t">Int</span>) -&gt; <span class="t">Unit</span>,
     modifier: <span class="t">Modifier</span> = <span class="t">Modifier</span>,
     <span class="c">// The ViewModel is obtained via viewModel(); its default repo is in-memory.</span>
     viewModel: <span class="t">PlanetsViewModel</span> = viewModel(),
 ) {
+    <span class="t">Log</span>.d(<span class="s">"LT"</span>, <span class="s">"Entered PlanetListScreen"</span>)
     <span class="c">// Observe the StateFlow as Compose State. `by` unwraps it to a PlanetsUiState.</span>
     <span class="c">// collectAsStateWithLifecycle() (not plain collectAsState) stops collecting</span>
     <span class="c">// when the screen is in the background — the lifecycle-aware way to observe.</span>
@@ -2871,9 +2874,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
         uiState = uiState,
         onOpen = onOpen,
         onRetry = viewModel::retry,        <span class="c">// the Error state's Retry button calls back into the ViewModel</span>
-        modifier = modifier,
-    )
-}</code></pre>
+        modifier = modifier,</code></pre>
       <p class="codeexplain">The stateful 'PlanetListScreen' obtains a lifecycle-scoped 'PlanetsViewModel' via 'viewModel()', then observes 'viewModel.uiState.collectAsStateWithLifecycle()' which pauses collection while the screen is backgrounded. It holds no data itself: it just forwards the plain 'uiState' and 'viewModel::retry' down to the stateless body. This stateful/stateless split is what makes the body previewable.</p>
     </figure>
     <figure class="code">
@@ -2882,7 +2883,10 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
         <span class="codemeta"><code title="NavDataLayer/src/main/java/com/example/navdatalayer/MainActivity.kt">MainActivity.kt</code> · lines 303–354</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
-      <pre class="src"><code>        <span class="k">when</span> (uiState) {
+      <pre class="src"><code>        <span class="c">// A single exhaustive `when` over the sealed PlanetsUiState. The compiler</span>
+        <span class="c">// forces us to handle EVERY case — that is the whole benefit of modeling</span>
+        <span class="c">// UI state as a sealed type.</span>
+        <span class="k">when</span> (uiState) {
             <span class="c">// ── LOADING ── show a centered spinner while data is being fetched.</span>
             <span class="k">is</span> <span class="t">PlanetsUiState</span>.<span class="t">Loading</span> -&gt; <span class="t">CenteredMessage</span> {
                 <span class="t">CircularProgressIndicator</span>()
@@ -2930,10 +2934,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
                         <span class="t">Text</span>(planet.title, style = <span class="t">MaterialTheme</span>.typography.titleMedium)
                         <span class="t">Text</span>(planet.blurb, style = <span class="t">MaterialTheme</span>.typography.bodyMedium)
                     }
-                    <span class="t">HorizontalDivider</span>()
-                }
-            }
-        }</code></pre>
+                    <span class="t">HorizontalDivider</span>()</code></pre>
       <p class="codeexplain">A single 'when (uiState)' renders each branch: Loading shows a spinner, Empty a note, Error smart-casts to read 'uiState.message' plus a Retry 'Button(onClick = onRetry)', and Success smart-casts to '.planets' and builds a LazyColumn. Each row is '.clickable { onOpen(planet.id) }', which pushes a DetailKey carrying only the id, so navigation never carries the whole object.</p>
     </figure>
 
@@ -2960,7 +2961,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>ComposeModernUI</h2>
       <p class="tagline">A single-screen notes app that teaches Compose fundamentals: layout, Material 3 theming, and state hoisting.</p>
       <div class="chips">
-        <span class="chip ord">Project 13 of 20</span>
+        <span class="chip ord">Project 13 of 22</span>
         <span class="chip dom notes">🗒️ notes domain</span>
         <span class="chip time">⏱ 15-25 min</span>
         <span class="chip track notes">Concepts track</span>
@@ -2977,7 +2978,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
 
     <h3>Screens you'll see</h3><ul class="screens"><li><b>NotesScreen (stateful)</b> — Thin wrapper that owns notes, newTitle, and isFavorite via rememberSaveable and forwards them into the stateless overload.</li><li><b>NotesScreen (stateless)</b> — Pure UI that draws the header, hoisted text input, favorite toggle, and the LazyColumn of cards from its parameters.</li><li><b>NoteCard</b> — A Material 3 Card showing one note's title and body using two typography roles.</li><li><b>FavoriteToggle</b> — A stateless Row with a label and Switch whose checked value is owned by the parent.</li><li><b>SectionHeader / PrimaryButton</b> — Tiny reusable building blocks for a themed heading and a filled button.</li></ul>
 
-    <h3>Key concepts</h3><div class="concepts"><div class="concept"><h4>Composable function</h4><p>A function marked '@Composable' (like 'NoteCard' or 'SectionHeader') that DESCRIBES UI instead of mutating widgets; Compose re-runs it ('recomposes') when the data it reads changes.</p></div><div class="concept"><h4>State hoisting</h4><p>A child takes its current value as a parameter (state DOWN) and reports changes through a callback (event UP); the parent holds the real value. 'FavoriteToggle' takes 'isFavorite: Boolean' and 'onToggle: (Boolean) -&gt; Unit' and stores nothing.</p></div><div class="concept"><h4>Stateless vs stateful overload</h4><p>'NotesScreen' exists twice: the stateless one is pure parameters plus callbacks, and the stateful one is the only place that calls 'rememberSaveable' and then forwards state into the stateless version. This is the 'state holder vs stateless content' split.</p></div><div class="concept"><h4>rememberSaveable + mutableStateOf</h4><p>'var notes by rememberSaveable { mutableStateOf(seedNotes) }' creates observable state that triggers recomposition on write AND survives screen rotation or low-memory recreation, unlike plain 'remember'.</p></div><div class="concept"><h4>Hoisted text input</h4><p>'OutlinedTextField' has no internal text: its 'value' is the hoisted 'newTitle' and 'onValueChange' sends every keystroke up to the owner, who is the single source of truth for the field.</p></div><div class="concept"><h4>Material 3 theming</h4><p>Components read 'MaterialTheme.typography' (e.g. titleSmall, bodyMedium) and 'MaterialTheme.colorScheme' (e.g. primary, onSurfaceVariant) instead of hardcoded sizes or hex, so light/dark and dynamic color work automatically.</p></div><div class="concept"><h4>Layout primitives</h4><p>'Column' stacks children vertically, 'Row' horizontally, 'Box' overlaps them, and spacing comes from 'Spacer', 'padding', and 'Arrangement.spacedBy' rather than manual gaps.</p></div><div class="concept"><h4>LazyColumn with keys</h4><p>'LazyColumn' only composes the rows on screen, and 'items(notes, key = { it.id })' gives each note a stable id so Compose can track items efficiently as the list grows.</p></div><div class="concept"><h4>@Preview</h4><p>'@Preview' renders a composable in Android Studio's design pane without an emulator. The previews call the STATELESS 'NotesScreen' with fake data and no-op callbacks, which is exactly why hoisting matters.</p></div></div>
+    <h3>Key concepts</h3><div class="concepts"><div class="concept"><h4>Composable function</h4><p>A function marked '@Composable' (like 'NoteCard' or 'SectionHeader') that DESCRIBES UI instead of mutating widgets; Compose re-runs it ('recomposes') when the data it reads changes.</p></div><div class="concept"><h4>State hoisting</h4><p>A child takes its current value as a parameter (state DOWN) and reports changes through a callback (event UP); the parent holds the real value. 'FavoriteToggle' takes 'isFavorite: Boolean' and 'onToggle: (Boolean) -&gt; Unit' and stores nothing.</p></div><div class="concept"><h4>Stateless vs stateful overload</h4><p>'NotesScreen' exists twice: the stateless one is pure parameters plus callbacks, and the stateful one is the only place that calls 'rememberSaveable' and then forwards state into the stateless version. This is the 'state holder vs stateless content' split.</p></div><div class="concept"><h4>rememberSaveable + mutableStateOf</h4><p>'var notes by rememberSaveable { mutableStateOf(seedNotes) }' creates observable state that triggers recomposition on write AND survives screen rotation or low-memory recreation, unlike plain 'remember'.</p></div><div class="concept"><h4>Hoisted text input</h4><p>'OutlinedTextField' has no internal text: its 'value' is the hoisted 'newTitle' and 'onValueChange' sends every keystroke up to the owner, who is the single source of truth for the field.</p></div><div class="concept"><h4>Material 3 theming</h4><p>Components read 'MaterialTheme.typography' (e.g. titleSmall, bodyMedium) and 'MaterialTheme.colorScheme' (e.g. primary, onSurfaceVariant) instead of hardcoded sizes or hex, so light/dark and dynamic color work automatically.</p></div><div class="concept"><h4>Layout primitives</h4><p>'Column' stacks children vertically, 'Row' horizontally, 'Box' overlaps them, and spacing comes from 'Spacer', 'padding', and 'Arrangement.spacedBy' rather than manual gaps.</p></div><div class="concept"><h4>LazyColumn with keys</h4><p>'LazyColumn' only composes the rows on screen, and 'items(notes, key = { it.id })' gives each note a stable id so Compose can track items efficiently as the list grows.</p></div><div class="concept"><h4>@Preview</h4><p>'@Preview' renders a composable in Android Studio's design pane without an emulator. The previews call the STATELESS 'NotesScreen' with fake data and no-op callbacks, which is exactly why hoisting matters.</p></div><div class="concept"><h4>Composition: nesting &amp; reusable composables</h4><p>A Compose UI is a TREE: containers like 'Column' and 'LazyColumn' take their children in a trailing { } lambda, so 'NotesScreen' nests a header, input, button, toggle, and a list. Repeated UI is EXTRACTED into its own @Composable and reused by CALLING it: 'SectionHeader' is called three times and 'NoteCard' once per note. This is composition (reuse by function call, not inheritance), and it is why the framework is called Compose.</p></div></div>
 
     <h3>Walk through the code</h3>
       <p class="hint">Each block is pulled straight from the project's source — the file and line numbers are real, so you can open the same lines in Android Studio.</p>
@@ -3007,7 +3008,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">FavoriteToggle: state down, event up</span>
-        <span class="codemeta"><code title="ComposeModernUI/src/main/java/com/example/composemodernui/MainActivity.kt">MainActivity.kt</code> · lines 239–261</span>
+        <span class="codemeta"><code title="ComposeModernUI/src/main/java/com/example/composemodernui/MainActivity.kt">MainActivity.kt</code> · lines 255–277</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code><span class="a">@Composable</span>
@@ -3038,7 +3039,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">NoteCard: a reusable themed card</span>
-        <span class="codemeta"><code title="ComposeModernUI/src/main/java/com/example/composemodernui/MainActivity.kt">MainActivity.kt</code> · lines 185–203</span>
+        <span class="codemeta"><code title="ComposeModernUI/src/main/java/com/example/composemodernui/MainActivity.kt">MainActivity.kt</code> · lines 201–219</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code><span class="a">@Composable</span>
@@ -3065,7 +3066,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">Stateless NotesScreen wires the hoisted input</span>
-        <span class="codemeta"><code title="ComposeModernUI/src/main/java/com/example/composemodernui/MainActivity.kt">MainActivity.kt</code> · lines 310–339</span>
+        <span class="codemeta"><code title="ComposeModernUI/src/main/java/com/example/composemodernui/MainActivity.kt">MainActivity.kt</code> · lines 326–355</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code>        <span class="t">OutlinedTextField</span>(
@@ -3103,7 +3104,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">Stateful NotesScreen owns the single source of truth</span>
-        <span class="codemeta"><code title="ComposeModernUI/src/main/java/com/example/composemodernui/MainActivity.kt">MainActivity.kt</code> · lines 354–386</span>
+        <span class="codemeta"><code title="ComposeModernUI/src/main/java/com/example/composemodernui/MainActivity.kt">MainActivity.kt</code> · lines 370–402</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code><span class="a">@Composable</span>
@@ -3144,7 +3145,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     <figure class="code">
       <figcaption>
         <span class="codetitle">MainActivity installs Compose with a Scaffold</span>
-        <span class="codemeta"><code title="ComposeModernUI/src/main/java/com/example/composemodernui/MainActivity.kt">MainActivity.kt</code> · lines 394–413</span>
+        <span class="codemeta"><code title="ComposeModernUI/src/main/java/com/example/composemodernui/MainActivity.kt">MainActivity.kt</code> · lines 410–429</span>
         <button class="copy" type="button" aria-label="Copy code">Copy</button>
       </figcaption>
       <pre class="src"><code><span class="k">class</span> <span class="t">MainActivity</span> : <span class="t">ComponentActivity</span>() {
@@ -3187,13 +3188,466 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
     </nav>
   </section>
 
+  <section class="panel" id="p-ComposeCatalog" role="tabpanel" aria-labelledby="t-ComposeCatalog" hidden>
+    <div class="phead">
+      <div class="pcrumb">5 · Android concepts</div>
+      <h2>ComposeCatalog</h2>
+      <p class="tagline">A single scrolling screen that tours every common Jetpack Compose + Material 3 component as a labelled exhibit.</p>
+      <div class="chips">
+        <span class="chip ord">Project 14 of 22</span>
+        <span class="chip dom none">▫️ no data domain</span>
+        <span class="chip time">⏱ 25-40 min</span>
+        <span class="chip track notes">Concepts track</span>
+      </div>
+    </div>
+
+    <div class="bigidea">
+      <span class="bilabel">The one big idea</span>
+      <p>Compose ships a Material 3 component for almost every common UI need; learn the small set of parameters each one takes (value/onValueChange, a content slot, a few style knobs) and you can assemble most screens.</p>
+    </div>
+
+    <h3>What it does</h3>
+    <p class="lead">You see one vertically-scrolling screen, built inside a Scaffold (with a TopAppBar, a FloatingActionButton, and a Snackbar), that walks top-to-bottom through every everyday component: Text (typography, color, weight, italic, alignment, ellipsis), the five Button emphasis levels plus IconButton, three FloatingActionButton sizes, Checkbox / RadioButton group / Switch, continuous / stepped / range Sliders, TextField and OutlinedTextField (label, leading icon, password masking), Surface and three Card styles, the Column / Row / Box layout primitives, Icon vs Image, circular and linear progress indicators (indeterminate and determinate), AssistChip / FilterChip / SuggestionChip / Badge, an AlertDialog opened from a button, and a horizontally-scrolling LazyRow. The interactive controls actually work (tap the FAB for a Snackbar, flip the Switch, toggle the FilterChip, open the dialog). There is no navigation, network, or persistence — it is purely a component reference.</p>
+
+    <h3>Screens you'll see</h3><ul class="screens"><li><b>CatalogScreen</b> — The whole catalog: a Scaffold (TopAppBar + FAB + Snackbar) wrapping a verticalScroll Column of component sections; owns the demo state via remember.</li><li><b>ComponentSection</b> — A reusable frame that draws a title + one-line caption around each demo, supplied via a trailing @Composable content slot.</li><li><b>MainActivity</b> — The single entry point: setContent { ComposeCatalogTheme { CatalogScreen() } }.</li></ul>
+
+    <h3>Key concepts</h3><div class="concepts"><div class="concept"><h4>The content-slot pattern</h4><p>'ComponentSection(title, caption) { …demo… }' takes the demo UI as a trailing '@Composable () -&gt; Unit' lambda — the exact same idea as 'Button { Text(...) }', 'Card { … }', and 'Scaffold { innerPadding -&gt; … }'.</p></div><div class="concept"><h4>Scaffold chrome</h4><p>'Scaffold' provides the standard screen skeleton: 'topBar', 'floatingActionButton', and 'snackbarHost' slots plus an 'innerPadding' you must apply so content isn't hidden behind the bars or system insets.</p></div><div class="concept"><h4>Button emphasis levels</h4><p>Same tap, five looks: 'Button' (filled, highest), 'FilledTonalButton', 'ElevatedButton', 'OutlinedButton', and 'TextButton' (lowest). 'IconButton' wraps a tappable 'Icon'. 'enabled = false' greys any of them out.</p></div><div class="concept"><h4>Stateful controls (value + onChange)</h4><p>'Checkbox', 'Switch', 'Slider', and the text fields are driven by a value parameter ('checked' / 'value') and report changes through a callback; here the value lives in 'CatalogScreen' via 'remember { mutableStateOf(...) }'.</p></div><div class="concept"><h4>Modern determinate progress</h4><p>Material 3 takes 'progress' as a LAMBDA: 'CircularProgressIndicator(progress = { 0.66f })' and 'LinearProgressIndicator(progress = { 0.4f })'. Omitting 'progress' gives the indeterminate (spinning / animated) variant.</p></div><div class="concept"><h4>Icon vs Image</h4><p>'Icon' draws a small VECTOR glyph tinted by 'tint' (a 'material-icons-core' asset like 'Icons.Default.Favorite'); 'Image' draws a picture (a Painter) at its own colors. They are different composables for different jobs.</p></div><div class="concept"><h4>Showing a Snackbar / Dialog</h4><p>A Snackbar is shown by launching a coroutine ('scope.launch { snackbarHostState.showSnackbar(...) }') because 'showSnackbar' is suspend. An 'AlertDialog' is added to the composition only WHILE a boolean state ('showDialog') is true.</p></div><div class="concept"><h4>Composition: nesting &amp; writing your own slot</h4><p>The whole 'CatalogScreen' is one nested TREE — a 'Scaffold' wrapping a scrolling 'Column' of ~13 'ComponentSection's, each nesting Rows/Columns and a demo component. Rather than repeat the title/caption/divider markup 13 times, it is EXTRACTED into one @Composable, 'ComponentSection', which takes a 'content: @Composable () -&gt; Unit' SLOT and renders it between the title and divider — the same content-lambda mechanism 'Card { }', 'Button { }', and 'Scaffold { }' use, here written by hand.</p></div></div>
+
+    <h3>Walk through the code</h3>
+      <p class="hint">Each block is pulled straight from the project's source — the file and line numbers are real, so you can open the same lines in Android Studio.</p>
+      
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">ComponentSection — the reusable exhibit frame (slot pattern)</span>
+        <span class="codemeta"><code title="ComposeCatalog/src/main/java/com/example/composecatalog/MainActivity.kt">MainActivity.kt</code> · lines 184–209</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code><span class="k">fun</span> <span class="t">ComponentSection</span>(
+    title: <span class="t">String</span>,
+    caption: <span class="t">String</span>,
+    content: <span class="a">@Composable</span> () -&gt; <span class="t">Unit</span>,                         <span class="c">// CONTENT SLOT: arbitrary UI the caller passes in</span>
+) {
+    <span class="c">// A Column groups the heading, caption, and demo body into one vertical block.</span>
+    <span class="t">Column</span>(modifier = <span class="t">Modifier</span>.fillMaxWidth().padding(vertical = <span class="n">10</span>.dp)) {
+        <span class="c">// The component name, styled with a theme typography role (not a hardcoded size).</span>
+        <span class="t">Text</span>(
+            text = title,
+            style = <span class="t">MaterialTheme</span>.typography.titleMedium,    <span class="c">// emphasized headline role</span>
+            color = <span class="t">MaterialTheme</span>.colorScheme.primary,       <span class="c">// semantic accent color from the theme</span>
+        )
+        <span class="c">// The one-line explanation, in the calmer body role and a muted color.</span>
+        <span class="t">Text</span>(
+            text = caption,
+            style = <span class="t">MaterialTheme</span>.typography.bodySmall,
+            color = <span class="t">MaterialTheme</span>.colorScheme.onSurfaceVariant,
+            modifier = <span class="t">Modifier</span>.padding(bottom = <span class="n">8</span>.dp),      <span class="c">// small gap before the demo body</span>
+        )
+        <span class="c">// Finally, render whatever demo UI the caller handed us.</span>
+        content()
+    }
+    <span class="c">// A thin rule visually separates one exhibit from the next.</span>
+    <span class="t">HorizontalDivider</span>(color = <span class="t">MaterialTheme</span>.colorScheme.outlineVariant)
+}</code></pre>
+      <p class="codeexplain">Each component group is shown inside this little frame. It draws a 'titleMedium' heading and a muted 'bodySmall' caption, then calls 'content()' — the demo UI the caller passed as a trailing '@Composable () -&gt; Unit' lambda — and finishes with a 'HorizontalDivider'. This IS the content-slot pattern that 'Button', 'Card', and 'Scaffold' all use.</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">Scaffold: TopAppBar + FAB + Snackbar</span>
+        <span class="codemeta"><code title="ComposeCatalog/src/main/java/com/example/composecatalog/MainActivity.kt">MainActivity.kt</code> · lines 247–263</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code>    <span class="t">Scaffold</span>(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            <span class="c">// TopAppBar — the title bar across the top. `title` is a content slot.</span>
+            <span class="t">TopAppBar</span>(title = { <span class="t">Text</span>(<span class="s">"Compose Catalog"</span>) })
+        },
+        floatingActionButton = {
+            <span class="c">// The round primary action. Tapping it launches a coroutine that asks</span>
+            <span class="c">// the SnackbarHostState to show a transient message at the bottom.</span>
+            <span class="t">FloatingActionButton</span>(
+                onClick = { scope.launch { snackbarHostState.showSnackbar(<span class="s">"Hello from the FAB!"</span>) } }
+            ) {
+                <span class="t">Icon</span>(imageVector = <span class="t">Icons</span>.<span class="t">Default</span>.<span class="t">Add</span>, contentDescription = <span class="s">"Add"</span>)
+            }
+        },
+        snackbarHost = { <span class="t">SnackbarHost</span>(hostState = snackbarHostState) }, <span class="c">// where Snackbars appear</span>
+    ) { innerPadding -&gt;</code></pre>
+      <p class="codeexplain">'Scaffold' supplies the screen skeleton. 'topBar' holds a 'TopAppBar(title = { Text(...) })'; 'floatingActionButton' holds a 'FloatingActionButton' whose tap 'scope.launch'es 'snackbarHostState.showSnackbar(...)' (showSnackbar is suspend); 'snackbarHost' renders the 'SnackbarHost'. The trailing '{ innerPadding -&gt; }' is the content slot, and that padding must be applied so content clears the bars.</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">Text — typography, color, weight, alignment, ellipsis</span>
+        <span class="codemeta"><code title="ComposeCatalog/src/main/java/com/example/composecatalog/MainActivity.kt">MainActivity.kt</code> · lines 280–298</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code>            <span class="t">ComponentSection</span>(<span class="s">"Text"</span>, <span class="s">"Draws a string. Style it with the theme's type scale and color roles."</span>) {
+                <span class="t">Column</span>(verticalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">4</span>.dp)) {
+                    <span class="c">// `style` pulls a named role from MaterialTheme.typography rather</span>
+                    <span class="c">// than hardcoding a size, so the whole app restyles in one place.</span>
+                    <span class="t">Text</span>(<span class="s">"headlineSmall role"</span>, style = <span class="t">MaterialTheme</span>.typography.headlineSmall)
+                    <span class="t">Text</span>(<span class="s">"bodyMedium role"</span>, style = <span class="t">MaterialTheme</span>.typography.bodyMedium)
+                    <span class="c">// You can also override individual properties directly on Text:</span>
+                    <span class="t">Text</span>(<span class="s">"Bold + primary color"</span>, fontWeight = <span class="t">FontWeight</span>.<span class="t">Bold</span>, color = <span class="t">MaterialTheme</span>.colorScheme.primary)
+                    <span class="t">Text</span>(<span class="s">"Italic"</span>, fontStyle = <span class="t">FontStyle</span>.<span class="t">Italic</span>)
+                    <span class="t">Text</span>(<span class="s">"Underlined"</span>, textDecoration = <span class="t">TextDecoration</span>.<span class="t">Underline</span>)
+                    <span class="t">Text</span>(<span class="s">"Centered in the width"</span>, textAlign = <span class="t">TextAlign</span>.<span class="t">Center</span>, modifier = <span class="t">Modifier</span>.fillMaxWidth())
+                    <span class="c">// maxLines + overflow truncates long text with an ellipsis (…).</span>
+                    <span class="t">Text</span>(
+                        <span class="s">"This sentence is intentionally far too long to fit on a single line, so it is clipped with an ellipsis."</span>,
+                        maxLines = <span class="n">1</span>,
+                        overflow = <span class="t">TextOverflow</span>.<span class="t">Ellipsis</span>,
+                    )
+                }
+            }</code></pre>
+      <p class="codeexplain">'style = MaterialTheme.typography.headlineSmall' pulls a named role from the theme instead of hardcoding a size. You can also override individual properties: 'fontWeight = FontWeight.Bold', 'color = MaterialTheme.colorScheme.primary', 'fontStyle = FontStyle.Italic', 'textDecoration = TextDecoration.Underline', 'textAlign = TextAlign.Center', and 'maxLines = 1' + 'overflow = TextOverflow.Ellipsis' to clip long text with a '…'.</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">Buttons — five emphasis levels + IconButton</span>
+        <span class="codemeta"><code title="ComposeCatalog/src/main/java/com/example/composecatalog/MainActivity.kt">MainActivity.kt</code> · lines 303–334</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code>            <span class="t">ComponentSection</span>(<span class="s">"Buttons"</span>, <span class="s">"Same action, different emphasis: filled → tonal → elevated → outlined → text."</span>) {
+                <span class="t">Column</span>(verticalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">8</span>.dp)) {
+                    <span class="c">// A Row lays the high/medium emphasis buttons side by side.</span>
+                    <span class="t">Row</span>(horizontalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">8</span>.dp)) {
+                        <span class="c">// Button = highest emphasis (filled). onClick is REQUIRED; the</span>
+                        <span class="c">// label goes in the trailing content slot.</span>
+                        <span class="t">Button</span>(onClick = {}) { <span class="t">Text</span>(<span class="s">"Filled"</span>) }
+                        <span class="c">// FilledTonalButton = medium emphasis (a softer tint).</span>
+                        <span class="t">FilledTonalButton</span>(onClick = {}) { <span class="t">Text</span>(<span class="s">"Tonal"</span>) }
+                    }
+                    <span class="t">Row</span>(horizontalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">8</span>.dp)) {
+                        <span class="c">// ElevatedButton = filled-ish but with a shadow.</span>
+                        <span class="t">ElevatedButton</span>(onClick = {}) { <span class="t">Text</span>(<span class="s">"Elevated"</span>) }
+                        <span class="c">// OutlinedButton = medium emphasis, just an outline.</span>
+                        <span class="t">OutlinedButton</span>(onClick = {}) { <span class="t">Text</span>(<span class="s">"Outlined"</span>) }
+                        <span class="c">// TextButton = lowest emphasis, text only (for "Cancel" etc.).</span>
+                        <span class="t">TextButton</span>(onClick = {}) { <span class="t">Text</span>(<span class="s">"Text"</span>) }
+                    }
+                    <span class="t">Row</span>(horizontalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">8</span>.dp), verticalAlignment = <span class="t">Alignment</span>.<span class="t">CenterVertically</span>) {
+                        <span class="c">// A button with a leading Icon — Icon + Spacer + Text in the slot.</span>
+                        <span class="t">Button</span>(onClick = {}) {
+                            <span class="t">Icon</span>(<span class="t">Icons</span>.<span class="t">Default</span>.<span class="t">Favorite</span>, contentDescription = <span class="k">null</span>, modifier = <span class="t">Modifier</span>.size(<span class="n">18</span>.dp))
+                            <span class="t">Spacer</span>(<span class="t">Modifier</span>.width(<span class="n">8</span>.dp))
+                            <span class="t">Text</span>(<span class="s">"Like"</span>)
+                        }
+                        <span class="c">// `enabled = false` greys the button out and ignores taps.</span>
+                        <span class="t">Button</span>(onClick = {}, enabled = <span class="k">false</span>) { <span class="t">Text</span>(<span class="s">"Disabled"</span>) }
+                        <span class="c">// IconButton — a tappable icon (toolbar / app-bar actions).</span>
+                        <span class="t">IconButton</span>(onClick = {}) { <span class="t">Icon</span>(<span class="t">Icons</span>.<span class="t">Default</span>.<span class="t">Search</span>, contentDescription = <span class="s">"Search"</span>) }
+                    }
+                }
+            }</code></pre>
+      <p class="codeexplain">The same 'onClick' rendered five ways — 'Button' (filled), 'FilledTonalButton', 'ElevatedButton', 'OutlinedButton', 'TextButton' — plus a 'Button' with a leading 'Icon' in its content slot, a disabled 'Button(enabled = false)', and an 'IconButton'. Choose the emphasis that matches how important the action is.</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">Text fields — TextField &amp; a password OutlinedTextField</span>
+        <span class="codemeta"><code title="ComposeCatalog/src/main/java/com/example/composecatalog/MainActivity.kt">MainActivity.kt</code> · lines 414–434</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code>                    <span class="t">TextField</span>(
+                        value = nameText,
+                        onValueChange = { nameText = <span class="k">it</span> },
+                        label = { <span class="t">Text</span>(<span class="s">"Name"</span>) },
+                        leadingIcon = { <span class="t">Icon</span>(<span class="t">Icons</span>.<span class="t">Default</span>.<span class="t">Email</span>, contentDescription = <span class="k">null</span>) },
+                        singleLine = <span class="k">true</span>,
+                        modifier = <span class="t">Modifier</span>.fillMaxWidth(),
+                    )
+                    <span class="c">// OutlinedTextField (boxed style): here as a password field —</span>
+                    <span class="c">// PasswordVisualTransformation masks characters as dots, and</span>
+                    <span class="c">// KeyboardOptions asks for the password keyboard.</span>
+                    <span class="t">OutlinedTextField</span>(
+                        value = passwordText,
+                        onValueChange = { passwordText = <span class="k">it</span> },
+                        label = { <span class="t">Text</span>(<span class="s">"Password"</span>) },
+                        placeholder = { <span class="t">Text</span>(<span class="s">"at least 8 characters"</span>) },
+                        singleLine = <span class="k">true</span>,
+                        visualTransformation = <span class="t">PasswordVisualTransformation</span>(),
+                        keyboardOptions = <span class="t">KeyboardOptions</span>(keyboardType = <span class="t">KeyboardType</span>.<span class="t">Password</span>),
+                        modifier = <span class="t">Modifier</span>.fillMaxWidth(),
+                    )</code></pre>
+      <p class="codeexplain">Both fields are 'hoisted': their 'value' is screen state and every keystroke goes up through 'onValueChange'. The filled 'TextField' shows a floating 'label', a 'leadingIcon', and 'singleLine'; the 'OutlinedTextField' adds a 'placeholder', a 'PasswordVisualTransformation()' that masks input as dots, and 'KeyboardOptions(keyboardType = KeyboardType.Password)'.</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">FilterChip (nullable icon slot) + BadgedBox</span>
+        <span class="codemeta"><code title="ComposeCatalog/src/main/java/com/example/composecatalog/MainActivity.kt">MainActivity.kt</code> · lines 549–561</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code>                        <span class="t">FilterChip</span>(
+                            selected = filterSelected,
+                            onClick = { filterSelected = !filterSelected },
+                            label = { <span class="t">Text</span>(<span class="s">"Filter"</span>) },
+                            leadingIcon = <span class="k">if</span> (filterSelected) {
+                                { <span class="t">Icon</span>(<span class="t">Icons</span>.<span class="t">Default</span>.<span class="t">Check</span>, contentDescription = <span class="k">null</span>, modifier = <span class="t">Modifier</span>.size(<span class="n">18</span>.dp)) }
+                            } <span class="k">else</span> <span class="k">null</span>,
+                        )
+                        <span class="c">// BadgedBox: anchors a Badge (here showing "8") to the top-right</span>
+                        <span class="c">// corner of whatever content it wraps — classic notification bell.</span>
+                        <span class="t">BadgedBox</span>(badge = { <span class="t">Badge</span> { <span class="t">Text</span>(<span class="s">"8"</span>) } }) {
+                            <span class="t">Icon</span>(<span class="t">Icons</span>.<span class="t">Default</span>.<span class="t">Notifications</span>, contentDescription = <span class="s">"Notifications"</span>)
+                        }</code></pre>
+      <p class="codeexplain">'FilterChip' toggles 'selected' state on click and only shows a leading checkmark WHEN selected — note 'leadingIcon = if (filterSelected) { { Icon(...) } } else null', a nullable composable-lambda slot. 'BadgedBox(badge = { Badge { Text("8") } })' anchors a small count Badge to the top-right corner of the bell Icon it wraps.</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">Dialog — state-driven AlertDialog</span>
+        <span class="codemeta"><code title="ComposeCatalog/src/main/java/com/example/composecatalog/MainActivity.kt">MainActivity.kt</code> · lines 569–582</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code>            <span class="t">ComponentSection</span>(<span class="s">"Dialog"</span>, <span class="s">"A modal AlertDialog: it floats above the screen until confirmed or dismissed."</span>) {
+                <span class="c">// The button flips state to OPEN the dialog. The dialog itself is only</span>
+                <span class="c">// in the composition WHILE showDialog is true — a common Compose idiom.</span>
+                <span class="t">Button</span>(onClick = { showDialog = <span class="k">true</span> }) { <span class="t">Text</span>(<span class="s">"Show dialog"</span>) }
+                <span class="k">if</span> (showDialog) {
+                    <span class="t">AlertDialog</span>(
+                        onDismissRequest = { showDialog = <span class="k">false</span> },   <span class="c">// tap outside / back press</span>
+                        title = { <span class="t">Text</span>(<span class="s">"Delete note?"</span>) },
+                        text = { <span class="t">Text</span>(<span class="s">"This cannot be undone."</span>) },
+                        confirmButton = { <span class="t">TextButton</span>(onClick = { showDialog = <span class="k">false</span> }) { <span class="t">Text</span>(<span class="s">"Delete"</span>) } },
+                        dismissButton = { <span class="t">TextButton</span>(onClick = { showDialog = <span class="k">false</span> }) { <span class="t">Text</span>(<span class="s">"Cancel"</span>) } },
+                    )
+                }
+            }</code></pre>
+      <p class="codeexplain">A 'Button' sets 'showDialog = true'. The 'AlertDialog' is in the composition only while that boolean is true: 'onDismissRequest' (tap-outside / back) and both the confirm and dismiss 'TextButton's set it back to false. Driving a dialog from a boolean state is the canonical Compose idiom.</p>
+    </figure>
+
+    <div class="callout new"><b>What's new here</b><p>ComposeModernUI taught HOW Compose works (composables, recomposition, state hoisting, previews) on a tiny three-component screen. ComposeCatalog widens that to the full vocabulary: it puts essentially every common Material 3 component on one screen — buttons, selection controls, sliders, text fields, cards/surfaces, icons/images, progress, chips/badges, dialogs, a Scaffold with TopAppBar/FAB/Snackbar, and a LazyRow — each in a reusable ComponentSection frame, so you can see what each widget looks like and learn its key parameters in one place. It is the 'which widget, and what knobs?' reference; ComposeModifiers is the companion 'how do I size and arrange them?' reference.</p></div>
+
+    <h3>Try this yourself</h3><ol class="trythis"><li><span class="tn">1</span><span>Run the app, then tap the FloatingActionButton (bottom-right) and watch a Snackbar slide up — it is launched in a coroutine because 'showSnackbar' is a suspend function.</span></li><li><span class="tn">2</span><span>Flip the 'Switch' and toggle the 'Checkbox' / 'RadioButton' group: the labels update because each control's value is screen state read by the UI.</span></li><li><span class="tn">3</span><span>Drag the stepped Slider — it snaps to 0–5 because of 'valueRange = 0f..5f, steps = 4'. Change 'steps' to 9 and a 'valueRange' of '0f..10f' to get 0–10.</span></li><li><span class="tn">4</span><span>Tap the 'FilterChip' and watch a leading checkmark appear / disappear — that is the 'leadingIcon = if (selected) { { Icon(...) } } else null' nullable slot at work.</span></li><li><span class="tn">5</span><span>Open MainActivity.kt in Android Studio and view the tall 'Catalog' @Preview to scroll the whole catalog without an emulator.</span></li><li><span class="tn">6</span><span>Edit the same components live in homework/playground.html — change a Button to an OutlinedButton, or a Text's style, and watch the preview update as you type.</span></li></ol>
+
+    <div class="callout warn"><b>Good to know</b><ul><li>'TopAppBar' is an experimental Material 3 API, so 'CatalogScreen' is annotated '@OptIn(ExperimentalMaterial3Api::class)'. Forgetting the opt-in is a compile error, not a crash.</li><li>Determinate progress uses a LAMBDA: 'CircularProgressIndicator(progress = { 0.66f })'. The old bare-Float overload is deprecated; passing a plain Float will not match the current signature.</li><li>The 'Icon' demos need vector assets that 'material3' no longer bundles, so this project adds 'material-icons-core' in libs.versions.toml / build.gradle.kts. Without it 'Icons.Default.*' won't resolve.</li><li>All state is plain 'remember' (not 'rememberSaveable'), so toggles reset on a configuration change. That's deliberate — this is a transient catalog, not data worth persisting.</li><li>This screen owns its control state inline for convenience. That is the opposite of the ComposeModernUI lesson; in a real app you'd hoist that state into a stateless child or a ViewModel.</li></ul></div>
+
+    <h3>Run &amp; check it</h3><div class="callout run"><p>Build and install from the project root with './gradlew installDebug' (or './gradlew assembleDebug' to just build the APK), then scroll the catalog and try the interactive bits: tap the FAB for a Snackbar, flip the Switch, toggle the FilterChip, and open the AlertDialog. Run the example unit test with './gradlew testDebugUnitTest'. Fastest of all: open MainActivity.kt in Android Studio and view the 'Catalog' @Preview in the design pane (no emulator needed). There are no deep links in this project.</p></div>
+
+    <details class="files"><summary>Files in this project (4)</summary><ul><li><code title="ComposeCatalog/src/main/java/com/example/composecatalog/MainActivity.kt">MainActivity.kt</code> — The entire catalog: the reusable ComponentSection frame, the CatalogScreen (owns the demo state), MainActivity, and two @Preview functions.</li><li><code title="ComposeCatalog/src/main/java/com/example/composecatalog/ui/theme/Theme.kt">Theme.kt</code> — ComposeCatalogTheme — the Material 3 wrapper supplying colorScheme + typography that every component reads from.</li><li><code title="ComposeCatalog/gradle/libs.versions.toml">libs.versions.toml</code> — Compose BOM + Material 3, plus the extra 'material-icons-core' library that supplies the Icons.Default.* vector glyphs.</li><li><code title="ComposeCatalog/README.md">README.md</code> — Plain-English list of every component group, key files, what to inspect, and how to run.</li></ul></details>
+
+    <nav class="pager">
+      <button class="prev" type="button">‹ Previous</button>
+      <span class="pagerpos"></span>
+      <button class="next" type="button">Next ›</button>
+    </nav>
+  </section>
+
+  <section class="panel" id="p-ComposeModifiers" role="tabpanel" aria-labelledby="t-ComposeModifiers" hidden>
+    <div class="phead">
+      <div class="pcrumb">5 · Android concepts</div>
+      <h2>ComposeModifiers</h2>
+      <p class="tagline">A scrolling set of lessons on the Modifier chain and layout — the two tools you use on every composable.</p>
+      <div class="chips">
+        <span class="chip ord">Project 15 of 22</span>
+        <span class="chip dom none">▫️ no data domain</span>
+        <span class="chip time">⏱ 25-40 min</span>
+        <span class="chip track notes">Concepts track</span>
+      </div>
+    </div>
+
+    <div class="bigidea">
+      <span class="bilabel">The one big idea</span>
+      <p>A Modifier is an ORDERED, immutable chain — each call wraps the previous one and Compose applies them outside-in — so the ORDER of '.padding()', '.background()', '.border()' changes the result; layout is then just Column/Row/Box plus Arrangement (main axis), Alignment (cross axis), and weight (sharing leftover space).</p>
+    </div>
+
+    <h3>What it does</h3>
+    <p class="lead">You see one vertically-scrolling screen of labelled lessons that make Compose layout VISIBLE with colored tiles. It opens with the headline lesson — 'background → padding' vs 'padding → background' shown side by side, so you can see that swapping two modifiers changes the picture — then a 'border → padding → border' demo that draws two concentric outlines to prove the chain is nested layers. After that it walks through sizing ('size', 'fillMaxWidth(0.5f)', 'wrapContentWidth'), the padding variants, decoration ('clip', 'border', 'shadow'), every 'Arrangement' on its own Row, cross-axis 'Alignment', 'weight' (1 : 2 plus a fixed tile), 'Box' with per-child 'Modifier.align', transforms ('offset', 'alpha', 'rotate'), 'aspectRatio', and finally a 'clickable' tile that counts taps. No navigation, network, or data.</p>
+
+    <h3>Screens you'll see</h3><ul class="screens"><li><b>ModifiersScreen</b> — A Scaffold + verticalScroll Column of ~13 labelled lessons, each demonstrating one Modifier or layout idea with colored Tiles.</li><li><b>Lesson</b> — A reusable frame that draws a title + caption above each demo (the content-slot pattern).</li><li><b>Tile</b> — A small colored, labelled Box whose 'modifier' parameter is supplied by the caller — so each demo passes in the very modifier it is teaching.</li><li><b>MainActivity</b> — The single entry point: setContent { ComposeModifiersTheme { ModifiersScreen() } }.</li></ul>
+
+    <h3>Key concepts</h3><div class="concepts"><div class="concept"><h4>The Modifier chain is ordered</h4><p>'Modifier.a().b().c()' returns a NEW Modifier at each step that WRAPS the previous; Compose applies them outside-in (first = outermost layer). That is why order matters.</p></div><div class="concept"><h4>Order matters: background vs padding</h4><p>'Modifier.background(Blue).padding(16.dp)' fills blue first then insets the text (blue shows AROUND the text); 'Modifier.padding(16.dp).background(Blue)' leaves a transparent margin first then fills (blue HUGS the text). Same two modifiers, different picture.</p></div><div class="concept"><h4>Sizing</h4><p>'size(w, h)' fixes both dimensions; 'fillMaxWidth()' takes the full width and 'fillMaxWidth(0.5f)' takes half; 'wrapContentWidth' shrinks back to the content. 'fillMaxHeight' / 'fillMaxSize' are the height / both variants.</p></div><div class="concept"><h4>Arrangement vs Alignment</h4><p>'Arrangement' spreads children along the layout's MAIN axis (vertical for Column, horizontal for Row): 'spacedBy(8.dp)', 'Center', 'SpaceBetween', 'SpaceAround', 'SpaceEvenly'. 'Alignment' lines them up on the CROSS axis: 'horizontalAlignment' in a Column, 'verticalAlignment' in a Row.</p></div><div class="concept"><h4>weight</h4><p>Inside a Row/Column, 'Modifier.weight(n)' divides the LEFTOVER main-axis space by ratio. A 'weight(2f)' child is twice as wide as a 'weight(1f)' child; fixed-size children are measured first and weights split what remains. 'weight' only exists inside a RowScope / ColumnScope.</p></div><div class="concept"><h4>Box &amp; Modifier.align</h4><p>'Box' stacks its children on top of each other; each child calls 'Modifier.align(Alignment.TopStart / Center / BottomEnd / …)' to position itself within the Box. 'align' only exists inside a BoxScope.</p></div><div class="concept"><h4>Decoration &amp; transforms</h4><p>'clip(CircleShape)' rounds, 'border(width, color, shape)' outlines, 'shadow(elevation, shape)' lifts off the surface; 'offset' nudges, 'alpha' fades, 'rotate' spins, and 'aspectRatio(16f/9f)' locks a width:height ratio.</p></div></div>
+
+    <h3>Walk through the code</h3>
+      <p class="hint">Each block is pulled straight from the project's source — the file and line numbers are real, so you can open the same lines in Android Studio.</p>
+      
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">Tile — a reusable composable that takes a modifier parameter</span>
+        <span class="codemeta"><code title="ComposeModifiers/src/main/java/com/example/composemodifiers/MainActivity.kt">MainActivity.kt</code> · lines 140–148</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code><span class="a">@Composable</span>
+<span class="k">fun</span> <span class="t">Tile</span>(label: <span class="t">String</span>, color: <span class="t">Color</span>, modifier: <span class="t">Modifier</span> = <span class="t">Modifier</span>) {
+    <span class="t">Box</span>(
+        modifier = modifier.background(color),               <span class="c">// paint the tile; caller controls size/position</span>
+        contentAlignment = <span class="t">Alignment</span>.<span class="t">Center</span>,                 <span class="c">// center the label inside the tile</span>
+    ) {
+        <span class="t">Text</span>(label, color = <span class="t">Color</span>.<span class="t">White</span>, fontWeight = <span class="t">FontWeight</span>.<span class="t">Bold</span>, style = <span class="t">MaterialTheme</span>.typography.labelLarge)
+    }
+}</code></pre>
+      <p class="codeexplain">'Tile(label, color, modifier)' draws a centered white label on a colored Box and forwards the caller's 'modifier' to that Box. Accepting a 'modifier: Modifier = Modifier' parameter is the #1 convention for reusable composables — here it lets every lesson pass in the very modifier it is teaching (e.g. 'Tile("A", color, Modifier.weight(1f))').</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">The chain is read outside-in</span>
+        <span class="codemeta"><code title="ComposeModifiers/src/main/java/com/example/composemodifiers/MainActivity.kt">MainActivity.kt</code> · lines 180–193</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code>            <span class="t">Lesson</span>(<span class="s">"The modifier chain"</span>, <span class="s">"Each .call() wraps the previous one. The chain is read outside-in: first = outermost."</span>) {
+                <span class="c">// Here the chain is: size (reserve 160×72) -&gt; clip (round corners)</span>
+                <span class="c">// -&gt; background (fill the rounded area) -&gt; padding (inset content).</span>
+                <span class="t">Box</span>(
+                    modifier = <span class="t">Modifier</span>
+                        .size(width = <span class="n">160</span>.dp, height = <span class="n">72</span>.dp)    <span class="c">// 1. reserve space</span>
+                        .clip(<span class="t">RoundedCornerShape</span>(<span class="n">12</span>.dp))         <span class="c">// 2. round the corners of everything inside</span>
+                        .background(<span class="t">Blue</span>)                        <span class="c">// 3. fill the (now-rounded) area</span>
+                        .padding(<span class="n">12</span>.dp),                         <span class="c">// 4. inset the content from the edges</span>
+                    contentAlignment = <span class="t">Alignment</span>.<span class="t">Center</span>,
+                ) {
+                    <span class="t">Text</span>(<span class="s">"size→clip→background→padding"</span>, color = <span class="t">Color</span>.<span class="t">White</span>, style = <span class="t">MaterialTheme</span>.typography.labelMedium)
+                }
+            }</code></pre>
+      <p class="codeexplain">'Modifier.size(...).clip(...).background(...).padding(...)' is applied in order: reserve the space, round the corners, fill the (now-rounded) area, then inset the content. Each call wraps the previous one; the first in the chain is the outermost layer.</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">Order matters: background vs padding (the headline)</span>
+        <span class="codemeta"><code title="ComposeModifiers/src/main/java/com/example/composemodifiers/MainActivity.kt">MainActivity.kt</code> · lines 198–228</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code>            <span class="t">Lesson</span>(<span class="s">"Order matters: background vs padding"</span>, <span class="s">"Swap two modifiers and the picture changes. Watch where the blue goes."</span>) {
+                <span class="c">// We put both versions on a light card background so the TRANSPARENT</span>
+                <span class="c">// padding (which lets the card show through) is visible on the right.</span>
+                <span class="t">Row</span>(
+                    modifier = <span class="t">Modifier</span>
+                        .fillMaxWidth()
+                        .background(<span class="t">MaterialTheme</span>.colorScheme.surfaceVariant, <span class="t">RoundedCornerShape</span>(<span class="n">8</span>.dp))
+                        .padding(<span class="n">12</span>.dp),
+                    horizontalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">16</span>.dp),
+                ) {
+                    <span class="t">Column</span>(horizontalAlignment = <span class="t">Alignment</span>.<span class="t">CenterHorizontally</span>) {
+                        <span class="t">Text</span>(<span class="s">"background → padding"</span>, style = <span class="t">MaterialTheme</span>.typography.labelSmall)
+                        <span class="t">Spacer</span>(<span class="t">Modifier</span>.height(<span class="n">6</span>.dp))
+                        <span class="c">// background FIRST: the blue fills the whole box, THEN padding</span>
+                        <span class="c">// pushes the text inward — so blue shows AROUND the text.</span>
+                        <span class="t">Box</span>(<span class="t">Modifier</span>.background(<span class="t">Blue</span>).padding(<span class="n">16</span>.dp)) {
+                            <span class="t">Text</span>(<span class="s">"text"</span>, color = <span class="t">Color</span>.<span class="t">White</span>)
+                        }
+                    }
+                    <span class="t">Column</span>(horizontalAlignment = <span class="t">Alignment</span>.<span class="t">CenterHorizontally</span>) {
+                        <span class="t">Text</span>(<span class="s">"padding → background"</span>, style = <span class="t">MaterialTheme</span>.typography.labelSmall)
+                        <span class="t">Spacer</span>(<span class="t">Modifier</span>.height(<span class="n">6</span>.dp))
+                        <span class="c">// padding FIRST: 16dp of transparent margin (the card shows</span>
+                        <span class="c">// through), THEN blue fills only the remaining inner area —</span>
+                        <span class="c">// so the blue hugs the text with NO blue border around it.</span>
+                        <span class="t">Box</span>(<span class="t">Modifier</span>.padding(<span class="n">16</span>.dp).background(<span class="t">Blue</span>)) {
+                            <span class="t">Text</span>(<span class="s">"text"</span>, color = <span class="t">Color</span>.<span class="t">White</span>)
+                        }
+                    }
+                }
+            }</code></pre>
+      <p class="codeexplain">The two boxes use the SAME two modifiers in the opposite order. 'Modifier.background(Blue).padding(16.dp)' fills blue then insets the text, so blue shows around the text. 'Modifier.padding(16.dp).background(Blue)' leaves a transparent 16dp margin (the card shows through) then fills, so blue hugs the text. Sitting both on a surfaceVariant card makes the transparent padding obvious.</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">weight — share leftover space by ratio</span>
+        <span class="codemeta"><code title="ComposeModifiers/src/main/java/com/example/composemodifiers/MainActivity.kt">MainActivity.kt</code> · lines 364–374</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code>            <span class="t">Lesson</span>(<span class="s">"weight"</span>, <span class="s">"weight(n) divides the LEFTOVER main-axis space by ratio. Here 1 : 2, plus a fixed 48dp tile."</span>) {
+                <span class="t">Row</span>(modifier = <span class="t">Modifier</span>.fillMaxWidth().height(<span class="n">44</span>.dp), horizontalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">6</span>.dp)) {
+                    <span class="c">// Takes 1 share of the leftover width. fillMaxHeight() makes the</span>
+                    <span class="c">// tile as tall as the 44dp Row so the proportions are easy to see.</span>
+                    <span class="t">Tile</span>(<span class="s">"weight 1"</span>, <span class="t">Blue</span>, <span class="t">Modifier</span>.weight(<span class="n">1f</span>).fillMaxHeight())
+                    <span class="c">// Takes 2 shares — so it ends up TWICE as wide as the first.</span>
+                    <span class="t">Tile</span>(<span class="s">"weight 2"</span>, <span class="t">Green</span>, <span class="t">Modifier</span>.weight(<span class="n">2f</span>).fillMaxHeight())
+                    <span class="c">// Fixed width: it is measured FIRST; weights split what remains.</span>
+                    <span class="t">Tile</span>(<span class="s">"48dp"</span>, <span class="t">Orange</span>, <span class="t">Modifier</span>.width(<span class="n">48</span>.dp).fillMaxHeight())
+                }
+            }</code></pre>
+      <p class="codeexplain">In the Row, 'Modifier.weight(2f)' ends up twice as wide as 'Modifier.weight(1f)', while the fixed 'Modifier.width(48.dp)' tile is measured first and the weights divide what remains. 'fillMaxHeight()' makes each tile as tall as the 44dp Row so the proportions read clearly.</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">Box &amp; Modifier.align — position children in a stack</span>
+        <span class="codemeta"><code title="ComposeModifiers/src/main/java/com/example/composemodifiers/MainActivity.kt">MainActivity.kt</code> · lines 379–391</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code>            <span class="t">Lesson</span>(<span class="s">"Box &amp; Modifier.align"</span>, <span class="s">"Box stacks children; each child uses Modifier.align(...) to sit in a corner or center."</span>) {
+                <span class="t">Box</span>(
+                    modifier = <span class="t">Modifier</span>
+                        .fillMaxWidth()
+                        .height(<span class="n">120</span>.dp)
+                        .background(<span class="t">MaterialTheme</span>.colorScheme.surfaceVariant, <span class="t">RoundedCornerShape</span>(<span class="n">8</span>.dp)),
+                ) {
+                    <span class="c">// Each child positions itself within the Box independently.</span>
+                    <span class="t">Tile</span>(<span class="s">"TopStart"</span>, <span class="t">Blue</span>, <span class="t">Modifier</span>.align(<span class="t">Alignment</span>.<span class="t">TopStart</span>).size(<span class="n">64</span>.dp, <span class="n">28</span>.dp))
+                    <span class="t">Tile</span>(<span class="s">"Center"</span>, <span class="t">Green</span>, <span class="t">Modifier</span>.align(<span class="t">Alignment</span>.<span class="t">Center</span>).size(<span class="n">64</span>.dp, <span class="n">28</span>.dp))
+                    <span class="t">Tile</span>(<span class="s">"BottomEnd"</span>, <span class="t">Purple</span>, <span class="t">Modifier</span>.align(<span class="t">Alignment</span>.<span class="t">BottomEnd</span>).size(<span class="n">72</span>.dp, <span class="n">28</span>.dp))
+                }
+            }</code></pre>
+      <p class="codeexplain">'Box' overlaps its children; each Tile uses 'Modifier.align(Alignment.TopStart / Center / BottomEnd)' to sit in a different spot of the same box. 'align' is a BoxScope extension — it only exists (and only compiles) inside a Box's content lambda.</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">MainActivity wires it up</span>
+        <span class="codemeta"><code title="ComposeModifiers/src/main/java/com/example/composemodifiers/MainActivity.kt">MainActivity.kt</code> · lines 442–452</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code><span class="k">class</span> <span class="t">MainActivity</span> : <span class="t">ComponentActivity</span>() {
+    <span class="k">override</span> <span class="k">fun</span> onCreate(savedInstanceState: <span class="t">Bundle</span>?) {
+        <span class="k">super</span>.onCreate(savedInstanceState)                   <span class="c">// always call through to the framework first</span>
+        enableEdgeToEdge()                                   <span class="c">// draw under the system bars for a modern look</span>
+        setContent {
+            <span class="t">ComposeModifiersTheme</span> {                          <span class="c">// apply our Material 3 colors + typography</span>
+                <span class="t">ModifiersScreen</span>()
+            }
+        }
+    }
+}</code></pre>
+      <p class="codeexplain">The single entry point: 'onCreate' calls 'enableEdgeToEdge()' then 'setContent { ComposeModifiersTheme { ModifiersScreen() } }'. No navigation, no data — it just installs the scrolling lesson screen.</p>
+    </figure>
+    <figure class="code">
+      <figcaption>
+        <span class="codetitle">The headline lesson as a focused @Preview</span>
+        <span class="codemeta"><code title="ComposeModifiers/src/main/java/com/example/composemodifiers/MainActivity.kt">MainActivity.kt</code> · lines 467–484</span>
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+      </figcaption>
+      <pre class="src"><code><span class="a">@Preview</span>(name = <span class="s">"Order: background vs padding"</span>, showBackground = <span class="k">true</span>, widthDp = <span class="n">360</span>)
+<span class="a">@Composable</span>
+<span class="k">fun</span> <span class="t">OrderMattersPreview</span>() {
+    <span class="t">ComposeModifiersTheme</span> {
+        <span class="t">Row</span>(modifier = <span class="t">Modifier</span>.padding(<span class="n">16</span>.dp), horizontalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">24</span>.dp)) {
+            <span class="t">Column</span>(horizontalAlignment = <span class="t">Alignment</span>.<span class="t">CenterHorizontally</span>) {
+                <span class="t">Text</span>(<span class="s">"background → padding"</span>, style = <span class="t">MaterialTheme</span>.typography.labelSmall)
+                <span class="t">Spacer</span>(<span class="t">Modifier</span>.height(<span class="n">6</span>.dp))
+                <span class="t">Box</span>(<span class="t">Modifier</span>.background(<span class="t">Blue</span>).padding(<span class="n">16</span>.dp)) { <span class="t">Text</span>(<span class="s">"text"</span>, color = <span class="t">Color</span>.<span class="t">White</span>) }
+            }
+            <span class="t">Column</span>(horizontalAlignment = <span class="t">Alignment</span>.<span class="t">CenterHorizontally</span>) {
+                <span class="t">Text</span>(<span class="s">"padding → background"</span>, style = <span class="t">MaterialTheme</span>.typography.labelSmall)
+                <span class="t">Spacer</span>(<span class="t">Modifier</span>.height(<span class="n">6</span>.dp))
+                <span class="t">Box</span>(<span class="t">Modifier</span>.padding(<span class="n">16</span>.dp).background(<span class="t">Blue</span>)) { <span class="t">Text</span>(<span class="s">"text"</span>, color = <span class="t">Color</span>.<span class="t">White</span>) }
+            }
+        }
+    }
+}</code></pre>
+      <p class="codeexplain">'OrderMattersPreview' renders just the background-vs-padding comparison in the design pane. Because it is pure UI with literal colors, it renders instantly without an emulator — the fastest way to stare at the difference until the idea sticks.</p>
+    </figure>
+
+    <div class="callout new"><b>What's new here</b><p>ComposeCatalog showed you WHICH component to reach for; ComposeModifiers shows you how to CONTROL it. It isolates the two tools you apply to every composable: the Modifier chain (and its all-important ORDER) and layout (Column/Row/Box + Arrangement, Alignment, weight, align). Where the catalog's demos mostly used default modifiers, this project makes layout itself the subject — colored tiles, side-by-side 'order matters' comparisons, every Arrangement on its own row — so the rules become visible. Together the two projects are the 'which widget' and 'how to arrange it' halves of building a Compose screen.</p></div>
+
+    <h3>Try this yourself</h3><ol class="trythis"><li><span class="tn">1</span><span>In the headline lesson, swap '.background(Blue).padding(16.dp)' to '.padding(16.dp).background(Blue)' on the first box and watch the blue move from around the text to hugging it.</span></li><li><span class="tn">2</span><span>In the 'weight' lesson, change 'weight(2f)' to 'weight(3f)' and watch that tile grow relative to the 'weight(1f)' one; then add a second fixed-width tile and see the weights re-divide what's left.</span></li><li><span class="tn">3</span><span>In the 'Arrangement' lesson, add a row using 'Arrangement.spacedBy(24.dp)' and compare it to 'SpaceBetween'.</span></li><li><span class="tn">4</span><span>In the 'Box &amp; align' lesson, change one Tile's 'Alignment.BottomEnd' to 'Alignment.TopCenter' and see it jump to a new corner.</span></li><li><span class="tn">5</span><span>Open MainActivity.kt in Android Studio and look at the 'Order: background vs padding' @Preview — the difference is obvious at a glance with no emulator.</span></li><li><span class="tn">6</span><span>Reproduce the same experiments live in homework/playground.html: type a Modifier chain, reorder '.padding()' and '.background()', and watch the preview re-render instantly.</span></li></ol>
+
+    <div class="callout warn"><b>Good to know</b><ul><li>'Modifier.weight(...)' and 'Modifier.align(...)' are SCOPED extensions: 'weight' only exists inside a RowScope/ColumnScope and 'align' inside a BoxScope. They compile only because the calls sit lexically inside those layout lambdas.</li><li>Order is significant for paint/space modifiers (padding, background, border, clip, shadow) but generally not for the others — reordering '.background()' and '.padding()' changes the look; reordering two independent decorations usually doesn't.</li><li>'TopAppBar' is experimental, so 'ModifiersScreen' is annotated '@OptIn(ExperimentalMaterial3Api::class)', just like ComposeCatalog.</li><li>'shadow(elevation, shape)' is applied BEFORE 'background(color, shape)' so the shadow follows the rounded outline; flip them and the shadow can be clipped away.</li><li>Tiles use raw 'Color(0xFF…)' values (Blue/Green/Orange/Purple) rather than theme colors, on purpose, so the demos have predictable contrast in both light and dark.</li></ul></div>
+
+    <h3>Run &amp; check it</h3><div class="callout run"><p>Build and install from the project root with './gradlew installDebug' (or './gradlew assembleDebug' to just build the APK), then scroll the lessons and tap the 'clickable' tile to watch its counter rise. Run the example unit test with './gradlew testDebugUnitTest'. Fastest of all: open MainActivity.kt in Android Studio and view the two @Preview functions — the 'Order: background vs padding' preview makes the headline lesson obvious without an emulator. There are no deep links in this project.</p></div>
+
+    <details class="files"><summary>Files in this project (3)</summary><ul><li><code title="ComposeModifiers/src/main/java/com/example/composemodifiers/MainActivity.kt">MainActivity.kt</code> — Every lesson, plus the reusable Lesson frame and the Tile helper, MainActivity, and two @Preview functions.</li><li><code title="ComposeModifiers/src/main/java/com/example/composemodifiers/ui/theme/Theme.kt">Theme.kt</code> — ComposeModifiersTheme — the Material 3 wrapper supplying colorScheme + typography.</li><li><code title="ComposeModifiers/README.md">README.md</code> — Plain-English summary of the one big idea (the ordered chain), every lesson, and what to inspect.</li></ul></details>
+
+    <nav class="pager">
+      <button class="prev" type="button">‹ Previous</button>
+      <span class="pagerpos"></span>
+      <button class="next" type="button">Next ›</button>
+    </nav>
+  </section>
+
   <section class="panel" id="p-ComposeLists" role="tabpanel" aria-labelledby="t-ComposeLists" hidden>
     <div class="phead">
       <div class="pcrumb">5 · Android concepts</div>
       <h2>ComposeLists</h2>
       <p class="tagline">Render and manage collections in Compose: LazyColumn, LazyVerticalGrid, stable keys, multi-select, filtering, empty state.</p>
       <div class="chips">
-        <span class="chip ord">Project 14 of 20</span>
+        <span class="chip ord">Project 16 of 22</span>
         <span class="chip dom notes">🗒️ notes domain</span>
         <span class="chip time">⏱ 15-25 min</span>
         <span class="chip track notes">Concepts track</span>
@@ -3351,7 +3805,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>NetworkParsing</h2>
       <p class="tagline">Fetch JSON from a real API with Retrofit, parse it, and render explicit Loading / Success / Error states.</p>
       <div class="chips">
-        <span class="chip ord">Project 15 of 20</span>
+        <span class="chip ord">Project 17 of 22</span>
         <span class="chip dom notes">🗒️ notes domain</span>
         <span class="chip time">⏱ 20-30 min</span>
         <span class="chip track notes">Concepts track</span>
@@ -3554,7 +4008,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>WebSocketLive</h2>
       <p class="tagline">Talk to a backend over a second protocol - a full-duplex WebSocket - streaming live messages instead of one request/response.</p>
       <div class="chips">
-        <span class="chip ord">Project 16 of 20</span>
+        <span class="chip ord">Project 18 of 22</span>
         <span class="chip dom none">▫️ no data domain</span>
         <span class="chip time">⏱ 20-30 min</span>
         <span class="chip track notes">Concepts track</span>
@@ -3819,7 +4273,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>LocationServices</h2>
       <p class="tagline">Integrate an on-device API: ask for the runtime location permission, then read the device's position from the fused location provider.</p>
       <div class="chips">
-        <span class="chip ord">Project 17 of 20</span>
+        <span class="chip ord">Project 19 of 22</span>
         <span class="chip dom none">▫️ no data domain</span>
         <span class="chip time">⏱ 20-30 min</span>
         <span class="chip track notes">Concepts track</span>
@@ -4033,7 +4487,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>MvvmState</h2>
       <p class="tagline">A notes screen that teaches MVVM: ViewModel + StateFlow + immutable UiState + unidirectional data flow.</p>
       <div class="chips">
-        <span class="chip ord">Project 18 of 20</span>
+        <span class="chip ord">Project 20 of 22</span>
         <span class="chip dom notes">🗒️ notes domain</span>
         <span class="chip time">⏱ 15-25 min</span>
         <span class="chip track notes">Concepts track</span>
@@ -4252,7 +4706,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>RoomAndPreferences</h2>
       <p class="tagline">Persist notes in a Room SQLite table and settings in DataStore so everything survives an app restart.</p>
       <div class="chips">
-        <span class="chip ord">Project 19 of 20</span>
+        <span class="chip ord">Project 21 of 22</span>
         <span class="chip dom notes">🗒️ notes domain</span>
         <span class="chip time">⏱ 20-30 min</span>
         <span class="chip track notes">Concepts track</span>
@@ -4486,7 +4940,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <h2>AppReleaseBasics</h2>
       <p class="tagline">Take a notes app from 'runs on my emulator' toward 'shippable': runtime permissions plus release build config.</p>
       <div class="chips">
-        <span class="chip ord">Project 20 of 20</span>
+        <span class="chip ord">Project 22 of 22</span>
         <span class="chip dom notes">🗒️ notes domain</span>
         <span class="chip time">⏱ 15-25 min</span>
         <span class="chip track notes">Concepts track</span>
@@ -4682,7 +5136,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
 
 <script>
 (function(){
-  var DATA = {"order":["SingleActivity","Intent","NavDetailList","NavListDetail","NavThreeScreen","NavFourScreen","NavDeepLinks","NavBottomTabs","NavNestedGraphs","NavViewModelState","NavTransitions","NavDataLayer","ComposeModernUI","ComposeLists","NetworkParsing","WebSocketLive","LocationServices","MvvmState","RoomAndPreferences","AppReleaseBasics"]};
+  var DATA = {"order":["SingleActivity","Intent","NavDetailList","NavListDetail","NavThreeScreen","NavFourScreen","NavDeepLinks","NavBottomTabs","NavNestedGraphs","NavViewModelState","NavTransitions","NavDataLayer","ComposeModernUI","ComposeCatalog","ComposeModifiers","ComposeLists","NetworkParsing","WebSocketLive","LocationServices","MvvmState","RoomAndPreferences","AppReleaseBasics"]};
   var qs = function(s,r){return (r||document).querySelector(s);};
   var qsa = function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
 

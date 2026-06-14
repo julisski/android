@@ -41,8 +41,8 @@ const GROUPS = [
   },
   {
     id: 'notes', label: '5 · Android concepts', short: 'Concepts track', track: 'notes',
-    blurb: 'A second track of standalone concept demos: UI, lists, networking, real-time WebSockets, location, MVVM, storage, release.',
-    projects: ['ComposeModernUI', 'ComposeLists', 'NetworkParsing', 'WebSocketLive', 'LocationServices', 'MvvmState', 'RoomAndPreferences', 'AppReleaseBasics'],
+    blurb: 'A second track of standalone concept demos: UI fundamentals, the full component catalog, modifiers & layout, lists, networking, real-time WebSockets, location, MVVM, storage, release.',
+    projects: ['ComposeModernUI', 'ComposeCatalog', 'ComposeModifiers', 'ComposeLists', 'NetworkParsing', 'WebSocketLive', 'LocationServices', 'MvvmState', 'RoomAndPreferences', 'AppReleaseBasics'],
   },
 ]
 
@@ -288,6 +288,14 @@ function overviewPanel() {
       <p>Pick a project from the tabs at the top. Read <b>What it does</b>, study the <b>code walk-through</b> (the line numbers are real), then do the <b>Try this</b> experiments in Android Studio. Use the <b>Prev / Next</b> buttons — or the ← → arrow keys — to walk the progression in order.</p>
     </div>
 
+    <div class="callout new" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:240px;">
+        <b>🧪 Interactive Compose Playground</b>
+        <p>Want to <i>change the code and see the effect</i>? Open the live playground: edit Jetpack&nbsp;Compose Kotlin (Column, Row, Box, Text, Button, Card, modifiers…) and watch the UI re-render as you type. It's the hands-on companion to the <b>ComposeCatalog</b> and <b>ComposeModifiers</b> projects.</p>
+      </div>
+      <a href="./playground.html" style="flex:none;background:var(--accent-deep);color:#fff;text-decoration:none;font-weight:750;padding:10px 18px;border-radius:10px;white-space:nowrap;">Open the Playground →</a>
+    </div>
+
     <h3>Two learning tracks</h3>
     <div class="tracks">
       <div class="trackcol nav">
@@ -296,7 +304,7 @@ function overviewPanel() {
       </div>
       <div class="trackcol notes">
         <div class="trackhead">🗒️ Android-concepts track <span>standalone concept demos</span></div>
-        ${stepCards(['ComposeModernUI','ComposeLists','NetworkParsing','WebSocketLive','LocationServices','MvvmState','RoomAndPreferences','AppReleaseBasics'])}
+        ${stepCards(['ComposeModernUI','ComposeCatalog','ComposeModifiers','ComposeLists','NetworkParsing','WebSocketLive','LocationServices','MvvmState','RoomAndPreferences','AppReleaseBasics'])}
       </div>
     </div>
 
@@ -710,11 +718,12 @@ const html = `<!DOCTYPE html>
   <div class="wrap">
     <p class="eyebrow">Android · Kotlin · Jetpack Compose · Navigation 3</p>
     <h1>Android Projects, Explained</h1>
-    <p class="sub">An interactive tour of ${ORDER.length} small, self-contained teaching apps. Each one isolates a single idea — from the smallest possible Compose screen all the way to deep links, multiple back stacks, MVVM and on-device storage. Pick a project from the sidebar and read exactly what is going on.</p>
+    <p class="sub">An interactive tour of ${ORDER.length} small, self-contained teaching apps. Each one isolates a single idea — from the smallest possible Compose screen all the way to deep links, multiple back stacks, MVVM and on-device storage. Pick a project from the sidebar and read exactly what is going on. New: a live <a href="./playground.html" style="color:#fff;font-weight:800;text-decoration:underline;">Compose Playground</a> where you edit code and watch the UI update.</p>
     <div class="hmeta">
       <span><b>${ORDER.length}</b> projects</span>
       <span><b>2</b> tracks · navigation &amp; Android concepts</span>
       <span>Real source · real line numbers</span>
+      <span><a href="./playground.html" style="color:inherit;text-decoration:none;">🧪 live playground</a></span>
       <span>← → to move · ⌕ to search</span>
     </div>
   </div>

@@ -67,6 +67,8 @@ jobs:
             "NavTransitions|NavTransitions|NavTransitions"
             "NavDataLayer|NavDataLayer|NavDataLayer"
             "ComposeModernUI|ComposeModernUI|ComposeModernUI"
+            "ComposeCatalog|ComposeCatalog|ComposeCatalog"
+            "ComposeModifiers|ComposeModifiers|ComposeModifiers"
             "ComposeLists|ComposeLists|ComposeLists"
             "NetworkParsing|NetworkParsing|NetworkParsing"
             "MvvmState|MvvmState|MvvmState"

@@ -119,11 +119,27 @@ private val seedNotes = listOf(
 )
 
 // ===========================================================================
-// UI — REUSABLE COMPONENTS
+// UI — REUSABLE COMPONENTS (COMPOSITION: build big UI by NESTING small pieces)
 // ---------------------------------------------------------------------------
 // Each component below is its OWN small @Composable with a single job. Building
 // the screen out of these pieces (instead of one giant function) is what makes
 // Compose UIs readable, testable, and previewable in isolation.
+//
+// COMPOSITION — the core idea behind the framework's name. You build a UI by:
+//   1. NESTING: a Compose UI is a TREE. A container composable takes its children
+//      in a trailing { } lambda, and you nest as deep as you like. In NotesScreen
+//      below the tree is roughly:
+//        Column { SectionHeader; OutlinedTextField; PrimaryButton; FavoriteToggle;
+//                 LazyColumn { items -> NoteCard } }
+//   2. EXTRACTING + REUSING: when a chunk of UI repeats or earns a name, pull it
+//      into its OWN @Composable function and just CALL it — composition reuses by
+//      FUNCTION CALL, not by inheritance. SectionHeader is called 3 times below
+//      and NoteCard once per note. Change the function once; every caller updates.
+//   3. SLOTS: a composable can accept OTHER composables as a parameter (a
+//      `content: @Composable () -> Unit` lambda). That is exactly how Card { } and
+//      Button { } let YOU supply their inner UI — see ComposeCatalog's
+//      ComponentSection for a slot you write yourself.
+// Rule of thumb: many tiny, single-purpose composables > one giant function.
 // ===========================================================================
 
 /**

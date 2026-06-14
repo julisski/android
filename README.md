@@ -13,6 +13,12 @@ comments, so you can diff any two projects to see exactly what a feature adds.
 > 📚 For the navigation curriculum in depth — suggested teaching order, the exact
 > `file:line` where each concept lives, and run/test notes — see
 > **[`NAV_DEMOS.md`](./NAV_DEMOS.md)**.
+>
+> 🖥️ Two interactive HTML companions live in [`homework/`](./homework): open
+> **[`projects.html`](./homework/projects.html)** for a per-project, real-source
+> walk-through of all of these apps, and
+> **[`playground.html`](./homework/playground.html)** for a live **Compose
+> Playground** where you edit Compose Kotlin and watch the UI render as you type.
 
 ---
 
@@ -57,6 +63,8 @@ Same Kotlin / Compose / Material 3 / Gradle-KTS stack; each has its own README.
 | Project | Concept |
 |---|---|
 | [`ComposeModernUI`](./ComposeModernUI) | Compose fundamentals: composables, Material 3 theme, layout, **state hoisting**, reusable components, previews. |
+| [`ComposeCatalog`](./ComposeCatalog) | A guided tour of **every common Material 3 component** on one screen: Text, the button family, selection controls, sliders, text fields, cards, icons/images, progress, chips/badges, dialog, Scaffold + TopAppBar + FAB + Snackbar. |
+| [`ComposeModifiers`](./ComposeModifiers) | **Modifiers & layout** deep dive: the ordered modifier chain (**order matters** — `padding` vs `background`), sizing, `Arrangement`/`Alignment`, `weight`, `Box` + `align`, clip/border/shadow, transforms. |
 | [`ComposeLists`](./ComposeLists) | `LazyColumn` + `LazyVerticalGrid`, stable item keys, multi-selection, empty states, filtering. |
 | [`NetworkParsing`](./NetworkParsing) | Retrofit + kotlinx.serialization against a no-auth API (JSONPlaceholder) — loading / success / error states, with an offline fake. |
 | [`WebSocketLive`](./WebSocketLive) | A **second network protocol**: full-duplex **WebSocket** (OkHttp) streaming live messages — connection status + transcript, with an offline echo fake. |
