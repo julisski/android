@@ -296,6 +296,14 @@ function overviewPanel() {
       <a href="./playground.html" style="flex:none;background:var(--accent-deep);color:#fff;text-decoration:none;font-weight:750;padding:10px 18px;border-radius:10px;white-space:nowrap;">Open the Playground →</a>
     </div>
 
+    <div class="callout new" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-color:var(--blue-line);background:var(--blue-soft);">
+      <div style="flex:1;min-width:240px;">
+        <b>🧭 Interactive Navigation 3 Playground</b>
+        <p>See navigation as a <i>back stack of keys</i>: edit a <code>rememberNavBackStack(…)</code> list — or tap the phone, press Back, switch tabs — and watch the stack and the equivalent <code>backStack.add(…)</code> / <code>removeLastOrNull()</code> update live. The hands-on companion to the <b>navigation track</b> (NavListDetail → deep links, tabs, nested graphs).</p>
+      </div>
+      <a href="./nav-playground.html" style="flex:none;background:var(--blue);color:#fff;text-decoration:none;font-weight:750;padding:10px 18px;border-radius:10px;white-space:nowrap;">Open the Nav Playground →</a>
+    </div>
+
     <h3>Two learning tracks</h3>
     <div class="tracks">
       <div class="trackcol nav">
@@ -718,12 +726,13 @@ const html = `<!DOCTYPE html>
   <div class="wrap">
     <p class="eyebrow">Android · Kotlin · Jetpack Compose · Navigation 3</p>
     <h1>Android Projects, Explained</h1>
-    <p class="sub">An interactive tour of ${ORDER.length} small, self-contained teaching apps. Each one isolates a single idea — from the smallest possible Compose screen all the way to deep links, multiple back stacks, MVVM and on-device storage. Pick a project from the sidebar and read exactly what is going on. New: a live <a href="./playground.html" style="color:#fff;font-weight:800;text-decoration:underline;">Compose Playground</a> where you edit code and watch the UI update.</p>
+    <p class="sub">An interactive tour of ${ORDER.length} small, self-contained teaching apps. Each one isolates a single idea — from the smallest possible Compose screen all the way to deep links, multiple back stacks, MVVM and on-device storage. Pick a project from the sidebar and read exactly what is going on. New: live <a href="./playground.html" style="color:#fff;font-weight:800;text-decoration:underline;">Compose</a> &amp; <a href="./nav-playground.html" style="color:#fff;font-weight:800;text-decoration:underline;">Navigation</a> playgrounds where you edit code and watch the UI update.</p>
     <div class="hmeta">
       <span><b>${ORDER.length}</b> projects</span>
       <span><b>2</b> tracks · navigation &amp; Android concepts</span>
       <span>Real source · real line numbers</span>
-      <span><a href="./playground.html" style="color:inherit;text-decoration:none;">🧪 live playground</a></span>
+      <span><a href="./playground.html" style="color:inherit;text-decoration:none;">🧪 compose playground</a></span>
+      <span><a href="./nav-playground.html" style="color:inherit;text-decoration:none;">🧭 nav playground</a></span>
       <span>← → to move · ⌕ to search</span>
     </div>
   </div>

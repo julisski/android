@@ -14,11 +14,14 @@ comments, so you can diff any two projects to see exactly what a feature adds.
 > `file:line` where each concept lives, and run/test notes — see
 > **[`NAV_DEMOS.md`](./NAV_DEMOS.md)**.
 >
-> 🖥️ Two interactive HTML companions live in [`homework/`](./homework): open
+> 🖥️ Interactive HTML companions live in [`homework/`](./homework): open
 > **[`projects.html`](./homework/projects.html)** for a per-project, real-source
-> walk-through of all of these apps, and
+> walk-through of all of these apps;
 > **[`playground.html`](./homework/playground.html)** for a live **Compose
-> Playground** where you edit Compose Kotlin and watch the UI render as you type.
+> Playground** where you edit Compose Kotlin and watch the UI render as you type;
+> and **[`nav-playground.html`](./homework/nav-playground.html)** for a live
+> **Navigation 3 Playground** where you edit a `rememberNavBackStack(…)` key list
+> (or tap the phone / press Back) and watch the back stack and screen update.
 
 ---
 
