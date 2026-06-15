@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lab — State that survives rotation</title>
+<link rel="stylesheet" href="labs.css" />
+<script src="compose-engine.js"></script>
+<script src="lab-harness.js"></script>
+</head>
+<body>
+<script>
+mountLab({
+  kind: 'compose',
+  id: 'compose-05',
+  title: 'Lab 5 · State that survives rotation',
+  track: 'Compose',
+  level: 'Intermediate',
+  goal: 'This tap counter is broken: a plain var isn’t Compose state, so taps don’t recompose and the count is lost on rotation. Give it state that updates the UI and survives a configuration change — with rememberSaveable.',
+  steps: [
+    'Hold the count in <code>mutableStateOf(0)</code> — that makes it <b>observable</b>, so writing it triggers recomposition (the UI redraws).',
+    'Wrap that in <code>rememberSaveable { … }</code> so the value survives <b>recomposition AND rotation / process death</b> (plain <code>remember</code> would be lost on rotation).',
+    'Declare it with <code>by</code> so you read &amp; write <code>count</code> like a normal Int: <code>var count by rememberSaveable { mutableStateOf(0) }</code>.',
+    'Keep the button’s <code>onClick = { count++ }</code> so tapping still increments it.',
+  ],
+  hints: [
+    'This is the exact pattern behind <code>selectedTab</code> in the <b>NavBottomTabs</b> project — the same line keeps the chosen tab across rotation.',
+    'Three layers: <code>mutableStateOf</code> = observable; <code>remember</code> = survives recompose; <code>rememberSaveable</code> = ALSO survives rotation/process death.',
+    'The <code>by</code> delegate (plus the <code>getValue</code>/<code>setValue</code> imports) lets you skip <code>.value</code> and use <code>count</code> directly.',
+  ],
+  starter:
+'// BROKEN: `count` is a plain local var. It is NOT Compose state, so tapping\n' +
+'// neither updates the UI nor survives rotation. Make it survive a rotation.\n' +
+'Column(\n' +
+'    modifier = Modifier.fillMaxWidth(),\n' +
+'    verticalArrangement = Arrangement.spacedBy(12.dp),\n' +
+'    horizontalAlignment = Alignment.CenterHorizontally\n' +
+') {\n' +
+'    var count = 0\n' +
+'    Text("Taps: $count", style = MaterialTheme.typography.headlineSmall)\n' +
+'    Button(onClick = { count++ }) { Text("Tap me") }\n' +
+'}\n',
+  solution:
+'Column(\n' +
+'    modifier = Modifier.fillMaxWidth(),\n' +
+'    verticalArrangement = Arrangement.spacedBy(12.dp),\n' +
+'    horizontalAlignment = Alignment.CenterHorizontally\n' +
+') {\n' +
+'    var count by rememberSaveable { mutableStateOf(0) }\n' +
+'    Text("Taps: $count", style = MaterialTheme.typography.headlineSmall)\n' +
+'    Button(onClick = { count++ }) { Text("Tap me") }\n' +
+'}\n',
+  checks: [
+    { label: 'The count lives in <code>mutableStateOf(…)</code> — observable, so taps recompose', test: function(a){ return /\bmutable(State|IntState)Of\s*\(/.test(a.code); } },
+    { label: 'It’s wrapped in <code>rememberSaveable { … }</code> — survives rotation &amp; process death', test: function(a){ return /\brememberSaveable\s*\{/.test(a.code); } },
+    { label: 'Declared with <code>by</code> so you use <code>count</code> like a plain Int', test: function(a){ return /\bvar\s+count\s+by\b/.test(a.code); } },
+    { label: 'The button still increments it (<code>count++</code>)', test: function(a){ return /count\s*\+\+|count\s*\+=|count\s*=\s*count\s*\+/.test(a.code); } },
+  ],
+});
+
+// A teaching note: the static preview can't show recomposition or rotation —
+// it renders the layout with the INITIAL count. Append it under the goal.
+// (mountLab has already built the DOM synchronously above, so the hero exists.)
+(function(){
+  var g = document.querySelector('header.hero .goal');
+  if (g) {
+    var note = document.createElement('p');
+    note.className = 'goal';
+    note.style.opacity = '.85';
+    note.style.fontSize = '12.5px';
+    note.innerHTML = 'ℹ️ The preview is static — it shows the initial count and can’t actually recompose or rotate. The checks verify you wrote the right state code; run it in Android Studio (or see the same pattern live as <b>selectedTab</b> in NavBottomTabs) to watch it update and survive rotation.';
+    g.parentNode.insertBefore(note, g.nextSibling);
+  }
+})();
+</script>
+</body>
+</html>

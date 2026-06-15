@@ -108,9 +108,28 @@
         else if(tk.t==='pn'&&(tk.v===')'||tk.v==='}')){ if(depth===0) return; depth--; }
         else if(tk.t==='pn'&&tk.v==='->'&&depth===0){ pos=k+1; return; } }
     }
+    // A statement that begins with `var`/`val` is a property declaration, NOT a
+    // composable. We SKIP it so e.g. `var count by rememberSaveable { mutableStateOf(0) }`
+    // doesn't get parsed into junk placeholder nodes. (Its value is surfaced
+    // separately via collectStateVars() for $-interpolation in Text.)
+    function isDecl(){ return cur().t==='id' && (cur().v==='var'||cur().v==='val'); }
+    function skipBalanced(open, close){ var depth=0; while(!eof()){ var t=cur(); if(t.t==='pn'&&t.v===open){ depth++; pos++; } else if(t.t==='pn'&&t.v===close){ depth--; pos++; if(depth===0) return; } else pos++; } }
+    function consumeValueTokens(){
+      var t=cur();
+      if(t.t==='num'){ pos++; if(isPn('.')&&at(1).t==='id'&&(at(1).v==='dp'||at(1).v==='sp')) pos+=2; else if(isPn('.')&&at(1).t==='pn'&&at(1).v==='.'){ pos+=2; consumeValueTokens(); } return; }
+      if(t.t==='str'){ pos++; return; }
+      if(t.t==='id'){ pos++; while(true){ if(isPn('.')){ pos++; if(cur().t==='id') pos++; } else if(isPn('(')){ skipBalanced('(',')'); } else if(isPn('{')){ skipBalanced('{','}'); } else break; } return; }
+      pos++;
+    }
+    function skipDeclaration(){
+      pos++;                                              // consume `var`/`val`
+      if(cur().t==='id') pos++;                           // consume the variable NAME
+      if((cur().t==='id'&&cur().v==='by')||(cur().t==='pn'&&cur().v==='=')) pos++; // consume `by` or `=`
+      consumeValueTokens();                               // consume the RHS (incl. trailing { } lambda)
+    }
     function parseBlock(){
       eat('{'); skipLambdaParams(); var nodes=[];
-      while(!eof()&&!isPn('}')){ if(cur().t==='id') nodes.push(parseComposable()); else if(isPn(',')||isPn('=')) pos++; else pos++; }
+      while(!eof()&&!isPn('}')){ if(isDecl()) skipDeclaration(); else if(cur().t==='id') nodes.push(parseComposable()); else if(isPn(',')||isPn('=')) pos++; else pos++; }
       eat('}'); return nodes;
     }
     function parseValue(){
@@ -150,7 +169,7 @@
       if(isPn('{')){ node.children=parseBlock(); }
       return node;
     }
-    var top=[]; while(!eof()){ if(cur().t==='id') top.push(parseComposable()); else pos++; }
+    var top=[]; while(!eof()){ if(isDecl()) skipDeclaration(); else if(cur().t==='id') top.push(parseComposable()); else pos++; }
     return top;
   }
 
@@ -273,9 +292,27 @@
       default: return buildUnknown(node);
     }
   }
+  // STATE_VARS maps a `var/val NAME` to its initial value (collected by regex in
+  // renderToElement), so a Text using "$NAME" / "${NAME}" shows that initial value
+  // in the static preview instead of a literal "$NAME".
+  var STATE_VARS = {};
+  function collectStateVars(code){
+    var vars = {}, m;
+    // form 1:  var/val NAME … mutableStateOf(INIT) / mutableIntStateOf(INIT)
+    var re1 = /\b(?:var|val)\s+(\w+)[^\n]*?mutable(?:State|IntState)Of\s*\(\s*("(?:[^"\\]|\\.)*"|[^)]*?)\s*\)/g;
+    while((m = re1.exec(code))) vars[m[1]] = cleanInit(m[2]);
+    // form 2:  var/val NAME = LITERAL   (plain, only if not already captured)
+    var re2 = /\b(?:var|val)\s+(\w+)\s*=\s*("(?:[^"\\]|\\.)*"|-?\d+(?:\.\d+)?[fFlL]?|true|false)/g;
+    while((m = re2.exec(code))){ if(vars[m[1]]==null) vars[m[1]] = cleanInit(m[2]); }
+    return vars;
+  }
+  function cleanInit(raw){ if(raw==null) return ''; raw=String(raw).trim(); if(/^".*"$/.test(raw)) return raw.slice(1,-1); return raw.replace(/[fFlL]$/,''); }
+  function interpolate(s){ return String(s).replace(/\$\{(\w+)\}|\$(\w+)/g, function(m,a,b){ var n=a||b; return (STATE_VARS[n]!=null) ? String(STATE_VARS[n]) : m; }); }
+
   function buildText(node){
     var span=document.createElement('span');
-    span.textContent=(node.positional[0]&&node.positional[0].kind==='str')?node.positional[0].v:str(node.named.text);
+    var raw=(node.positional[0]&&node.positional[0].kind==='str')?node.positional[0].v:str(node.named.text);
+    span.textContent=interpolate(raw);
     span.style.color='inherit'; var st=styleOf(node.named.style);
     if(st){ span.style.fontSize=st[0]+'px'; span.style.fontWeight=st[1]; } else span.style.fontSize='14px';
     if(node.named.fontSize) span.style.fontSize=num(node.named.fontSize,14)+'px';
@@ -338,6 +375,7 @@
   // --- Public render: code -> a "screen" element ------------------------------
   function renderToElement(code, theme){
     themeName = (theme==='dark')?'dark':'light';
+    STATE_VARS = collectStateVars(code);                 // map state vars -> init values for $-interpolation
     var host=document.createElement('div');
     host.style.display='flex'; host.style.flexDirection='column'; host.style.gap='0';
     host.style.background=T().background; host.style.color=T().onBackground;
