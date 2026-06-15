@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jetpack Compose Quiz — Answer Key &amp; Explanations</title>
+<style>
+  :root{
+    --ink:#1c1b1f; --muted:#5b5b66; --line:#e3e1e8; --bg:#f6f5fa; --card:#ffffff;
+    --purple:#6650a4; --purple-d:#4a3a86;
+    --ok:#1b7f3b; --ok-bg:#e7f5ec; --ok-line:#bfe3cb;
+    --no:#b3261e; --no-bg:#fcebe9; --no-line:#f0c4bf;
+    --code-bg:#f1eff7; --code-ink:#33304a;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:32px 20px 80px}
+  header.page{
+    background:linear-gradient(135deg,var(--purple),var(--purple-d));
+    color:#fff; border-radius:16px; padding:26px 28px; margin-bottom:22px;
+    box-shadow:0 6px 20px rgba(74,58,134,.18);
+  }
+  header.page h1{margin:0 0 6px; font-size:1.5rem; letter-spacing:.2px}
+  header.page p{margin:0; opacity:.92; font-size:.96rem}
+  .legend{
+    display:flex; gap:18px; flex-wrap:wrap; margin:16px 0 26px;
+    background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 16px; font-size:.9rem;
+  }
+  .legend .pill{display:inline-flex; align-items:center; gap:8px}
+  .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+  .dot.ok{background:var(--ok)} .dot.no{background:var(--no)}
+  .legend .note{color:var(--muted)}
+
+  .q{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px 22px 8px; margin-bottom:22px; box-shadow:0 1px 2px rgba(0,0,0,.03);
+  }
+  .q-num{
+    display:inline-block; background:var(--purple); color:#fff; font-weight:700;
+    font-size:.78rem; padding:3px 10px; border-radius:999px; margin-bottom:10px; letter-spacing:.4px;
+  }
+  .q-prompt{font-weight:600; font-size:1.06rem; margin:2px 0 16px}
+  .q-prompt code{font-size:.95em}
+
+  .opt{border:1px solid var(--line); border-radius:11px; padding:12px 14px; margin:0 0 12px; border-left-width:5px}
+  .opt.correct{background:var(--ok-bg); border-color:var(--ok-line); border-left-color:var(--ok)}
+  .opt.incorrect{background:var(--no-bg); border-color:var(--no-line); border-left-color:var(--no)}
+  .opt-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px}
+  .badge{font-size:.72rem; font-weight:700; padding:3px 9px; border-radius:999px; letter-spacing:.3px; white-space:nowrap}
+  .badge.ok{background:var(--ok); color:#fff}
+  .badge.no{background:var(--no); color:#fff}
+  .opt-label{font-size:.8rem; color:var(--muted); font-weight:600}
+  .opt-body{margin:2px 0 0}
+  .opt-body p{margin:0}
+  code{
+    font-family:"SF Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    background:var(--code-bg); color:var(--code-ink); padding:1px 5px; border-radius:5px; font-size:.9em;
+  }
+  code.block{display:block; padding:9px 12px; white-space:pre-wrap; word-break:break-word; font-size:.9rem; line-height:1.45}
+  .why{margin-top:10px; padding-top:10px; border-top:1px dashed rgba(0,0,0,.12); font-size:.93rem}
+  .why strong{color:var(--ink)}
+  .fix{margin-top:6px; font-size:.9rem}
+  .fix code{background:#fff; border:1px solid var(--line)}
+
+  .callout{
+    background:#fbfaff; border:1px solid var(--line); border-left:5px solid var(--purple);
+    border-radius:11px; padding:14px 16px; margin:4px 0 18px; font-size:.92rem;
+  }
+  .callout h3{margin:0 0 8px; font-size:.95rem; color:var(--purple-d)}
+  table.ref{width:100%; border-collapse:collapse; margin-top:6px; font-size:.88rem; background:#fff}
+  table.ref th, table.ref td{border:1px solid var(--line); padding:7px 10px; text-align:left; vertical-align:top}
+  table.ref th{background:#f3f1fa}
+  table.ref td code{font-size:.86em}
+  .mnemonic{margin-top:10px; font-style:italic; color:var(--muted)}
+
+  footer{color:var(--muted); font-size:.82rem; text-align:center; margin-top:30px}
+  @media print{
+    body{background:#fff}
+    .q,.legend,.callout{box-shadow:none}
+    header.page{background:var(--purple-d) !important; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+    .opt,.badge,.dot{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <h1>Jetpack Compose Quiz — Answer Key &amp; Explanations</h1>
+    <p>Five multiple-answer questions. Each item explains why every option is correct or incorrect, with special focus on the wrong answers.</p>
+  </header>
+
+  <div class="legend">
+    <span class="pill"><span class="dot ok"></span> <strong>Green</strong> = correct answer (should be selected)</span>
+    <span class="pill"><span class="dot no"></span> <strong>Red</strong> = incorrect (should be left unselected)</span>
+    <span class="pill note">These are “select ALL that apply” questions — picking a red option or missing a green one loses credit.</span>
+  </div>
+
+  <!-- ================= QUESTION 1 ================= -->
+  <section class="q">
+    <span class="q-num">QUESTION 1</span>
+    <div class="q-prompt">Which of the following are valid Jetpack Compose <code>Text()</code> calls? Assume all required imports (<code>Text</code>, <code>FontWeight</code>, <code>Color</code>, <code>sp</code>, <code>MaterialTheme</code>) are present. Select ALL that are valid.</div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ VALID — correct answer</span><span class="opt-label">Option 1</span></div>
+      <div class="opt-body"><code class="block">Text("Hello")</code></div>
+      <div class="why"><strong>Why it's valid:</strong> <code>text</code> is the only required parameter of <code>Text</code>. Every other parameter (<code>modifier</code>, <code>color</code>, <code>fontSize</code>, <code>style</code>, …) has a default value, so the simplest legal call is just a string.</div>
+    </div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ VALID — correct answer</span><span class="opt-label">Option 2</span></div>
+      <div class="opt-body"><code class="block">Text("Body text in bodyMedium", style = MaterialTheme.typography.bodyMedium)</code></div>
+      <div class="why"><strong>Why it's valid:</strong> <code>style</code> is a real <code>Text</code> parameter of type <code>TextStyle</code>, and <code>MaterialTheme.typography.bodyMedium</code> returns a <code>TextStyle</code> from the Material 3 type scale — a type-correct argument.</div>
+    </div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ VALID — correct answer</span><span class="opt-label">Option 3</span></div>
+      <div class="opt-body"><code class="block">Text("Bold + primary color", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)</code></div>
+      <div class="why"><strong>Why it's valid:</strong> <code>fontWeight</code> (<code>FontWeight?</code>) and <code>color</code> (<code>Color</code>) are both genuine parameters. <code>FontWeight.Bold</code> and <code>MaterialTheme.colorScheme.primary</code> are the right types, passed as comma-separated named arguments.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ INVALID</span><span class="opt-label">Option 4</span></div>
+      <div class="opt-body"><code class="block">Text("Big and red", fontSize = 22.sp, color = Color.Red</code></div>
+      <div class="why"><strong>Why it's wrong:</strong> the <strong>closing parenthesis is missing</strong>. The call opens <code>(</code> but never closes it, so it fails to compile with “Expecting ')'”. Note that the arguments themselves are all perfectly valid — this is purely a syntax typo, and it is the most common one in real code.
+        <div class="fix"><strong>Fix:</strong> add the <code>)</code> → <code>Text("Big and red", fontSize = 22.sp, color = Color.Red)</code></div>
+      </div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ INVALID</span><span class="opt-label">Option 5</span></div>
+      <div class="opt-body"><code class="block">Text("Sized", size = 20.sp)</code></div>
+      <div class="why"><strong>Why it's wrong:</strong> <code>Text</code> has <strong>no parameter named <code>size</code></strong>. The compiler reports “Cannot find a parameter with this name: size.” The parameter that controls text size is <code>fontSize</code>. (<code>size</code> sounds right because <code>Modifier.size()</code> exists for layout — but that is a modifier, not a <code>Text</code> parameter.)
+        <div class="fix"><strong>Fix:</strong> <code>Text("Sized", fontSize = 20.sp)</code></div>
+      </div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ INVALID</span><span class="opt-label">Option 6</span></div>
+      <div class="opt-body"><code class="block">Text(color = Color.Blue)</code></div>
+      <div class="why"><strong>Why it's wrong:</strong> the <strong>required <code>text</code> argument is missing</strong>. Because <code>text</code> has no default, omitting it gives “No value passed for parameter 'text'.” A <code>Text</code> with a color but no string has nothing to render.
+        <div class="fix"><strong>Fix:</strong> supply a string → <code>Text("Blue", color = Color.Blue)</code></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= QUESTION 2 ================= -->
+  <section class="q">
+    <span class="q-num">QUESTION 2</span>
+    <div class="q-prompt">A single <code>Text("Hello")</code> is placed directly inside <code>setContent { }</code> with no Modifier, Scaffold, Surface, or other layout wrapper. Which of the following are TRUE about where and how it is displayed by default? Select ALL that apply.</div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 1</span></div>
+      <div class="opt-body"><p>It appears in the top-left corner of the screen (the top-start position in a left-to-right layout).</p></div>
+      <div class="why"><strong>Why it's true:</strong> a single root composable is placed at the origin (0, 0) of the available space, which is the top-left in an LTR layout — “top-start” in Compose terms (start = left in LTR, right in RTL). Compose applies no implicit centering to root content.</div>
+    </div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 2</span></div>
+      <div class="opt-body"><p>It sits at the very top and can overlap the status bar, because no padding or window insets are applied by default.</p></div>
+      <div class="why"><strong>Why it's true:</strong> nothing applies insets to raw content, so the text draws from the very top of the window and can sit under the status bar. This is exactly why apps add a <code>Scaffold</code> (which hands you <code>innerPadding</code>), a <code>Surface</code>, or <code>Modifier.statusBarsPadding()</code>/<code>safeDrawingPadding()</code>.</div>
+    </div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 3</span></div>
+      <div class="opt-body"><p>It takes up only as much width as its text needs, wrapping its content instead of filling the screen width.</p></div>
+      <div class="why"><strong>Why it's true:</strong> <code>Text</code> measures itself to fit its content (wrap-content). With no width modifier it is only as wide as “Hello”. Filling the width is opt-in via <code>Modifier.fillMaxWidth()</code>.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 4</span></div>
+      <div class="opt-body"><p>It is automatically centered horizontally and vertically on the screen.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> Compose does <strong>not</strong> center root content. Centering is explicit — e.g. <code>Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center)</code>. With none of that present, the text stays at the top-start, not the center. (This is the most tempting wrong answer because many other tools center by default.)</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 5</span></div>
+      <div class="opt-body"><p>It appears in the bottom-left corner of the screen by default.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> the default origin is the <strong>top</strong>, not the bottom; content grows downward from the top-start. Bottom placement would need something explicit like <code>Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomStart)</code>.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 6</span></div>
+      <div class="opt-body"><p>It automatically stretches to fill the entire width of the screen.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> the opposite of Option 3 — <code>Text</code> wraps its content and does not stretch. Filling width requires <code>Modifier.fillMaxWidth()</code>. (Options 3 and 6 directly contradict each other; only the wrap-content behavior is correct.)</div>
+    </div>
+  </section>
+
+  <!-- ================= QUESTION 3 ================= -->
+  <section class="q">
+    <span class="q-num">QUESTION 3</span>
+    <div class="q-prompt">Which of the following statements about the Jetpack Compose <code>Column</code> composable are TRUE? Select ALL that apply.</div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 1</span></div>
+      <div class="opt-body"><p>Column places its children vertically, one above the next, in the order they are declared (first child at the top).</p></div>
+      <div class="why"><strong>Why it's true:</strong> <code>Column</code> is the vertical layout primitive. It stacks children along the vertical (main) axis in declaration order — first child on top, next below it.</div>
+    </div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 2</span></div>
+      <div class="opt-body"><p>The verticalArrangement parameter controls how children are positioned and spaced along the vertical (main) axis.</p></div>
+      <div class="why"><strong>Why it's true:</strong> a Column's main axis is vertical, so <code>verticalArrangement</code> (an <code>Arrangement.Vertical</code> such as <code>Arrangement.Top</code> or <code>Arrangement.spacedBy(8.dp)</code>) governs top-to-bottom positioning, spacing, and distribution of leftover vertical space.</div>
+    </div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 3</span></div>
+      <div class="opt-body"><p>The horizontalAlignment parameter controls how children line up along the horizontal (cross) axis, for example Alignment.CenterHorizontally.</p></div>
+      <div class="why"><strong>Why it's true:</strong> a Column's cross axis is horizontal, so <code>horizontalAlignment</code> (an <code>Alignment.Horizontal</code> such as <code>Alignment.Start</code> or <code>Alignment.CenterHorizontally</code>) decides how each child lines up across the column's width.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 4</span></div>
+      <div class="opt-body"><p>Column places its children horizontally, side by side.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> horizontal, side-by-side layout is what <code>Row</code> does. A <code>Column</code> is vertical by definition. Swapping Column and Row is the classic mistake this option tests.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 5</span></div>
+      <div class="opt-body"><p>A Column scrolls vertically by default, with no extra modifier needed.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> a plain <code>Column</code> is <strong>not</strong> scrollable — overflowing children are clipped. You must add <code>Modifier.verticalScroll(rememberScrollState())</code>. The composable that scrolls automatically (and lazily) is <code>LazyColumn</code>, which is a different thing — confusing the two is what makes this tempting.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 6</span></div>
+      <div class="opt-body"><p>You space the children of a Column apart by setting a horizontalArrangement parameter.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> <code>Column</code> has <strong>no</strong> <code>horizontalArrangement</code> parameter (passing one is a compile error). Spacing along a Column's main axis uses <code>verticalArrangement</code>, e.g. <code>verticalArrangement = Arrangement.spacedBy(8.dp)</code>. <code>horizontalArrangement</code> belongs to <code>Row</code>.</div>
+    </div>
+
+    <div class="callout">
+      <h3>Key concept — Column vs. Row (ties Q3 &amp; Q4 together)</h3>
+      <table class="ref">
+        <tr><th></th><th>Column</th><th>Row</th></tr>
+        <tr><td>Main axis</td><td>Vertical (top → bottom)</td><td>Horizontal (start → end)</td></tr>
+        <tr><td>Position/space on <em>main</em> axis</td><td><code>verticalArrangement</code></td><td><code>horizontalArrangement</code></td></tr>
+        <tr><td>Align on <em>cross</em> axis</td><td><code>horizontalAlignment</code></td><td><code>verticalAlignment</code></td></tr>
+        <tr><td>Scrolls by default?</td><td>No — use <code>verticalScroll</code> or <code>LazyColumn</code></td><td>No — use <code>horizontalScroll</code> or <code>LazyRow</code></td></tr>
+      </table>
+      <p class="mnemonic">Mnemonic: the <strong>Arrangement</strong> word matches the <strong>main-axis</strong> direction; the <strong>Alignment</strong> word matches the <strong>cross-axis</strong> direction.</p>
+    </div>
+  </section>
+
+  <!-- ================= QUESTION 4 ================= -->
+  <section class="q">
+    <span class="q-num">QUESTION 4</span>
+    <div class="q-prompt">Which of the following statements about the Jetpack Compose <code>Row</code> composable are TRUE? Select ALL that apply.</div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 1</span></div>
+      <div class="opt-body"><p>Row places its children horizontally, side by side, in the order they are declared (first child at the leading edge).</p></div>
+      <div class="why"><strong>Why it's true:</strong> <code>Row</code> is the horizontal layout primitive. It places children along the horizontal (main) axis in declaration order — first child at the leading/start edge (left in LTR), each next child to its right.</div>
+    </div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 2</span></div>
+      <div class="opt-body"><p>The horizontalArrangement parameter controls how children are positioned and spaced along the horizontal (main) axis, for example Arrangement.SpaceBetween.</p></div>
+      <div class="why"><strong>Why it's true:</strong> a Row's main axis is horizontal, so <code>horizontalArrangement</code> (an <code>Arrangement.Horizontal</code> such as <code>Arrangement.SpaceBetween</code> or <code>Arrangement.spacedBy(8.dp)</code>) governs left-to-right positioning, spacing, and distribution of leftover horizontal space.</div>
+    </div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 3</span></div>
+      <div class="opt-body"><p>The verticalAlignment parameter controls how children line up along the vertical (cross) axis, for example Alignment.CenterVertically.</p></div>
+      <div class="why"><strong>Why it's true:</strong> a Row's cross axis is vertical, so <code>verticalAlignment</code> (an <code>Alignment.Vertical</code> such as <code>Alignment.CenterVertically</code>) decides how each child lines up within the row's height.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 4</span></div>
+      <div class="opt-body"><p>Row stacks its children vertically, top to bottom.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> vertical, top-to-bottom stacking is what <code>Column</code> does. A <code>Row</code> is horizontal by definition — the Column/Row swap again.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 5</span></div>
+      <div class="opt-body"><p>A Row scrolls horizontally by default, with no extra modifier needed.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> a plain <code>Row</code> is <strong>not</strong> scrollable; overflow is clipped. Add <code>Modifier.horizontalScroll(rememberScrollState())</code>, or use the lazy, auto-scrolling <code>LazyRow</code> — a different composable.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 6</span></div>
+      <div class="opt-body"><p>You align the children of a Row on the cross axis by setting a horizontalAlignment parameter.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> <code>Row</code> has <strong>no</strong> <code>horizontalAlignment</code> parameter. On a Row the cross axis is vertical, so cross-axis alignment uses <code>verticalAlignment</code>; <code>horizontalAlignment</code> belongs to <code>Column</code>. This option mixes up the two composables' parameters.</div>
+    </div>
+  </section>
+
+  <!-- ================= QUESTION 5 ================= -->
+  <section class="q">
+    <span class="q-num">QUESTION 5</span>
+    <div class="q-prompt">Which of the following statements about the Jetpack Compose Material 3 <code>Card</code> composable are TRUE? Select ALL that apply.</div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 1</span></div>
+      <div class="opt-body"><p>Card is a Material 3 container (built on top of Surface) used to group related content, and it applies a themed background color and rounded-corner shape by default.</p></div>
+      <div class="why"><strong>Why it's true:</strong> <code>Card</code> is implemented on top of <code>Surface</code>. Out of the box it applies a default rounded shape (<code>CardDefaults.shape</code>), a themed container/content color (<code>CardDefaults.cardColors()</code>), and a small elevation — so you get a visible card without styling it yourself.</div>
+    </div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 2</span></div>
+      <div class="opt-body"><p>The content you pass to a Card is a ColumnScope lambda, so by default its children are stacked vertically, the same way a Column lays them out.</p></div>
+      <div class="why"><strong>Why it's true:</strong> the card's <code>content</code> is declared as <code>@Composable ColumnScope.() -&gt; Unit</code>. Because the receiver is <code>ColumnScope</code>, children stack vertically by default and you can use <code>ColumnScope</code> modifiers like <code>Modifier.align()</code> and <code>Modifier.weight()</code>. (For horizontal content, put a <code>Row</code> inside the card.)</div>
+    </div>
+
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 3</span></div>
+      <div class="opt-body"><p>A Card can handle taps directly by using the Card overload that takes an onClick parameter (and an enabled flag).</p></div>
+      <div class="why"><strong>Why it's true:</strong> <code>Card</code> has an overload whose first parameter is <code>onClick: () -&gt; Unit</code> (plus <code>enabled: Boolean = true</code>). That makes the whole card a clickable surface with the proper ripple and accessibility semantics — no wrapper needed. A separate display-only overload (no <code>onClick</code>) also exists.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 4</span></div>
+      <div class="opt-body"><p>By default a Card lays out its children horizontally, the same way a Row does.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> a card's content scope is <code>ColumnScope</code>, so the default is <strong>vertical</strong> stacking (like a <code>Column</code>), not a <code>Row</code>. You only get horizontal content if you explicitly place a <code>Row</code> inside. This is the Card-specific version of the Column-vs-Row trap.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 5</span></div>
+      <div class="opt-body"><p>A Card has no default shape or container color, so nothing is drawn until you set shape and colors explicitly.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> the opposite of Option 1. <code>Card</code> <strong>does</strong> have defaults — a rounded shape, a themed container color, and elevation from <code>CardDefaults</code>. It is fully visible with zero styling; you override <code>shape</code>, <code>colors</code>, or <code>elevation</code> only when you want something different.</div>
+    </div>
+
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 6</span></div>
+      <div class="opt-body"><p>A Card cannot respond to clicks on its own; you must wrap it in a Button or attach a separate clickable to make it tappable.</p></div>
+      <div class="why"><strong>Why it's wrong:</strong> as Option 3 shows, the <code>onClick</code> overload makes a card clickable on its own — no <code>Button</code> wrapper required (and wrapping a whole card in a Button would be the wrong pattern). You <em>may</em> add <code>Modifier.clickable</code>, but it is not required.</div>
+    </div>
+  </section>
+
+  <footer>Answer key — Jetpack Compose (Material 3). Correct options shown in green, incorrect in red, each with rationale.</footer>
+
+</div>
+</body>
+</html>

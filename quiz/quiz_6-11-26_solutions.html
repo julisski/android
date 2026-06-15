@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 6/11/26 — Solutions & Explanations · COP4667D Android Development</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --panel-2: #1c2230;
+    --border: #2a3340;
+    --text: #c9d1d9;
+    --muted: #8b949e;
+    --teal: #2dd4bf;
+    --gold: #f5b942;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.65;
+    padding: 32px 16px 80px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  header {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    padding: 22px 26px;
+    margin-bottom: 28px;
+  }
+  header .prompt { color: var(--teal); font-size: 13px; letter-spacing: 0.04em; }
+  header h1 {
+    margin: 6px 0 4px;
+    font-size: 22px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  header .sub { color: var(--muted); font-size: 13px; }
+  .legend {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    margin-top: 14px; font-size: 12px; color: var(--muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+  .q {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .q-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 18px;
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .q-num {
+    color: var(--blue);
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .pts {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2px 10px;
+  }
+  .q-body { padding: 16px 18px; }
+  .stem { color: var(--text); margin: 0 0 12px; }
+  pre {
+    background: #0a0e14;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--teal);
+    border-radius: 6px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    margin: 10px 0;
+    color: #d4dce6;
+  }
+  .k { color: var(--gold); }
+  .fn { color: var(--blue); }
+  .s { color: var(--green); }
+  .c { color: var(--muted); }
+
+  .answer {
+    display: flex; align-items: baseline; gap: 10px;
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(63,185,80,0.08);
+    border: 1px solid rgba(63,185,80,0.35);
+    border-radius: 6px;
+  }
+  .answer .tag {
+    color: var(--green); font-weight: 600; font-size: 12px;
+    white-space: nowrap; letter-spacing: 0.05em;
+  }
+  .answer .val { color: var(--text); }
+  .answer .val code {
+    color: var(--gold);
+    background: #0a0e14;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  h4.section {
+    color: var(--teal);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 18px 0 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px;
+  }
+  .why { font-size: 14px; color: var(--text); }
+  .why p { margin: 8px 0; }
+  .why code { color: var(--teal); background: #0a0e14; padding: 0 5px; border-radius: 4px; }
+
+  table.opts {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 13px;
+  }
+  table.opts td {
+    border: 1px solid var(--border);
+    padding: 7px 10px;
+    vertical-align: top;
+  }
+  table.opts td.lbl { white-space: nowrap; color: var(--muted); width: 1%; }
+  table.opts tr.right td { background: rgba(63,185,80,0.08); }
+  table.opts tr.right td.lbl { color: var(--green); font-weight: 600; }
+  table.opts tr.wrong td.lbl { color: var(--red); }
+  table.opts code { color: var(--gold); background: #0a0e14; padding: 0 5px; border-radius: 4px; }
+
+  .trace {
+    background: #0a0e14;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--muted);
+    margin: 8px 0;
+  }
+  .trace b { color: var(--gold); font-weight: 600; }
+
+  .note {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--gold);
+    background: rgba(245,185,66,0.06);
+    border: 1px dashed rgba(245,185,66,0.35);
+    border-radius: 6px;
+    padding: 9px 13px;
+  }
+  .pitfall {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #ffb4ac;
+    background: rgba(248,81,73,0.06);
+    border-left: 3px solid var(--red);
+    border-radius: 6px;
+    padding: 8px 13px;
+  }
+  .pitfall b { color: var(--red); }
+  footer {
+    text-align: center; color: var(--muted); font-size: 12px;
+    margin-top: 36px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="prompt">~/cop4667d/week1 $ cat quiz_6-11-26_solutions --verbose</div>
+    <h1>Quiz 6/11/26 — Answer Key &amp; Explanations</h1>
+    <div class="sub">Android Development · COP4667D2-106082026 · Kotlin fundamentals</div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--green)"></span> Correct</span>
+      <span><span class="dot" style="background:var(--red)"></span> Distractor</span>
+      <span><span class="dot" style="background:var(--blue)"></span> Code answer</span>
+      <span><span class="dot" style="background:var(--gold)"></span> Teaching note</span>
+    </div>
+  </header>
+
+  <!-- Q1 -->
+  <div class="q">
+    <div class="q-head">
+      <span class="q-num">QUESTION 1</span>
+      <span class="pts">1 pt · MC</span>
+    </div>
+    <div class="q-body">
+      <p class="stem">What is the result of:</p>
+      <pre><span class="k">val</span> nums = <span class="fn">listOf</span>(3, 1, 4, 1, 5); <span class="k">val</span> r = nums.<span class="fn">fold</span>(1) { acc, n -> acc * n }</pre>
+      <div class="answer"><span class="tag">ANSWER ▸</span><span class="val"><code>60</code> (Option 3)</span></div>
+
+      <h4 class="section">How fold works</h4>
+      <div class="why">
+        <p><code>fold(initial)</code> walks the list left to right, carrying a running accumulator. The lambda takes <code>(acc, n)</code> and returns the new accumulator. The <em>seed</em> you pass — here <code>1</code> — is the accumulator's starting value <em>before</em> any element is seen. Because the operation is multiplication, seeding with <code>1</code> (the multiplicative identity) means the seed doesn't distort the product.</p>
+      </div>
+      <div class="trace">
+        <b>Trace:</b><br>
+        start &nbsp;&nbsp;acc = 1<br>
+        n=3 &nbsp;→ &nbsp;acc = 1 × 3 = 3<br>
+        n=1 &nbsp;→ &nbsp;acc = 3 × 1 = 3<br>
+        n=4 &nbsp;→ &nbsp;acc = 3 × 4 = 12<br>
+        n=1 &nbsp;→ &nbsp;acc = 12 × 1 = 12<br>
+        n=5 &nbsp;→ &nbsp;acc = 12 × 5 = <b>60</b>
+      </div>
+      <div class="why">
+        <p><b>Why the distractors are there:</b> <code>15</code> is the <em>sum</em> (3+1+4+1+5) — the trap for anyone who misreads <code>*</code> as <code>+</code>. <code>0</code> would be the answer only if the seed were <code>0</code> (anything ×0 = 0), the classic mistake of seeding a product with the additive identity. <code>14</code> and <code>61</code> are just off-by-one noise.</p>
+      </div>
+      <div class="note">💡 Teaching point: the seed must match the operation's identity — use <code>1</code> for products, <code>0</code> for sums, <code>emptyList()</code> for list-building. Seeding a product with <code>0</code> is the single most common <code>fold</code> bug.</div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q">
+    <div class="q-head">
+      <span class="q-num">QUESTION 2</span>
+      <span class="pts">1 pt · MC</span>
+    </div>
+    <div class="q-body">
+      <p class="stem">Given <code>val count: Int = 42</code>, which single line compiles in Kotlin?</p>
+      <div class="answer"><span class="tag">ANSWER ▸</span><span class="val"><code>val asLong: Long = count.toLong()</code> (Option 3)</span></div>
+
+      <h4 class="section">Why each option does / doesn't compile</h4>
+      <table class="opts">
+        <tr class="wrong"><td class="lbl">✗ O1</td><td><code>val asLong: Long = count</code> — Kotlin does <b>not</b> perform implicit widening. Unlike Java, an <code>Int</code> will not silently become a <code>Long</code>. Type mismatch, won't compile.</td></tr>
+        <tr class="wrong"><td class="lbl">✗ O2</td><td><code>count as Long</code> — <code>as</code> is a <em>reference cast</em>, checked against the class hierarchy. <code>Int</code> and <code>Long</code> are unrelated types (neither is a subtype of the other), so this can't convert and won't compile/throws.</td></tr>
+        <tr class="right"><td class="lbl">✓ O3</td><td><code>count.toLong()</code> — the explicit conversion function. Every Kotlin numeric type exposes <code>toByte()</code>, <code>toShort()</code>, <code>toInt()</code>, <code>toLong()</code>, <code>toFloat()</code>, <code>toDouble()</code>. The idiomatic, type-safe way to widen.</td></tr>
+        <tr class="wrong"><td class="lbl">✗ O4</td><td><code>(Long) count</code> — C/Java-style cast syntax. Kotlin has no such syntax; it's a parse error.</td></tr>
+        <tr class="wrong"><td class="lbl">✗ O5</td><td><code>Long(count)</code> — <code>Long</code> is not a constructor you can call. There's no <code>Long(...)</code> factory.</td></tr>
+      </table>
+      <div class="note">💡 Teaching point: Kotlin deliberately removed implicit numeric conversions to prevent silent precision/range surprises. The only way up or down the numeric ladder is an explicit <code>toXxx()</code> call.</div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q">
+    <div class="q-head">
+      <span class="q-num">QUESTION 3</span>
+      <span class="pts">1 pt · MC</span>
+    </div>
+    <div class="q-body">
+      <p class="stem">In which situation does a Kotlin <code>when</code> REQUIRE an <code>else</code> branch?</p>
+      <div class="answer"><span class="tag">ANSWER ▸</span><span class="val">Expression assigned to a value, subject is an <code>Int</code> (Option 1)</span></div>
+
+      <h4 class="section">The rule</h4>
+      <div class="why">
+        <p>Two conditions must <em>both</em> hold for <code>else</code> to be mandatory:</p>
+        <p>① The <code>when</code> is used as an <b>expression</b> — its value is consumed (assigned, returned, passed as an argument). A <code>when</code> used purely as a <b>statement</b> never requires <code>else</code>, because there's no result that could be "missing."</p>
+        <p>② The branches are <b>not exhaustive</b> — the compiler can't prove every possible subject value is handled. If it can't prove exhaustiveness, it forces <code>else</code> so the expression always produces a value.</p>
+      </div>
+
+      <h4 class="section">Applying it to the options</h4>
+      <table class="opts">
+        <tr class="right"><td class="lbl">✓ O1</td><td>Expression + <code>Int</code> subject. An <code>Int</code> has ~4 billion values; you can't enumerate them, so the compiler can never prove exhaustiveness. <b>else required.</b></td></tr>
+        <tr class="wrong"><td class="lbl">✗ O2</td><td>Sealed interface with every subtype covered → already exhaustive. The compiler knows the complete set of subtypes at compile time, so <b>no else needed.</b></td></tr>
+        <tr class="wrong"><td class="lbl">✗ O3</td><td>Enum with every constant covered → already exhaustive, same reasoning. <b>No else needed.</b></td></tr>
+        <tr class="wrong"><td class="lbl">✗ O4</td><td>Used as a <em>statement</em>, result ignored → exhaustiveness is irrelevant. <b>No else needed.</b></td></tr>
+        <tr class="wrong"><td class="lbl">✗ O5</td><td>Subjectless <code>when</code> used as a statement → again a statement. <b>No else needed.</b></td></tr>
+      </table>
+      <div class="note">💡 Teaching point: "expression + can't-be-proven-exhaustive ⇒ else." Sealed classes/interfaces and enums are special precisely because they give the compiler a <em>closed</em> set of possibilities to check against. Adding a new sealed subtype later turns a previously-exhaustive <code>when</code> into a compile error — a feature, not a bug, since it forces you to handle the new case.</div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q">
+    <div class="q-head">
+      <span class="q-num">QUESTION 4</span>
+      <span class="pts">1 pt · MC</span>
+    </div>
+    <div class="q-body">
+      <p class="stem"><code>user: User?</code>; its <code>address</code> is a non-null <code>Address</code>; <code>address.city</code> is a non-null <code>String</code>. Inferred type of:</p>
+      <pre><span class="k">val</span> c = user?.address?.city</pre>
+      <div class="answer"><span class="tag">ANSWER ▸</span><span class="val"><code>String?</code> (Option 2)</span></div>
+
+      <h4 class="section">Why the chain is nullable</h4>
+      <div class="why">
+        <p>The safe-call operator <code>?.</code> has one defining behavior: <b>if the left side is <code>null</code>, the whole expression short-circuits to <code>null</code> and the right side is never evaluated.</b></p>
+        <p>Here, <code>user</code> is <code>User?</code>. If <code>user</code> is null, the entire expression evaluates to <code>null</code> immediately — it never even looks at <code>address</code> or <code>city</code>. So the result must be able to <em>hold</em> null, which means the type is nullable regardless of how non-null the deeper properties are.</p>
+        <p>The non-nullness of <code>address</code> and <code>city</code> only tells you that <em>if</em> the chain reaches them, they won't add <em>additional</em> null sources. But the very first <code>?.</code> already poisoned the result type with nullability. One nullable link is enough.</p>
+      </div>
+      <div class="trace">
+        <b>Type derivation:</b><br>
+        <code>user</code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: User?<br>
+        <code>user?.address</code> : Address? &nbsp;<span style="color:#8b949e">(? propagates from user)</span><br>
+        <code>...?.city</code> &nbsp;&nbsp;&nbsp;: String? &nbsp;<span style="color:#8b949e">(? still propagating)</span>
+      </div>
+      <div class="why">
+        <p><b>Distractors:</b> <code>String</code> (O1) would be right only if <code>user</code> were non-null. <code>Address?</code> (O3) is the type of the <em>intermediate</em> <code>user?.address</code>, not the final result. <code>User?</code> (O4) is just the starting type. And <code>?.</code> chaining absolutely compiles (O5) — that's its whole purpose.</p>
+      </div>
+      <div class="note">💡 Teaching point: to collapse the result back to non-null, end the chain with the Elvis operator — <code>user?.address?.city ?: "unknown"</code> infers <code>String</code>, because Elvis guarantees a non-null fallback.</div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q">
+    <div class="q-head">
+      <span class="q-num">QUESTION 5</span>
+      <span class="pts">1 pt · MC</span>
+    </div>
+    <div class="q-body">
+      <p class="stem">Four are equivalent ways to pass the same predicate to <code>filter</code>. Which is NOT valid Kotlin?</p>
+      <div class="answer"><span class="tag">ANSWER ▸</span><span class="val"><code>nums.filter(it > 2)</code> (Option 5)</span></div>
+
+      <h4 class="section">filter's signature</h4>
+      <div class="why">
+        <p><code>filter</code> expects a <b>function</b>: <code>filter(predicate: (T) -> Boolean)</code>. You must hand it something <em>callable</em> that takes an element and returns a Boolean — i.e. a lambda. The four valid options are just different surface syntaxes for handing over the same lambda <code>{ it > 2 }</code>.</p>
+      </div>
+      <table class="opts">
+        <tr class="wrong"><td class="lbl">valid O1</td><td><code>filter({ it > 2 })</code> — lambda passed normally inside the parentheses.</td></tr>
+        <tr class="wrong"><td class="lbl">valid O2</td><td><code>filter() { it > 2 }</code> — empty parens + trailing lambda. Legal but unusual.</td></tr>
+        <tr class="wrong"><td class="lbl">valid O3</td><td><code>filter { it > 2 }</code> — trailing-lambda syntax: when the lambda is the <em>last</em> (here, only) argument, it can move outside and the parens drop. The idiomatic form.</td></tr>
+        <tr class="wrong"><td class="lbl">valid O4</td><td><code>filter(predicate = { it > 2 })</code> — named argument, lambda as the value.</td></tr>
+        <tr class="right"><td class="lbl">✓ O5</td><td><code>filter(it > 2)</code> — <b>this is the answer.</b> No braces, so <code>it > 2</code> is not a lambda — it's an attempt to evaluate an expression. Worse, <code>it</code> has no meaning here (no lambda scope to define it), and even if it did you'd be passing a <code>Boolean</code> where a function is required. Two errors at once.</td></tr>
+      </table>
+      <div class="pitfall"><b>The trap:</b> the missing braces are easy to miss when skimming. <code>{ it > 2 }</code> is a function value; <code>it > 2</code> is a (broken) boolean expression. The braces are what create the lambda and bring the implicit <code>it</code> parameter into scope.</div>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q">
+    <div class="q-head">
+      <span class="q-num">QUESTION 6</span>
+      <span class="pts">2 pts · Code</span>
+    </div>
+    <div class="q-body">
+      <p class="stem">Return the length of <code>s</code>, or 0 if <code>s</code> is null. Use <code>?.</code> and <code>?:</code> — one line.</p>
+      <pre><span class="k">fun</span> <span class="fn">safeLength</span>(s: String?): Int = s?.length ?: 0</pre>
+
+      <h4 class="section">How it reads</h4>
+      <div class="why">
+        <p>Evaluate left to right:</p>
+        <p><code>s?.length</code> — safe-call. If <code>s</code> is non-null, this is its <code>length</code> (an <code>Int</code>). If <code>s</code> is null, the safe-call short-circuits to <code>null</code>, giving an intermediate type of <code>Int?</code>.</p>
+        <p><code>?: 0</code> — Elvis. If the left side is non-null, use it; if it's null, fall back to <code>0</code>. This collapses the <code>Int?</code> back down to a plain <code>Int</code>, satisfying the declared return type.</p>
+      </div>
+      <div class="trace">
+        <b>Cases:</b><br>
+        <code>safeLength("hello")</code> → <code>"hello".length</code> = 5 → 5<br>
+        <code>safeLength("")</code> &nbsp;&nbsp;&nbsp;&nbsp;→ <code>"".length</code> = 0 → 0<br>
+        <code>safeLength(null)</code> &nbsp;→ null ?: 0 → <b>0</b>
+      </div>
+      <div class="pitfall"><b>Common wrong answers:</b> <code>s.length</code> won't compile (<code>s</code> is nullable, no safe-call). <code>if (s != null) s.length else 0</code> works but ignores the instruction to use <code>?.</code> and <code>?:</code>. <code>s?.length ?: -1</code> returns the wrong fallback.</div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q">
+    <div class="q-head">
+      <span class="q-num">QUESTION 7</span>
+      <span class="pts">2 pts · Code</span>
+    </div>
+    <div class="q-body">
+      <p class="stem">Return a new list of only the even numbers, each doubled, in original order. Chain <code>filter</code> then <code>map</code> — no manual loop.</p>
+      <pre><span class="k">fun</span> <span class="fn">evensDoubled</span>(nums: List&lt;Int&gt;): List&lt;Int&gt; =
+    nums.<span class="fn">filter</span> { it % 2 == 0 }.<span class="fn">map</span> { it * 2 }</pre>
+
+      <h4 class="section">Why this order</h4>
+      <div class="why">
+        <p><code>filter { it % 2 == 0 }</code> keeps only elements where the predicate is true — the evens. <code>map { it * 2 }</code> then transforms each surviving element by doubling it. Both operations preserve input order and both return <em>new</em> lists (the original <code>nums</code> is untouched), which is what "return a new list" demands.</p>
+        <p><b>Order of operations matters</b> — and the question says so explicitly. Filtering first means <code>map</code> runs on fewer elements (cheaper), and it produces the right answer: you want "evens, doubled," not "all values doubled, then keep the ones that are even." Reversing them would double odds too before discarding them — wasted work and a different intent.</p>
+      </div>
+      <div class="trace">
+        <b>Trace:</b> &nbsp;<code>listOf(1, 2, 3, 4, 5, 6)</code><br>
+        after <b>filter</b> (evens) → <code>[2, 4, 6]</code><br>
+        after <b>map</b> (×2) &nbsp;&nbsp;&nbsp;&nbsp;→ <b>[4, 8, 12]</b>
+      </div>
+      <div class="pitfall"><b>Watch for:</b> <code>it % 2 == 1</code> catches odds, not evens (and breaks on negative numbers, where the remainder can be <code>-1</code>). Use <code>== 0</code>. A manual <code>for</code> loop with an accumulator list would produce the same output but is explicitly disallowed here.</div>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q">
+    <div class="q-head">
+      <span class="q-num">QUESTION 8</span>
+      <span class="pts">2 pts · Code</span>
+    </div>
+    <div class="q-body">
+      <p class="stem">Implement code that uses four functions chained together.</p>
+      <pre><span class="k">fun</span> <span class="fn">fancySum</span>(nums: List&lt;Int&gt;): Int =
+    nums.<span class="fn">filter</span> { it > 0 }.<span class="fn">map</span> { it * 2 }.<span class="fn">distinct</span>().<span class="fn">sum</span>()</pre>
+
+      <h4 class="section">What each link does</h4>
+      <table class="opts">
+        <tr><td class="lbl">filter</td><td><code>{ it > 0 }</code> — keeps positives, drops zero and negatives. Returns <code>List&lt;Int&gt;</code>.</td></tr>
+        <tr><td class="lbl">map</td><td><code>{ it * 2 }</code> — doubles each survivor. Still <code>List&lt;Int&gt;</code>.</td></tr>
+        <tr><td class="lbl">distinct</td><td>removes duplicate values, keeping the first occurrence and preserving order. Returns <code>List&lt;Int&gt;</code>.</td></tr>
+        <tr><td class="lbl">sum</td><td>adds all elements, returning a single <code>Int</code> — matches the function's return type and is what makes the chain terminate in a value rather than a list.</td></tr>
+      </table>
+      <div class="trace">
+        <b>Trace:</b> &nbsp;<code>listOf(-1, 2, 2, 3, 0, 3)</code><br>
+        filter &gt;0 &nbsp;→ <code>[2, 2, 3, 3]</code><br>
+        map ×2 &nbsp;&nbsp;&nbsp;→ <code>[4, 4, 6, 6]</code><br>
+        distinct → <code>[4, 6]</code> &nbsp;<span style="color:#8b949e">(dupes from doubling collapse)</span><br>
+        sum &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <b>10</b>
+      </div>
+      <div class="why">
+        <p>Note the behavioral wrinkle: <code>distinct()</code> here actually <em>changes the result</em>, not just tidies the list. Two different positive inputs that double to the same value contribute only once to the sum. Worth flagging to students as the substantive consequence of including <code>distinct</code> in the chain.</p>
+        <p>Any chain of four standard collection functions that ends in an <code>Int</code> satisfies the prompt — e.g. <code>filter().map().take(3).sum()</code>, or <code>filter().map().sorted().first()</code>. The terminal operation must collapse the list to a scalar <code>Int</code>.</p>
+      </div>
+      <div class="note">⚠ Grading note: Q8 is open-ended as written, so many valid answers exist. To make student submissions comparable, consider pinning the spec down (e.g. "filter positives, map ×2, take the first 3, sum"). Otherwise grade on: (a) exactly four chained calls, (b) the chain type-checks, and (c) it returns an <code>Int</code>.</div>
+    </div>
+  </div>
+
+  <footer>
+    Answer key · COP4667D Android Development · Quiz 6/11/26 · All MC keys verified against the question document.
+  </footer>
+
+</div>
+</body>
+</html>
