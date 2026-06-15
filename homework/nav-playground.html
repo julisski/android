@@ -153,6 +153,14 @@ pre .px{color:var(--c-punct);}
 .ndetail p{margin:0 0 18px;color:var(--muted);font-size:14px;}
 .nbtn{border:0;background:var(--blue);color:#fff;border-radius:999px;font-size:14px;font-weight:700;padding:10px 18px;cursor:pointer;}
 .nbtn:hover{filter:brightness(1.05);}
+.nbtn.alt{background:var(--blue-soft);color:#1e40af;margin-right:8px;}
+/* overlay (dialog) scene: a dimmed scrim + a centered dialog card over the screen below */
+.noverlay-scrim{position:absolute;inset:0;z-index:20;background:rgba(8,15,28,.45);display:flex;align-items:center;justify-content:center;padding:22px;}
+.noverlay-dialog{background:#fff;border-radius:16px;padding:18px 18px 16px;max-width:240px;box-shadow:0 20px 50px -16px rgba(2,8,20,.55);}
+.noverlay-title{font-size:16px;font-weight:800;color:var(--ink);margin-bottom:8px;}
+.noverlay-body{font-size:13.5px;color:var(--muted);line-height:1.5;margin-bottom:16px;}
+body.theme-dark .noverlay-dialog{background:#1b2230;}
+body.theme-dark .noverlay-title{color:#e6edf6;}
 .nbtn.tonal{background:var(--blue-soft);color:#1e40af;}
 .ncenter{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px;}
 .ncenter .big{font-size:40px;}
@@ -311,12 +319,12 @@ body.theme-dark .phone .nfield{ background:#1b2230; }
     { id:2, name:'Gas Giants', description:'Massive planets made mostly of gas.' },
   ];
   var ITEMS = [
-    { id:1, categoryId:1, title:'Mercury', blurb:'The smallest planet and the closest to the Sun.' },
-    { id:2, categoryId:1, title:'Venus', blurb:'The hottest planet, wrapped in thick clouds of acid.' },
-    { id:3, categoryId:1, title:'Earth', blurb:'The only planet known to support life — so far.' },
-    { id:4, categoryId:1, title:'Mars', blurb:'The red planet, a frequent target for rovers.' },
-    { id:5, categoryId:2, title:'Jupiter', blurb:'The largest planet, a gas giant with a great red spot.' },
-    { id:6, categoryId:2, title:'Saturn', blurb:'The ringed gas giant, second largest in the system.' },
+    { id:1, categoryId:1, title:'Mercury', blurb:'The smallest planet and the closest to the Sun.', fact:'A year on Mercury is just 88 Earth days, but a single day lasts 176.' },
+    { id:2, categoryId:1, title:'Venus', blurb:'The hottest planet, wrapped in thick clouds of acid.', fact:'Venus spins backwards, so the Sun rises in the west and sets in the east.' },
+    { id:3, categoryId:1, title:'Earth', blurb:'The only planet known to support life — so far.', fact:'Earth is the only planet not named after a Greek or Roman god.' },
+    { id:4, categoryId:1, title:'Mars', blurb:'The red planet, a frequent target for rovers.', fact:'Mars hosts Olympus Mons, the tallest volcano in the solar system.' },
+    { id:5, categoryId:2, title:'Jupiter', blurb:'The largest planet, a gas giant with a great red spot.', fact:"Jupiter's Great Red Spot is a storm wider than the entire Earth." },
+    { id:6, categoryId:2, title:'Saturn', blurb:'The ringed gas giant, second largest in the system.', fact:'Saturn is so light it would float in water — if you found a big enough tub.' },
   ];
   var categoryById = function(id){ return CATEGORIES.filter(function(c){return c.id===id;})[0]; };
   var itemById = function(id){ return ITEMS.filter(function(i){return i.id===id;})[0]; };
@@ -332,6 +340,8 @@ body.theme-dark .phone .nfield{ background:#1b2230; }
     CategoriesKey: { arg:null,          screen:function(){ return 'Categories screen'; } },
     ItemsKey:      { arg:'categoryId',  screen:function(a){ if(a.categoryId==null) return 'Items · (no category)'; var c=categoryById(a.categoryId); return 'Items · '+(c?c.name:'category '+a.categoryId); } },
     DetailKey:     { arg:'itemId',      screen:function(a){ if(a.itemId==null) return 'Detail · (no item)'; var i=itemById(a.itemId); return 'Detail · '+(i?i.title:'item '+a.itemId); } },
+    PlanetsKey:    { arg:null,          screen:function(){ return 'Planets list'; } },
+    FactDialogKey: { arg:'itemId',      screen:function(a){ if(a.itemId==null) return 'Dialog · (no item)'; var i=itemById(a.itemId); return 'Dialog · '+(i?i.title:'item '+a.itemId)+' fact (overlay)'; } },
     HomeKey:       { arg:null,          screen:function(){ return 'Home'; } },
     WelcomeKey:    { arg:null,          screen:function(){ return 'Onboarding · Welcome'; } },
     PermissionsKey:{ arg:null,          screen:function(){ return 'Onboarding · Permissions'; } },
@@ -494,10 +504,46 @@ body.theme-dark .phone .nfield{ background:#1b2230; }
     var d = el('div','ndetail');
     d.appendChild(el('h3', null, it ? it.title : 'Item '+key.args.itemId));
     d.appendChild(el('p', null, it ? it.blurb : 'Unknown item.'));
+    // Open the fun-fact OVERLAY. This is an ORDINARY push (stack +1) — what makes
+    // it an overlay is the DialogSceneStrategy metadata on the entry, which keeps
+    // THIS detail screen visible behind the dialog. (See the Overlay scenario.)
+    if(it){
+      var f = el('button','nbtn alt','💬 Show fun fact');
+      f.addEventListener('click', function(){ push(mk('FactDialogKey', it.id), 'Show fun fact'); });
+      d.appendChild(f);
+    }
     var b = el('button','nbtn','‹ Back to list');
     b.addEventListener('click', function(){ pop(); });
     d.appendChild(b);
     area.appendChild(d);
+  }
+  // Render the flat PLANETS list (NavOverlay's root): every planet, tap → Detail.
+  function screenPlanets(area){
+    area.appendChild(appBar('🪐 Planets'));
+    var list = el('div','scrollarea');
+    ITEMS.forEach(function(it){
+      list.appendChild(row(it.title, it.blurb, function(){ push(mk('DetailKey', it.id), 'tap '+it.title); }));
+    });
+    area.appendChild(list);
+  }
+  // Render the fun-fact DIALOG as an OVERLAY: the screen BELOW it stays drawn,
+  // with a dimmed scrim + a dialog card on top. OK / scrim-tap both pop the key.
+  function screenFactDialog(area, key, stack){
+    area.style.position = 'relative';
+    var under = stack[stack.length-2];                 // the entry beneath the dialog (stays visible)
+    if(under) renderKeyScreen(area, under);
+    else screenSimple(area,'💬','Dialog','(no screen beneath the dialog)', null, null);
+    var it = itemById(key.args.itemId);
+    var scrim = el('div','noverlay-scrim');
+    var dlg = el('div','noverlay-dialog');
+    dlg.appendChild(el('div','noverlay-title', it ? (it.title + ' — fun fact') : 'Fun fact'));
+    dlg.appendChild(el('div','noverlay-body', it ? it.fact : 'Unknown planet.'));
+    var ok = el('button','nbtn','OK');
+    ok.addEventListener('click', function(){ pop(); });               // OK = pop the dialog key
+    dlg.appendChild(ok);
+    scrim.addEventListener('click', function(e){ if(e.target===scrim) pop(); }); // tap scrim = dismiss = pop
+    scrim.appendChild(dlg);
+    area.appendChild(scrim);
   }
   // A simple centered "screen" with a title, emoji, and a primary action.
   function screenSimple(area, emoji, title, sub, btnLabel, onBtn){
@@ -519,22 +565,30 @@ body.theme-dark .phone .nfield{ background:#1b2230; }
     area.appendChild(wrap);
   }
 
-  // Render whatever the TOP key is into the phone's content area.
-  function renderTopScreen(area){
-    var stack = activeStack();
-    if(!stack || !stack.length){ area.appendChild(el('div','nempty','(empty back stack — nothing to show. In a real app this exits the screen.)')); return; }
-    var top = stack[stack.length-1];
-    switch(top.type){
+  // Render ONE key's screen into `area` (used for the top key, and for the entry
+  // BENEATH a dialog overlay).
+  function renderKeyScreen(area, key){
+    switch(key.type){
       case 'CategoriesKey': return screenCategories(area);
-      case 'ItemsKey':      return screenItems(area, top);
-      case 'DetailKey':     return screenDetail(area, top);
+      case 'ItemsKey':      return screenItems(area, key);
+      case 'DetailKey':     return screenDetail(area, key);
+      case 'PlanetsKey':    return screenPlanets(area);
       case 'SearchKey':     return screenSearch(area);
       case 'HomeKey':       return screenSimple(area,'🪐','Home','Welcome to the Planets app.','Browse categories ›', function(){ push(mk('CategoriesKey'),'tap Browse'); });
       case 'WelcomeKey':    return screenSimple(area,'👋','Welcome','Step 1 of onboarding.','Next ›', function(){ push(mk('PermissionsKey'),'tap Next'); });
       case 'PermissionsKey':return screenSimple(area,'🔒','Permissions','Step 2 of onboarding.','Finish onboarding ›', function(){ finishOnboarding(); });
       case 'AboutKey':      return screenSimple(area,'ℹ️','About','A tiny planets demo for Navigation 3.', null, null);
-      default:              return screenSimple(area,'⚠️','Unknown key', top.type+' is not a known screen.', null, null);
+      default:              return screenSimple(area,'⚠️','Unknown key', key.type+' is not a known screen.', null, null);
     }
+  }
+  // Render whatever the TOP key is into the phone's content area.
+  function renderTopScreen(area){
+    var stack = activeStack();
+    if(!stack || !stack.length){ area.appendChild(el('div','nempty','(empty back stack — nothing to show. In a real app this exits the screen.)')); return; }
+    var top = stack[stack.length-1];
+    // An overlay key (the dialog) draws OVER the entry beneath it (which stays visible).
+    if(top.type==='FactDialogKey') return screenFactDialog(area, top, stack);
+    return renderKeyScreen(area, top);
   }
 
   // =========================================================================
@@ -699,6 +753,10 @@ body.theme-dark .phone .nfield{ background:#1b2230; }
     { name:'Nested graph', mode:'stack',
       comment:'// A self-contained onboarding sub-flow. Walk Welcome → Next → Permissions,\n// then "Finish onboarding" pops the WHOLE sub-flow as a unit and pushes Home.',
       build:function(){ return [ mk('WelcomeKey') ]; } },
+
+    { name:'Overlay (dialog) ★', mode:'stack',
+      comment:'// Overlay scene (NavOverlay): a dialog is a NORMAL key on the back stack —\n// add() to open (stack +1), removeLastOrNull() to dismiss (stack −1) — but it\n// RENDERS OVER the screen below, which stays visible. Tap "Show fun fact".',
+      build:function(){ return [ mk('PlanetsKey'), mk('DetailKey',6) ]; } },
   ];
 
   var CATALOG = [
@@ -719,6 +777,7 @@ body.theme-dark .phone .nfield{ background:#1b2230; }
       { name:'Deep links', what:'Enter the app from a URI and hand-seed a sensible stack so Back still works. Here navdemo://planet/6 seeds [Categories, Items, Detail] for Saturn.', params:'rememberNavBackStack(CategoriesKey, ItemsKey(categoryId = 2), DetailKey(itemId = 6))', scenario:2 },
       { name:'Multiple back stacks (tabs)', what:'Each bottom tab owns its own rememberNavBackStack. Switching tabs swaps which one NavDisplay renders; each tab keeps its place.', params:'one back stack per tab', scenario:3 },
       { name:'Nested graphs (sub-flows)', what:'Group a sub-flow (onboarding) and pop it as a UNIT, then hand off to the main flow. "Finish onboarding" clears both onboarding keys and pushes Home.', params:'finishOnboarding(): drop sub-flow, add(HomeKey)', scenario:4 },
+      { name:'Overlay (dialog) scene', what:'A dialog is an ORDINARY key: add() opens it (stack +1), removeLastOrNull() dismisses it (stack −1). What differs is RENDERING — Nav3’s DialogSceneStrategy draws it OVER the screen below, which stays composed and visible. No special back handling: System Back, the scrim, and "OK" all just pop the top key.', params:'entry<FactDialogKey>(metadata = DialogSceneStrategy.dialog())', scenario:5 },
     ]},
   ];
 
