@@ -67,43 +67,43 @@
     {
       "title": "The FORWARD transition: slide-in-from-right + fade, paired with a partial slide-out",
       "file": "NavTransitions/src/main/java/com/example/navtransitions/MainActivity.kt",
-      "start": 182,
-      "end": 198,
+      "start": 184,
+      "end": 200,
       "explain": "forwardSpec returns the lambda handed to NavDisplay's transitionSpec, run on every push. The incoming screen starts one full screen-width to the right (initialOffsetX = { fullWidth -> fullWidth }) and fades in, joined by 'togetherWith' to the outgoing screen, which slides only a third of the way left (-fullWidth / 3) and fades out. This is the core 'going deeper' motion, and every number comes from TRANSITION_MS and TRANSITION_EASING so you can tune it in one place."
     },
     {
       "title": "The POP transition is the exact mirror image of forward",
       "file": "NavTransitions/src/main/java/com/example/navtransitions/MainActivity.kt",
-      "start": 208,
-      "end": 223,
+      "start": 210,
+      "end": 225,
       "explain": "popSpec feeds NavDisplay's popTransitionSpec and runs on back navigation. Compare it to forwardSpec: the returning screen now enters from the LEFT (initialOffsetX = -fullWidth / 3) and the leaving screen exits fully to the RIGHT (targetOffsetX = fullWidth). Reversing every direction is what makes a pop read as 'walking back the way you came', and seeing the two functions side by side is the whole lesson."
     },
     {
       "title": "Predictive-pop: a soft scale+fade driven by drag progress",
       "file": "NavTransitions/src/main/java/com/example/navtransitions/MainActivity.kt",
-      "start": 234,
-      "end": 239,
+      "start": 236,
+      "end": 241,
       "explain": "predictivePopSpec is the spec for the Android 14+ back-swipe. Its lambda also receives the swipe-edge Int (ignored here as '_'), and it uses scaleIn(0.9f)+fadeIn togetherWith scaleOut(0.9f)+fadeOut instead of slides. NavDisplay drives this one by the finger-drag PROGRESS rather than a fixed clock, so a gentle scale feels natural while the user peeks at the previous screen."
     },
     {
       "title": "Wiring the three specs into NavDisplay",
       "file": "NavTransitions/src/main/java/com/example/navtransitions/MainActivity.kt",
-      "start": 394,
-      "end": 434,
+      "start": 396,
+      "end": 436,
       "explain": "This is the call site that makes the sample work: NavDisplay takes backStack, an onBack that pops, and the three params transitionSpec = forwardSpec(), popTransitionSpec = popSpec(), predictivePopTransitionSpec = predictivePopSpec(). NavDisplay decides forward-vs-pop by diffing the back stack and then invokes the matching spec. Without these three lines you would get NavDisplay's plain default cross-fade."
     },
     {
       "title": "Per-entry override: the Fact screen slides vertically via metadata",
       "file": "NavTransitions/src/main/java/com/example/navtransitions/MainActivity.kt",
-      "start": 485,
-      "end": 504,
+      "start": 487,
+      "end": 506,
       "explain": "The FactKey entry passes 'metadata = NavDisplay.transitionSpec { ... } + NavDisplay.popTransitionSpec { ... }'. On push it uses slideInVertically(initialOffsetY = { fullHeight -> fullHeight }) so the screen rises up from the bottom; on pop it uses slideOutVertically downward. Because entry metadata beats the NavDisplay-wide defaults, this one screen visibly breaks the app's horizontal pattern, proving per-entry overrides work."
     },
     {
       "title": "Serializable NavKeys: data object vs data class",
       "file": "NavTransitions/src/main/java/com/example/navtransitions/MainActivity.kt",
-      "start": 322,
-      "end": 335,
+      "start": 324,
+      "end": 337,
       "explain": "CategoriesKey is a 'data object' because there is only ever one categories screen (no arguments). ItemsKey, DetailKey and FactKey are 'data class' types because each instance differs by the id it carries (categoryId or itemId). All implement NavKey and are @Serializable so the back stack can be saved and restored across process death; the screens receive only the id and resolve the full object via the lookup helpers."
     }
   ],

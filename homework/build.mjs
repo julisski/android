@@ -36,8 +36,8 @@ const GROUPS = [
   },
   {
     id: 'nav-concepts', label: '4 · One nav concept each', short: 'Nav concepts', track: 'nav',
-    blurb: 'Six focused demos, each isolating a single real-world navigation feature.',
-    projects: ['NavDeepLinks', 'NavBottomTabs', 'NavNestedGraphs', 'NavViewModelState', 'NavTransitions', 'NavDataLayer'],
+    blurb: 'Seven focused demos, each isolating a single real-world navigation feature.',
+    projects: ['NavDeepLinks', 'NavBottomTabs', 'NavNestedGraphs', 'NavViewModelState', 'NavTransitions', 'NavDataLayer', 'NavOverlay'],
   },
   {
     id: 'notes', label: '5 · Android concepts', short: 'Concepts track', track: 'notes',
@@ -316,7 +316,7 @@ function overviewPanel() {
     <div class="tracks">
       <div class="trackcol nav">
         <div class="trackhead">🪐 Navigation track <span>“planets” domain · Category → Item</span></div>
-        ${stepCards(['SingleActivity','Intent','NavDetailList','NavListDetail','NavThreeScreen','NavFourScreen','NavDeepLinks','NavBottomTabs','NavNestedGraphs','NavViewModelState','NavTransitions','NavDataLayer'])}
+        ${stepCards(['SingleActivity','Intent','NavDetailList','NavListDetail','NavThreeScreen','NavFourScreen','NavDeepLinks','NavBottomTabs','NavNestedGraphs','NavViewModelState','NavTransitions','NavDataLayer','NavOverlay'])}
       </div>
       <div class="trackcol notes">
         <div class="trackhead">🗒️ Android-concepts track <span>standalone concept demos</span></div>
@@ -332,6 +332,7 @@ function overviewPanel() {
       <li><span class="tn">4</span><span><b>NavBottomTabs</b> &amp; <b>NavNestedGraphs</b> — more advanced back-stack shapes (parallel stacks; sub-flows).</span></li>
       <li><span class="tn">5</span><span><b>NavDeepLinks</b> — entering the app from outside and rebuilding a sensible back stack.</span></li>
       <li><span class="tn">6</span><span><b>NavTransitions</b> — polish: animating the moves between screens.</span></li>
+      <li><span class="tn">7</span><span><b>NavOverlay</b> — overlays: a dialog scene that sits on top of the back stack while the screen beneath stays visible.</span></li>
     </ol>
 
     <h3>The shared tech stack</h3>

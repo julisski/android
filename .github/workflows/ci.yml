@@ -66,6 +66,7 @@ jobs:
             "NavViewModelState|NavViewModelState|NavViewModelState"
             "NavTransitions|NavTransitions|NavTransitions"
             "NavDataLayer|NavDataLayer|NavDataLayer"
+            "NavOverlay|NavOverlay|NavOverlay"
             "ComposeModernUI|ComposeModernUI|ComposeModernUI"
             "ComposeCatalog|ComposeCatalog|ComposeCatalog"
             "ComposeModifiers|ComposeModifiers|ComposeModifiers"

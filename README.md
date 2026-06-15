@@ -61,6 +61,7 @@ comments, so you can diff any two projects to see exactly what a feature adds.
 | [`NavViewModelState`](./NavViewModelState) | State/logic in a `ViewModel` (`StateFlow`); survives rotation & navigation, unlike `remember`. |
 | [`NavTransitions`](./NavTransitions) | Custom animated screen transitions (forward / pop / predictive-back). |
 | [`NavDataLayer`](./NavDataLayer) | Screens observe a **repository through a ViewModel** with loading / empty / error / success states. |
+| [`NavOverlay`](./NavOverlay) | A **dialog overlay** scene that sits on top of the back stack while the screen beneath stays visible (push = +1, dismiss = −1). |
 
 ---
 
