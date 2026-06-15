@@ -57,13 +57,10 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);
 
 /* --- Hero (the dark header band) -------------------------------------------- */
 header.hero{background:linear-gradient(135deg,#0b1220 0%,#15243a 55%,#0f9d58 165%);
-  color:#fff;padding:18px 22px 16px;border-bottom:4px solid var(--accent);flex:none;}
-header.hero .bartop{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
-.eyebrow{letter-spacing:.15em;text-transform:uppercase;font-size:11px;color:var(--accent);font-weight:800;margin:0;}
-header.hero h1{margin:2px 0 0;font-size:21px;line-height:1.15;font-weight:850;letter-spacing:-.01em;}
-header.hero p.sub{margin:6px 0 0;color:#c6d2e2;font-size:13px;max-width:80ch;}
-header.hero a.back{margin-left:auto;color:#dbe7ff;text-decoration:none;font-size:13px;font-weight:700;
-  border:1px solid rgba(255,255,255,.25);padding:6px 12px;border-radius:8px;white-space:nowrap;}
+  color:#fff;padding:7px 16px;border-bottom:3px solid var(--accent);flex:none;}
+header.hero .bartop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header.hero a.back{color:#dbe7ff;text-decoration:none;font-size:12.5px;font-weight:700;
+  border:1px solid rgba(255,255,255,.25);padding:4px 10px;border-radius:8px;white-space:nowrap;}
 header.hero a.back:hover{background:rgba(255,255,255,.1);}
 
 /* --- Toolbar (presets, insert palette, theme/reset buttons) ----------------- */
@@ -83,10 +80,12 @@ header.hero a.back:hover{background:rgba(255,255,255,.1);}
 /* --- The editor | preview row ----------------------------------------------
    A fixed-ish height so both panes are usable; the catalog flows underneath and
    the page scrolls. (On narrow screens this stacks — see the media query.) */
-.main{height:62vh;min-height:380px;display:flex;flex:none;border-bottom:1px solid var(--line);}
+/* No fixed height: the row grows to fit the phone, so the whole emulator shows
+   without a cramped inner scrollbar. min-height is just a floor for short content. */
+.main{min-height:520px;display:flex;flex:none;border-bottom:1px solid var(--line);}
 .pane{display:flex;flex-direction:column;min-width:0;min-height:0;}
-.pane.editor{flex:1.1;border-right:1px solid var(--line);}   /* editor slightly wider than preview */
-.pane.preview{flex:1;background:#eef1f5;}
+.pane.editor{flex:1;border-right:1px solid var(--line);}     /* editor */
+.pane.preview{flex:1;background:#eef1f5;}                     /* 50/50 split; the phone itself is sized bigger below */
 .panehead{display:flex;align-items:center;gap:10px;padding:8px 14px;background:#f7f9fc;border-bottom:1px solid var(--line);
   font-size:12px;font-weight:750;color:var(--muted);flex:none;}
 .panehead .dot{width:9px;height:9px;border-radius:50%;background:var(--accent-deep);flex:none;}
@@ -123,11 +122,25 @@ pre .px{color:var(--c-punct);}
 .status.err{background:var(--warn-soft);color:#9a3412;}                          /* parse/render error styling */
 
 /* --- Preview "phone" -------------------------------------------------------- */
-.previewscroll{flex:1;min-height:0;overflow:auto;display:flex;justify-content:center;padding:22px 18px;}
-.phone{width:300px;flex:none;border:10px solid #0b1220;border-radius:34px;background:#fff;overflow:hidden;
+.previewscroll{flex:1;min-width:0;min-height:0;overflow:auto;display:flex;justify-content:safe center;padding:18px 12px;}
+.phone{width:340px;flex:none;border:10px solid #0b1220;border-radius:34px;background:#fff;overflow:hidden;
   box-shadow:0 20px 50px -20px rgba(2,8,20,.5);align-self:flex-start;}
 .phone .notch{height:22px;background:#0b1220;border-radius:0 0 12px 12px;width:120px;margin:0 auto;}
-.phone .screen{min-height:520px;padding:16px;display:flex;flex-direction:column;gap:0;}   /* the rendered UI lives here */
+/* The screen now HOSTS three layers so the preview can be honest about the
+   system bars: a simulated status bar (top), a gesture nav bar (bottom), and the
+   .frame in between where the rendered composables live. The status/nav bars are
+   absolutely positioned (device chrome that's ALWAYS there); whether your content
+   sits under them or clears them is decided by the Screen-frame controls. */
+.phone .screen{position:relative;min-height:600px;overflow:hidden;}        /* hosts statusbar + frame + navbar */
+.phone .statusbar{position:absolute;top:0;left:0;right:0;height:26px;z-index:5;pointer-events:none;
+  display:flex;align-items:center;justify-content:space-between;padding:0 12px;
+  font:600 11px ui-monospace,monospace;color:#5b6b7e;
+  background:rgba(120,134,156,.20);border-bottom:1px solid rgba(120,134,156,.28);}  /* translucent → you SEE content slide under it */
+.phone .navbar{position:absolute;bottom:0;left:0;right:0;height:18px;z-index:5;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;background:rgba(120,134,156,.14);}
+.phone .navbar .pill{width:96px;height:4px;border-radius:2px;background:rgba(80,94,116,.55);}
+.phone .frame{display:flex;flex-direction:column;box-sizing:border-box;width:100%;min-height:600px;}  /* the render target; JS styles padding/arrangement/alignment */
+/* placeholder shown for a composable the interpreter doesn't know */
 /* placeholder shown for a composable the interpreter doesn't know */
 .unknown{border:1px dashed #c9596b;color:#a23;background:#fff5f6;border-radius:8px;
   padding:6px 10px;font:12px ui-monospace,monospace;display:inline-block;}
@@ -152,29 +165,46 @@ pre .px{color:var(--c-punct);}
 .catcard .catparams{margin:0;font-size:11px;color:var(--muted);line-height:1.5;}
 .catcard .catparams code{font-size:10.5px;color:var(--muted);font-weight:600;}
 
+/* --- Screen-frame control bar (padding / alignment / system bars) ----------- */
+.framebar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:8px 16px;background:#0e1726;color:#dbe6f3;
+  border-bottom:1px solid var(--line);font-size:12.5px;}
+.framebar .lbl{font-weight:800;letter-spacing:.03em;color:#8fb4ff;text-transform:uppercase;font-size:11px;}
+.framebar label{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.framebar select{font:inherit;font-size:12px;padding:3px 6px;border-radius:6px;border:1px solid #2b3a52;background:#162134;color:#dbe6f3;}
+.framebar input[type=range]{accent-color:var(--accent);width:96px;}
+.framebar input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;}
+.framebar b{color:#ffd86b;font-variant-numeric:tabular-nums;min-width:42px;}
+.framebar .hint{margin-left:auto;color:#8aa0bd;font-size:11.5px;}
+
+/* --- Emulator-ready generated-code strip ------------------------------------ */
+.genbar{flex:none;background:#0b1322;color:#e6eefb;border-top:3px solid var(--accent);}
+.genbar .genhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 16px;font-size:13px;border-bottom:1px solid #1b2740;}
+.genbar .genhead b{color:#fff;}
+.genbar .genhead code{font-family:ui-monospace,monospace;color:#ffd86b;font-size:12px;}
+.genbar .genhead .btn{margin-left:auto;}
+.genbar pre{margin:0;padding:12px 16px 16px;overflow:auto;max-height:340px;
+  font:12.5px/1.6 ui-monospace,Menlo,Consolas,monospace;white-space:pre;}
+.genbar .note{padding:0 16px 12px;margin:0;color:#8aa0bd;font-size:12px;}
+
 /* --- Narrow screens: stack the editor above the preview, let everything grow - */
 @media (max-width:860px){
   .main{flex-direction:column;height:auto;}
   .pane.editor{border-right:0;border-bottom:1px solid var(--line);}
   .editorwrap{min-height:240px;}
-  .pane.preview{min-height:420px;}
+  .pane.preview{min-height:480px;}
 }
 </style>
 </head>
 <body>
 
-<!-- HERO: title + a link back to the explained-projects page -->
+<!-- HERO: slim nav bar only — title + description removed to give the editor and
+     the emulator more vertical room. (The descriptions live in the catalog below.) -->
 <header class="hero">
   <div class="bartop">
-    <div>
-      <p class="eyebrow">Android · Kotlin · Jetpack Compose</p>
-      <h1>Compose Playground</h1>
-    </div>
     <a class="back" href="../labs/index.html">✅ Labs</a>
     <a class="back" href="./nav-playground.html">🧭 Navigation Playground</a>
     <a class="back" href="./projects.html">← Projects, Explained</a>
   </div>
-  <p class="sub">Edit Compose Kotlin on the left and watch the UI render live on the right. Try swapping <code style="color:#ffd">.padding()</code> and <code style="color:#ffd">.background()</code>, changing an <code style="color:#ffd">Arrangement</code>, or adding <code style="color:#ffd">.weight(1f)</code> — the preview updates as you type. Scroll down for a catalog of everything it understands. (A teaching interpreter, not a real compiler.)</p>
 </header>
 
 <!-- TOOLBAR: example presets (left), insert-snippet palette + theme/reset (right).
@@ -187,6 +217,59 @@ pre .px{color:var(--c-punct);}
     <button class="btn" id="themeBtn" type="button">◐ Dark preview</button>
     <button class="btn" id="resetBtn" type="button">↺ Reset</button>
   </div>
+</div>
+
+<!-- SCREEN-FRAME CONTROLS: the fix for "my UI is jammed in the corner / under the
+     status bar". These wrap whatever you type in a real screen container and let
+     you dial in padding, alignment, and system-bar (insets) handling WITHOUT
+     hand-editing the code. The preview + the "Emulator-ready Kotlin" strip below
+     update live. Turn "wrap content" OFF to reproduce the raw-setContent bug. -->
+<div class="framebar">
+  <span class="lbl">Screen frame</span>
+  <label title="Wrap your snippet in a full-screen root container. OFF = raw setContent (the corner bug).">
+    <input type="checkbox" id="frameOn"> wrap content
+  </label>
+  <label title="WHICH container holds your screen. Column = vertical stack · Box = overlap/center one thing · LazyColumn = scrolling list · Scaffold = standard app screen with innerPadding.">
+    root
+    <select id="frameRoot">
+      <option value="Column" selected>Column — vertical stack</option>
+      <option value="Box">Box — overlap / center</option>
+      <option value="LazyColumn">LazyColumn — scrolling list</option>
+      <option value="Scaffold">Scaffold — app screen</option>
+    </select>
+  </label>
+  <label title="Empty space between your content and the screen edges → Modifier.padding(n.dp) (or LazyColumn contentPadding).">
+    padding <input type="range" id="framePad" min="0" max="48" step="2" value="16"><b id="framePadVal">16.dp</b>
+  </label>
+  <label title="Column/LazyColumn: spacing on the MAIN (vertical) axis → verticalArrangement. Box: the vertical half of contentAlignment.">
+    vertical
+    <select id="frameVert">
+      <option value="Top">Top</option>
+      <option value="Center">Center</option>
+      <option value="Bottom">Bottom</option>
+      <option value="SpaceBetween">SpaceBetween</option>
+      <option value="SpaceAround">SpaceAround</option>
+      <option value="SpaceEvenly">SpaceEvenly</option>
+      <option value="spacedBy">spacedBy(12.dp)</option>
+    </select>
+  </label>
+  <label title="Column/LazyColumn: children's CROSS (horizontal) axis → horizontalAlignment. Box: the horizontal half of contentAlignment.">
+    horizontal
+    <select id="frameHoriz">
+      <option value="Start">Start</option>
+      <option value="CenterHorizontally">CenterHorizontally</option>
+      <option value="End">End</option>
+    </select>
+  </label>
+  <label title="Keep content clear of the status & navigation bars. 'none' draws under them (the bug). Scaffold handles this for you via innerPadding.">
+    system bars
+    <select id="frameInset">
+      <option value="none">none — under the bars (bug)</option>
+      <option value="systemBarsPadding" selected>systemBarsPadding()</option>
+      <option value="safeDrawingPadding">safeDrawingPadding()</option>
+    </select>
+  </label>
+  <span class="hint">↑ these rewrite the code on the left so it reflects every change</span>
 </div>
 
 <!-- MAIN: the editor pane and the live-preview pane, side by side. -->
@@ -205,11 +288,25 @@ pre .px{color:var(--c-punct);}
     <div class="previewscroll">
       <div class="phone">
         <div class="notch"></div>
-        <div class="screen" id="screen"></div>                 <!-- rendered composables are injected here -->
+        <div class="screen" id="screen">
+          <div class="statusbar"><span>9:41</span><span>●●●&nbsp;&nbsp;▮</span></div>  <!-- simulated status bar -->
+          <div class="frame" id="frame"></div>                 <!-- rendered composables are injected here -->
+          <div class="navbar"><span class="pill"></span></div> <!-- simulated gesture nav bar -->
+        </div>
       </div>
     </div>
   </section>
 </div>
+
+<!-- Explainer: the Screen-frame controls rewrite the EDITOR code itself, so the
+     code, the live preview and what you Copy are always the same thing — no
+     second hidden code view to get out of sync. -->
+<section class="genbar" id="genbar">
+  <div class="genhead">
+    <b>The “Screen frame” controls rewrite the code on the left</b> — pick the <b>root</b> container (<code>Column</code> / <code>Box</code> / <code>LazyColumn</code> / <code>Scaffold</code>), then change padding / alignment / system bars and watch the code update and the preview re-render. The editor’s <code>Copy</code> grabs the whole emulator-ready screen.
+  </div>
+  <p class="note"><b>root</b> = which container holds your screen: <b>Column</b> stacks vertically · <b>Box</b> overlaps/centers one thing · <b>LazyColumn</b> scrolls a long list · <b>Scaffold</b> is the standard app screen (gives you <code>innerPadding</code>). The preview simulates the status &amp; navigation bars; with <b>system bars = none</b> content slides under them (the corner bug), <b>systemBarsPadding()</b> / <b>Scaffold</b> push it clear.</p>
+</section>
 
 <!-- CATALOG: a full-width, explained reference of every component & modifier,
      each with a "Try" button. Built by JS from the CATALOG array. -->
@@ -727,6 +824,9 @@ pre .px{color:var(--c-punct);}
       case 'LinearProgressIndicator': return buildLinear(node);
       case 'AssistChip': case 'SuggestionChip': case 'FilterChip': case 'InputChip': return buildChip(node);
       case 'Scaffold': return buildScaffold(node);
+      case 'LazyColumn': return buildLazy(node, 'column');  // scrolling list (vertical)
+      case 'LazyRow': return buildLazy(node, 'row');        // scrolling list (horizontal)
+      case 'item': case 'items': case 'stickyHeader': return buildItems(node); // a LazyList block -> render its children
       default: return buildUnknown(node);                   // anything else -> placeholder (or render children)
     }
   }
@@ -758,6 +858,26 @@ pre .px{color:var(--c-punct);}
     if(arr.gap) el.style.gap=arr.gap+'px';            // spacedBy(n) -> a CSS gap
     var crossKey = dir==='column' ? node.named.horizontalAlignment : node.named.verticalAlignment;  // cross axis
     el.style.alignItems = crossToAlign(alignName(crossKey));
+    renderChildren(el, node);
+    return el;
+  }
+
+  // LazyColumn / LazyRow -> a scrolling flexbox. Same arrangement/alignment as a
+  // Column/Row, plus contentPadding (the list's inner edge spacing) and overflow.
+  function buildLazy(node, dir){
+    var el=buildStack(node, dir);                     // reuse main-axis / cross-axis handling
+    el.style.overflow='auto';                         // it scrolls
+    var cp=node.named.contentPadding;                 // contentPadding = PaddingValues(n.dp)
+    if(cp && cp.kind==='access' && cp.root==='PaddingValues'){
+      var call=cp.segments.find(function(s){return s.type==='call';});
+      if(call && call.args.positional[0]!=null) el.style.padding=num(call.args.positional[0])+'px';
+    }
+    return el;
+  }
+  // item { } / items(list) { } / stickyHeader { } -> just render the block's
+  // children (the rows). A real LazyList lazily composes these; here we show them.
+  function buildItems(node){
+    var el=document.createElement('div'); el.style.display='flex'; el.style.flexDirection='column';
     renderChildren(el, node);
     return el;
   }
@@ -967,9 +1087,11 @@ pre .px{color:var(--c-punct);}
     return '';
   }
 
-  // Scaffold -> just render its content lambda's children in a column (minimal).
+  // Scaffold -> render its content lambda's children, FILLING the screen so an
+  // inner fillMaxSize Column/Box has room to arrange/center (minimal model).
   function buildScaffold(node){
-    var el=document.createElement('div'); el.style.display='flex'; el.style.flexDirection='column'; el.style.gap='8px'; el.style.width='100%';
+    var el=document.createElement('div'); el.style.display='flex'; el.style.flexDirection='column'; el.style.width='100%';
+    el.style.flex='1 1 auto'; el.style.minHeight='100%';  // fill the preview screen
     renderChildren(el, node);
     return el;
   }
@@ -990,9 +1112,189 @@ pre .px{color:var(--c-punct);}
   // =========================================================================
   var codeEl=document.getElementById('code');       // the textarea you type into
   var hlEl=document.querySelector('#hl code');       // the highlighted layer behind it
-  var screenEl=document.getElementById('screen');    // the phone's screen (render target)
+  var screenEl=document.getElementById('screen');    // the phone's screen (hosts the bars + frame)
+  var frameEl=document.getElementById('frame');      // the actual render target (inside the screen)
   var statusEl=document.getElementById('status');    // the "✓ Rendered…/⚠ error" line
   var metaEl=document.getElementById('previewMeta'); // shows "light/dark theme"
+
+  // ----- Screen-frame controls (root / padding / alignment / system bars) ------
+  // These rewrite the editor code to wrap your snippet in a real screen container.
+  var frameOnEl=document.getElementById('frameOn');
+  var frameRootEl=document.getElementById('frameRoot');   // Column / Box / LazyColumn / Scaffold
+  var framePadEl=document.getElementById('framePad');
+  var framePadValEl=document.getElementById('framePadVal');
+  var frameVertEl=document.getElementById('frameVert');
+  var frameHorizEl=document.getElementById('frameHoriz');
+  var frameInsetEl=document.getElementById('frameInset');
+
+  // Simulated device-chrome heights (px). The interpreter can't render real insets
+  // (systemBarsPadding() is a no-op here), so we offset the PREVIEW to show whether
+  // your content clears the status / navigation bars.
+  var STATUSBAR_PX=26, NAVBAR_PX=18;
+  // Markers that delimit YOUR content inside the generated screen wrapper, so the
+  // controls can rewrite the frame around it without disturbing the body you typed.
+  // They are ordinary Kotlin comments — the interpreter ignores them.
+  var BODY_OPEN='// ┄┄ your UI — edit below ┄┄', BODY_CLOSE='// ┄┄ end of your UI ┄┄';
+
+  // Read the current control values into a plain object.
+  function frameState(){
+    return { on:frameOnEl.checked, root:frameRootEl.value, pad:parseInt(framePadEl.value,10),
+             vert:frameVertEl.value, horiz:frameHorizEl.value, inset:frameInsetEl.value };
+  }
+
+  // Collapse the vertical (arrangement) + horizontal (alignment) controls into the
+  // single 2-D Alignment a Box wants for contentAlignment. Arrangement-only values
+  // (SpaceBetween, spacedBy, …) have no Box meaning, so they fall back to Top.
+  function boxContentAlignment(vert, horiz){
+    var v = vert==='Center' ? 'Center' : vert==='Bottom' ? 'Bottom' : 'Top';
+    var h = horiz==='CenterHorizontally' ? 'Center' : horiz==='End' ? 'End' : 'Start';
+    return (v==='Center' && h==='Center') ? 'Center' : v + h;   // Center, TopStart, BottomEnd, CenterEnd, …
+  }
+
+  // Simulate the system bars in the PREVIEW. The padding / arrangement / alignment
+  // are now REAL code (the interpreter renders them), so the only thing left to
+  // fake is the inset offset: if the current code handles insets, push content
+  // clear of the status / nav bars; if not, let it slide under them (the bug).
+  function applyFrame(){
+    // Strip // line-comments FIRST, so the "add .systemBarsPadding()" warning text
+    // in a none-inset frame doesn't falsely read as real inset handling.
+    var codeNoComments = codeEl.value.replace(/\/\/[^\n]*/g, '');
+    var hasInset = /\.systemBarsPadding\(\)|\.safeDrawingPadding\(\)|\.statusBarsPadding\(\)|\.padding\(innerPadding\)/.test(codeNoComments);
+    frameEl.style.paddingTop = hasInset ? STATUSBAR_PX+'px' : '0';
+    frameEl.style.paddingBottom = hasInset ? NAVBAR_PX+'px' : '0';
+  }
+
+  // Indent every line of `code` by `n` spaces (used to nest the user's snippet
+  // inside the generated wrapper). Trailing blank lines are trimmed first.
+  function indentBy(code, n){
+    var pad=new Array(n+1).join(' ');
+    return code.replace(/\s+$/,'').split('\n').map(function(l){ return l.length?pad+l:l; }).join('\n');
+  }
+
+  // Strip the common leading indent off a block, so an extracted body comes back
+  // out flush-left and can be re-wrapped cleanly at a new indent.
+  function dedent(s){
+    var lines=s.split('\n'), min=Infinity;
+    lines.forEach(function(l){ if(l.trim()){ var m=l.match(/^ */)[0].length; if(m<min) min=m; } });
+    if(!isFinite(min)) min=0;
+    return lines.map(function(l){ return l.slice(min); }).join('\n');
+  }
+  // Pull YOUR content back out of a wrapped editor (the text between the markers).
+  // If the editor isn't wrapped (no markers), the WHOLE editor is your content.
+  function bodyOf(code){
+    var i=code.indexOf(BODY_OPEN), j=code.lastIndexOf(BODY_CLOSE);
+    if(i<0 || j<0 || j<i) return code.replace(/\s+$/,'');
+    var inner=code.slice(code.indexOf('\n', i)+1, j).replace(/\n[ \t]*$/,'');
+    return dedent(inner).replace(/\s+$/,'');
+  }
+
+  // BUILD THE REAL SCREEN CODE: your body wrapped in the chosen ROOT container
+  // (Column / Box / LazyColumn / Scaffold) carrying the chosen padding /
+  // arrangement / alignment / insets. This is exactly what you paste into
+  // setContent — the antidote to the "stuck in the corner" bug. Every root fixes
+  // the bug the same way: fill the screen + handle insets + place the children;
+  // they differ only in HOW they place children.
+  function buildScreenCode(body){
+    var f=frameState();
+    var vert='Arrangement.'+(f.vert==='spacedBy'?'spacedBy(12.dp)':f.vert);
+    var horiz='Alignment.'+f.horiz;
+    // The inset modifier line (at 8-space indent for a modifier chain), shared by
+    // the Column / Box / LazyColumn roots. Scaffold handles insets via innerPadding.
+    var insetLine8 = f.inset==='none' ? '' :
+      (f.inset==='safeDrawingPadding' ? '        .safeDrawingPadding()       // also dodges keyboard & display cutout\n'
+                                      : '        .systemBarsPadding()         // clear the status + navigation bars\n');
+    var warn = (f.inset==='none' && f.root!=='Scaffold')
+      ? '// ⚠ system bars = none: content draws UNDER the status bar (add .systemBarsPadding()).\n' : '';
+
+    // ── Scaffold: the standard app screen; it measures the bars and gives you innerPadding.
+    if(f.root==='Scaffold'){
+      return '// Scaffold — the standard app screen. It hosts a top bar / bottom bar / FAB and\n'+
+        '// MEASURES the system bars for you, returning innerPadding. Apply that to the content\n'+
+        '// (here a Column) or it draws under the bars. (The "system bars" control is handled by\n'+
+        '// Scaffold for you, so it is ignored for this root.)\n'+
+        'Scaffold { innerPadding ->\n'+
+        '    Column(\n'+
+        '        modifier = Modifier\n'+
+        '            .fillMaxSize()\n'+
+        '            .padding(innerPadding)       // the insets Scaffold measured for you\n'+
+        '            .padding('+f.pad+'.dp),       // your own edge spacing on top\n'+
+        '        verticalArrangement = '+vert+',\n'+
+        '        horizontalAlignment = '+horiz+',\n'+
+        '    ) {\n'+
+        '        '+BODY_OPEN+'\n'+ indentBy(body,8) +'\n        '+BODY_CLOSE+'\n'+
+        '    }\n}\n';
+    }
+
+    // ── Box: overlaps children in one space; one 2-D contentAlignment places them.
+    if(f.root==='Box'){
+      var ca='Alignment.'+boxContentAlignment(f.vert, f.horiz);
+      return warn+
+        '// Box — overlaps its children in a single space; place them with one 2-D\n'+
+        '// contentAlignment (any child can override via Modifier.align(...)). Best for\n'+
+        '// centering ONE thing, or layering (a FAB over content, a badge in a corner).\n'+
+        'Box(\n'+
+        '    modifier = Modifier\n'+
+        '        .fillMaxSize()\n'+
+        insetLine8+
+        '        .padding('+f.pad+'.dp),\n'+
+        '    contentAlignment = '+ca+',          // 2-D: replaces verticalArrangement + horizontalAlignment\n'+
+        ') {\n'+
+        '    '+BODY_OPEN+'\n'+ indentBy(body,4) +'\n    '+BODY_CLOSE+'\n'+
+        '}\n';
+    }
+
+    // ── LazyColumn: a SCROLLING list that only composes visible rows. Children go
+    //    in item { } / items(list) { }; edge spacing goes in contentPadding.
+    if(f.root==='LazyColumn'){
+      var lazyInset = f.inset==='none' ? '' :
+        (f.inset==='safeDrawingPadding' ? '.safeDrawingPadding()' : '.systemBarsPadding()');
+      return warn+
+        '// LazyColumn — a SCROLLING list that only composes the rows currently on screen\n'+
+        '// (use it instead of a Column for long or variable content). Children live in\n'+
+        '// item { } / items(list) { } blocks, and edge spacing goes in contentPadding so\n'+
+        '// rows can scroll under the bars without being clipped.\n'+
+        'LazyColumn(\n'+
+        '    modifier = Modifier.fillMaxSize()'+lazyInset+',\n'+
+        '    contentPadding = PaddingValues('+f.pad+'.dp),   // edge spacing for the rows\n'+
+        '    verticalArrangement = '+vert+',\n'+
+        '    horizontalAlignment = '+horiz+',\n'+
+        ') {\n'+
+        '    item {\n'+
+        '        '+BODY_OPEN+'\n'+ indentBy(body,8) +'\n        '+BODY_CLOSE+'\n'+
+        '    }\n'+
+        '    // In a real list: items(myList) { row -> /* one composable per row */ }\n'+
+        '}\n';
+    }
+
+    // ── Column (default): stacks children top→bottom. Main axis = vertical
+    //    (verticalArrangement); cross axis = horizontal (horizontalAlignment).
+    return warn+
+      '// Column — stacks children top→bottom. Main axis = vertical (verticalArrangement),\n'+
+      '// cross axis = horizontal (horizontalAlignment).\n'+
+      'Column(\n'+
+      '    modifier = Modifier\n'+
+      '        .fillMaxSize()               // BE the whole screen (not just wrap content)\n'+
+      insetLine8+
+      '        .padding('+f.pad+'.dp),       // inset your content from the screen edges\n'+
+      '    verticalArrangement = '+vert+',\n'+
+      '    horizontalAlignment = '+horiz+',\n'+
+      ') {\n'+
+      '    '+BODY_OPEN+'\n'+ indentBy(body,4) +'\n    '+BODY_CLOSE+'\n'+
+      '}\n';
+  }
+
+  // REWRITE THE EDITOR to match the controls, preserving your body, then re-render.
+  // This is what makes the code "reflect" a padding / alignment / insets change:
+  // the .padding(n.dp) etc. in the textarea on the left is rewritten in place.
+  // With "wrap content" OFF it strips the frame back to your raw body (the bug).
+  function reflectFrame(){
+    framePadValEl.textContent=frameState().pad+'.dp';
+    var body=bodyOf(codeEl.value);
+    var caret=codeEl.selectionStart;                      // best-effort: keep the caret from jumping to the top
+    codeEl.value = frameState().on ? buildScreenCode(body) : (body+'\n');
+    try { codeEl.selectionStart=codeEl.selectionEnd=Math.min(caret, codeEl.value.length); } catch(e){}
+    renderNow();
+  }
 
   // Re-color the highlighted layer to match the textarea's text.
   function refreshHighlight(){
@@ -1011,7 +1313,8 @@ pre .px{color:var(--c-punct);}
     var frag=document.createDocumentFragment(); var count=0;
     try { nodes.forEach(function(n){ frag.appendChild(render(n)); count++; }); }
     catch(e){ statusEl.className='status err'; statusEl.textContent='⚠ Render error: '+e.message; return; }
-    screenEl.innerHTML=''; screenEl.appendChild(frag);  // swap in the freshly rendered UI
+    frameEl.innerHTML=''; frameEl.appendChild(frag);    // swap in the freshly rendered UI (into the frame, not the screen)
+    applyFrame();                                       // simulate the system-bar offset for the current code
     statusEl.className='status'; statusEl.textContent='✓ Rendered '+count+' top-level composable'+(count===1?'':'s')+'.';
     metaEl.textContent = themeName==='dark'?'dark theme':'light theme';
   }
@@ -1199,6 +1502,27 @@ pre .px{color:var(--c-punct);}
 '    Text("Center", modifier = Modifier.align(Alignment.Center))\n'+
 '    Text("BottomEnd", modifier = Modifier.align(Alignment.BottomEnd))\n'+
 '}\n' },
+
+    { name:'Whole screen ★', code:
+'// THE FIX for "my UI is in the corner / under the status bar".\n'+
+'// A bare composable in setContent gets NO size, NO padding, NO inset handling,\n'+
+'// so it wrap-content\'s into the top-left, under the status bar.\n'+
+'// A real screen does four things — toggle the "Screen frame" controls above to\n'+
+'// feel each one, then copy the "Emulator-ready Kotlin" strip below the preview.\n'+
+'Column(\n'+
+'    modifier = Modifier\n'+
+'        .fillMaxSize()              // 1. take the WHOLE screen (not just wrap content)\n'+
+'        .systemBarsPadding()        // 2. stay clear of the status & navigation bars\n'+
+'        .padding(24.dp),            // 3. breathing room from the screen edges\n'+
+'    verticalArrangement = Arrangement.Center,           // 4a. center on the main (vertical) axis\n'+
+'    horizontalAlignment = Alignment.CenterHorizontally  // 4b. center on the cross (horizontal) axis\n'+
+') {\n'+
+'    Text("Centered on the screen", style = MaterialTheme.typography.titleLarge)\n'+
+'    Spacer(modifier = Modifier.height(8.dp))\n'+
+'    Text("fillMaxSize + systemBarsPadding + padding")\n'+
+'    Spacer(modifier = Modifier.height(16.dp))\n'+
+'    Button(onClick = {}) { Text("A button") }\n'+
+'}\n' },
   ];
 
   // PALETTE: tiny snippets the "Insert" chips drop in at the cursor (additive).
@@ -1228,6 +1552,37 @@ pre .px{color:var(--c-punct);}
       { name:'Spacer', what:'An empty, invisible gap of a fixed size — used to push things apart.', params:'modifier (height / width / size)',
         ex:'Column {\n    Text("above the gap")\n    Spacer(modifier = Modifier.height(24.dp))\n    Text("below the gap")\n}\n' },
     ]},
+
+    { group:'Placing a whole screen (the "stuck in the corner" fix)', items:[
+      { name:'Why it lands in the corner', what:'A composable passed straight to setContent gets NO size, NO padding and NO inset handling. With nothing telling it otherwise it shrinks to wrap its content and is placed at the TOP-START — under the status bar. Fixing it = fillMaxSize + padding + alignment + system-bar insets (the four controls in the "Screen frame" bar above).', params:'the four fixes: fillMaxSize · insets · padding · arrangement/alignment',
+        ex:'// Bare content — flip "wrap content" OFF in the Screen-frame bar to see this\n// jam into the corner under the status bar, then ON to fix it.\nColumn {\n    Text("I am stuck top-left, under the status bar")\n    Button(onClick = {}) { Text("…and so am I") }\n}\n' },
+      { name:'.fillMaxSize()', what:'Make the root take the WHOLE screen instead of wrapping its content. This is step one of a real screen — without it, alignment and arrangement have no extra space to work in, so nothing can center or spread.', params:'fillMaxSize() · fillMaxWidth() · fillMaxHeight()',
+        ex:'Column(\n    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceVariant),\n    verticalArrangement = Arrangement.Center,\n    horizontalAlignment = Alignment.CenterHorizontally\n) {\n    Text("Now I can center, because the Column fills the screen")\n}\n' },
+      { name:'verticalArrangement (main axis)', what:'On a Column this controls the children up/down: Top, Center, Bottom, SpaceBetween (ends + gaps between), SpaceAround, SpaceEvenly, or spacedBy(n.dp) for an even gap. (On a Row it is horizontalArrangement.) Try each from the "vertical" dropdown above.', params:'Arrangement.Top / Center / Bottom / SpaceBetween / SpaceAround / SpaceEvenly / spacedBy',
+        ex:'Column(\n    modifier = Modifier.fillMaxSize().padding(16.dp),\n    verticalArrangement = Arrangement.SpaceBetween\n) {\n    Text("pinned to the top")\n    Text("pinned to the bottom")\n}\n' },
+      { name:'horizontalAlignment (cross axis)', what:'On a Column this lines children up left/right: Start, CenterHorizontally, or End. (On a Row the cross axis is verticalAlignment: Top, CenterVertically, Bottom.) Main axis = arrangement; cross axis = alignment — that pairing is the whole layout model.', params:'Alignment.Start / CenterHorizontally / End  (Row: Top / CenterVertically / Bottom)',
+        ex:'Column(\n    modifier = Modifier.fillMaxSize().padding(16.dp),\n    horizontalAlignment = Alignment.CenterHorizontally,\n    verticalArrangement = Arrangement.spacedBy(8.dp)\n) {\n    Text("centered")\n    Button(onClick = {}) { Text("centered too") }\n}\n' },
+      { name:'Box contentAlignment', what:'A Box overlaps its children in one spot; contentAlignment sets where (Center, TopEnd, BottomCenter, …), and any child can override with Modifier.align(...). Perfect for one centered thing, or a badge in a corner.', params:'contentAlignment = Alignment.Center / TopEnd / BottomStart / …',
+        ex:'Box(\n    modifier = Modifier.fillMaxSize(),\n    contentAlignment = Alignment.Center\n) {\n    Text("dead center of the screen")\n}\n' },
+      { name:'.padding(...) — 3 forms', what:'Empty space between content and its edges. All sides: padding(16.dp). Per-axis: padding(horizontal = 20.dp, vertical = 8.dp). Per-side: padding(start = 16.dp, top = 8.dp, …). On the root it keeps content off the screen edges; drag the "padding" slider above to set it.', params:'padding(all) · padding(horizontal=, vertical=) · padding(start=, top=, end=, bottom=)',
+        ex:'Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primaryContainer).padding(horizontal = 24.dp, vertical = 12.dp)) {\n    Text("24 left/right, 12 top/bottom", color = MaterialTheme.colorScheme.onPrimaryContainer)\n}\n' },
+      { name:'Scaffold(innerPadding)', what:'The standard screen scaffold. It measures the top app bar, bottom bar and SYSTEM BARS for you and hands back an innerPadding you MUST apply to your content (.padding(innerPadding)) — otherwise content draws under those bars. Pick "Scaffold(innerPadding)" in the system-bars dropdown to generate this shape.', params:'Scaffold(topBar, bottomBar) { innerPadding -> … .padding(innerPadding) }',
+        ex:'// (sketch — the playground renders the inner content; the frame bar simulates insets)\nColumn(\n    modifier = Modifier.fillMaxSize().padding(16.dp),\n    verticalArrangement = Arrangement.spacedBy(8.dp)\n) {\n    Text("Inside Scaffold { innerPadding -> }")\n    Text("…with Modifier.padding(innerPadding) applied")\n}\n' },
+      { name:'.systemBarsPadding() / insets', what:'If you are NOT using a Scaffold (or use enableEdgeToEdge), add inset padding yourself: systemBarsPadding() clears the status + nav bars; statusBarsPadding() only the top; safeDrawingPadding() also avoids the keyboard and display cutout. Without one of these, edge-to-edge content slides under the bars — your exact bug. (The interpreter ignores these; the "system bars" dropdown above simulates them.)', params:'systemBarsPadding() · statusBarsPadding() · navigationBarsPadding() · safeDrawingPadding() · imePadding()',
+        ex:'Column(\n    modifier = Modifier.fillMaxSize().systemBarsPadding().padding(16.dp),\n    verticalArrangement = Arrangement.spacedBy(8.dp)\n) {\n    Text("Clear of the status bar at the top")\n    Text("…and the nav bar at the bottom")\n}\n' },
+    ]},
+
+    { group:'Choosing a root container (the “root” dropdown)', items:[
+      { name:'Column (vertical stack)', what:'The default root: lays children out top→bottom. Main axis = vertical (verticalArrangement: Top, Center, SpaceBetween, spacedBy…); cross axis = horizontal (horizontalAlignment: Start, CenterHorizontally, End). Reach for it when your screen is "a few things stacked down the page".', params:'modifier, verticalArrangement, horizontalAlignment',
+        ex:'Column(\n    modifier = Modifier.fillMaxSize().systemBarsPadding().padding(16.dp),\n    verticalArrangement = Arrangement.spacedBy(12.dp)\n) {\n    Text("Title", style = MaterialTheme.typography.headlineSmall)\n    Text("Some body text under it.")\n    Button(onClick = {}) { Text("Action") }\n}\n' },
+      { name:'Box (overlap / center)', what:'Overlaps all children in one space and positions them with ONE 2-D contentAlignment (Center, TopEnd, BottomStart…); any child can override with Modifier.align(...). It replaces verticalArrangement + horizontalAlignment with a single value. Use it to center one thing, or to layer (a FAB or badge over content).', params:'modifier, contentAlignment',
+        ex:'Box(\n    modifier = Modifier.fillMaxSize().systemBarsPadding().padding(16.dp),\n    contentAlignment = Alignment.Center\n) {\n    Text("Centered on the whole screen")\n    Text("top-right badge", modifier = Modifier.align(Alignment.TopEnd))\n}\n' },
+      { name:'LazyColumn (scrolling list)', what:'A vertical list that only composes the rows currently on screen — use it instead of a Column for long or variable content (it would be slow/janky to build hundreds of children eagerly). Children go in item { } / items(list) { } blocks, and edge spacing goes in contentPadding so rows scroll under the bars without being clipped.', params:'modifier, contentPadding, verticalArrangement, horizontalAlignment; item { } / items(list) { }',
+        ex:'LazyColumn(\n    modifier = Modifier.fillMaxSize().systemBarsPadding(),\n    contentPadding = PaddingValues(16.dp),\n    verticalArrangement = Arrangement.spacedBy(8.dp)\n) {\n    item { Text("Header", style = MaterialTheme.typography.titleMedium) }\n    item { Text("Row one") }\n    item { Text("Row two") }\n    item { Text("Row three") }\n}\n' },
+      { name:'Scaffold (app screen)', what:'The standard screen skeleton: it slots in a topBar / bottomBar / floatingActionButton / snackbar and MEASURES the system bars for you, returning innerPadding. You MUST apply that innerPadding to your content (here a Column), or it draws under the bars. Inside Scaffold you still pick a layout (Column / Box / LazyColumn) for the content.', params:'topBar, bottomBar, floatingActionButton, { innerPadding -> content }',
+        ex:'Scaffold { innerPadding ->\n    Column(\n        modifier = Modifier.fillMaxSize().padding(innerPadding).padding(16.dp),\n        verticalArrangement = Arrangement.spacedBy(12.dp)\n    ) {\n        Text("Inside a Scaffold", style = MaterialTheme.typography.headlineSmall)\n        Text("innerPadding keeps this clear of the bars.")\n    }\n}\n' },
+    ]},
+
     { group:'Composition (nesting)', items:[
       { name:'Nesting', what:'A Compose UI is a TREE. Put composables inside the { } content slot of a container (Column, Row, Box, Card, Surface, Scaffold), and nest as deep as you like — a Row inside a Column inside a Card.', params:'container { child; child { grandchild } }',
         ex:'Card(modifier = Modifier.fillMaxWidth()) {\n    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {\n        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {\n            Icon(Icons.Default.Star, contentDescription = null, tint = Color(0xFFE8730C))\n            Text("a Row, nested in a Column, nested in a Card")\n        }\n        Button(onClick = {}) { Text("a Button nested too") }\n    }\n}\n' },
@@ -1359,7 +1714,23 @@ pre .px{color:var(--c-punct);}
   // 9 · WIRE UP THE UI — build the toolbar chips, the palette, the catalog cards,
   //     and hook up the theme / reset / copy buttons. Then load the first preset.
   // =========================================================================
-  var lastLoaded = '';                               // the code currently "loaded" (for the Reset button)
+  var lastLoaded = '';                               // the raw code currently "loaded" (for the Reset button)
+  var lastWrap = false;                              // whether it was shown wrapped, so Reset restores the same
+
+  // Does this snippet already define a whole screen? If it fills the screen (or is
+  // a Scaffold) we show it as-is, instead of nesting it in a second fillMaxSize.
+  function looksLikeScreen(code){ return /\.fillMaxSize\s*\(/.test(code) || /\bScaffold\b/.test(code); }
+
+  // Put `raw` in the editor — optionally already wrapped in the current screen
+  // frame — and render. The "Examples" open WRAPPED so the full, copy-ready screen
+  // code is visible immediately (no need to nudge a control first); catalog "Try"
+  // references open raw so you can study one component on its own.
+  function showCode(raw, wrap){
+    raw = raw.replace(/\s+$/,'');
+    frameOnEl.checked = wrap;
+    codeEl.value = wrap ? buildScreenCode(raw) : (raw+'\n');
+    renderNow(); codeEl.scrollTop=0;
+  }
 
   // -- toolbar example chips --
   var presetsEl=document.getElementById('presets');
@@ -1368,10 +1739,11 @@ pre .px{color:var(--c-punct);}
     b.addEventListener('click', function(){ load(idx); });
     presetsEl.appendChild(b);
   });
-  function load(idx){                                // load preset #idx into the editor
+  function load(idx){                                // load preset #idx — Examples open WRAPPED (unless already a screen)
     Array.prototype.forEach.call(presetsEl.children, function(c,i){ c.classList.toggle('active', i===idx); }); // highlight the chip
     lastLoaded = PRESETS[idx].code;
-    codeEl.value = lastLoaded; renderNow(); codeEl.scrollTop=0;
+    lastWrap = !looksLikeScreen(lastLoaded);          // wrap content examples; leave full-screen ones (Whole screen ★) raw
+    showCode(lastLoaded, lastWrap);
   }
 
   // -- insert palette (drops a snippet at the cursor, additive) --
@@ -1382,9 +1754,26 @@ pre .px{color:var(--c-punct);}
     paletteEl.appendChild(b);
   });
   function insertAtCursor(text){
+    var v=codeEl.value, open=v.indexOf(BODY_OPEN), close=v.lastIndexOf(BODY_CLOSE);
+    // When the editor is WRAPPED in a screen frame, always drop the snippet INSIDE
+    // the body (just before the closing marker) and indent it to match. Otherwise a
+    // snippet landing outside the markers would be silently discarded the next time
+    // a control rewrites the frame (bodyOf only keeps what's between the markers).
+    if(frameOnEl.checked && open>=0 && close>open){
+      var lineStart=v.lastIndexOf('\n', close-1)+1;                 // start of the CLOSE marker line
+      var indent=(v.slice(lineStart).match(/^ */)||[''])[0];        // the body's indent (4 or 8 spaces)
+      var snippet=text.replace(/\s+$/,'').split('\n')               // re-indent every line of the snippet
+        .map(function(l){ return l.length?indent+l:l; }).join('\n')+'\n';
+      codeEl.value=v.slice(0,lineStart)+snippet+v.slice(lineStart); // insert before the CLOSE marker line
+      var caret=lineStart+snippet.length;
+      codeEl.selectionStart=codeEl.selectionEnd=caret;              // caret after the inserted snippet
+      codeEl.focus(); renderNow();
+      return;
+    }
+    // Not wrapped (the whole editor is your body): splice in at the cursor.
     var s=codeEl.selectionStart, en=codeEl.selectionEnd;
-    codeEl.value=codeEl.value.slice(0,s)+text+codeEl.value.slice(en);          // splice the snippet in
-    codeEl.selectionStart=codeEl.selectionEnd=s+text.length;                    // move the caret past it
+    codeEl.value=v.slice(0,s)+text+v.slice(en);
+    codeEl.selectionStart=codeEl.selectionEnd=s+text.length;
     codeEl.focus(); renderNow();
   }
 
@@ -1407,10 +1796,10 @@ pre .px{color:var(--c-punct);}
     });
     catBody.appendChild(grid);
   });
-  function loadExample(code){                         // load a catalog example into the editor
+  function loadExample(code){                         // load a catalog reference example (shown RAW — study one component)
     Array.prototype.forEach.call(presetsEl.children, function(c){ c.classList.remove('active'); }); // no preset is "active" now
-    lastLoaded = (code.charAt(code.length-1)==='\n') ? code : code+'\n';
-    codeEl.value = lastLoaded; renderNow(); codeEl.scrollTop=0;
+    lastLoaded = code; lastWrap = false;
+    showCode(lastLoaded, false);
     document.querySelector('.main').scrollIntoView({behavior:'smooth', block:'start'}); // scroll back up to the editor/preview
   }
 
@@ -1420,10 +1809,23 @@ pre .px{color:var(--c-punct);}
     this.textContent = themeName==='light' ? '◐ Dark preview' : '◑ Light preview';
     renderNow();                                      // re-render with the other palette
   });
-  document.getElementById('resetBtn').addEventListener('click', function(){ codeEl.value=lastLoaded; renderNow(); codeEl.scrollTop=0; }); // restore last-loaded code
+  document.getElementById('resetBtn').addEventListener('click', function(){ showCode(lastLoaded, lastWrap); }); // restore last-loaded code + its wrap state
   document.getElementById('copyBtn').addEventListener('click', function(){
     var b=this; navigator.clipboard && navigator.clipboard.writeText(codeEl.value).then(function(){ b.textContent='Copied'; setTimeout(function(){ b.textContent='Copy'; },1200); });
   });
+
+  // -- screen-frame controls: REWRITE THE EDITOR CODE (single source of truth) ---
+  // Toggling "wrap content" wraps/unwraps; changing padding / arrangement /
+  // alignment / insets implies you want a frame, so it turns wrapping ON and
+  // rewrites the screen around your body. reflectFrame() re-renders from the new
+  // code, so the preview always matches what's in the editor.
+  frameOnEl.addEventListener('change', reflectFrame);
+  function wrapThenReflect(){ frameOnEl.checked=true; reflectFrame(); }
+  frameRootEl.addEventListener('change', wrapThenReflect);   // switch container (Column/Box/LazyColumn/Scaffold)
+  framePadEl.addEventListener('input',  wrapThenReflect);
+  frameVertEl.addEventListener('change', wrapThenReflect);
+  frameHorizEl.addEventListener('change',wrapThenReflect);
+  frameInsetEl.addEventListener('change',wrapThenReflect);
 
   // CSS keyframes for the indeterminate (animated) progress indicators.
   var kf=document.createElement('style');
