@@ -4,7 +4,14 @@
 
     <!-- <application> holds app-wide settings (icon, label, theme, backup rules) and
          declares every component. Android only knows an Activity exists if it is
-         declared here; an undeclared Activity will crash with ActivityNotFoundException. -->
+         declared here; an undeclared Activity will crash with ActivityNotFoundException.
+
+         android:enableOnBackInvokedCallback="true" OPTS THIS APP INTO the modern
+         predictive-back system. Without it, the OS treats Back as a legacy instant
+         pop and NavDisplay's `predictivePopTransitionSpec` (our scale+fade peek) never
+         runs — the edge-swipe just jumps to the previous screen. With it on, an edge
+         back-swipe is reported AS A PROGRESSING GESTURE, so NavDisplay can drive the
+         predictive-pop animation by the drag amount and let you "peek" before committing. -->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,7 +20,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NavTransitions">
+        android:theme="@style/Theme.NavTransitions"
+        android:enableOnBackInvokedCallback="true">
 
         <!-- MainActivity: the app's entry-point screen.
              exported="true" is REQUIRED here because it is launched from outside the app

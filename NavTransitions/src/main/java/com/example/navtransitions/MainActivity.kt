@@ -151,6 +151,8 @@ import android.util.Log                                     // Logcat logging (L
 
 // How long every slide+fade lasts, in milliseconds. ~400ms reads as snappy but
 // still clearly visible. (Compare: NavDisplay's built-in default is 700ms.)
+// Tip: bump this to ~1200 temporarily to watch each transition in slow motion
+// while learning what it does, then restore to 400 for production-feel timing.
 private const val TRANSITION_MS = 400
 
 // The easing curve shared by all our slides/fades. FastOutSlowInEasing is the
