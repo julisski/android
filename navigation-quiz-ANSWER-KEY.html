@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Navigation Quiz — Answer Key (Detailed)</title>
+<style>
+  :root{
+    --ink:#1a1f29; --muted:#5b6472; --line:#e2e6ec;
+    --green:#1b7a3d; --green-bg:#eafaf0; --green-line:#bce6cb;
+    --red:#a4243b; --red-bg:#fdeef0;
+    --accent:#2f5d8a; --accent-bg:#eef4fb;
+    --code-bg:#f4f6f9; --code-ink:#243049;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); line-height:1.55; margin:0;
+    font-size:15px;
+    background:#fff;
+  }
+  .wrap{max-width:840px; margin:0 auto; padding:48px 40px 64px;}
+  header.doc{border-bottom:3px solid var(--ink); padding-bottom:18px; margin-bottom:24px;}
+  header.doc h1{font-size:26px; margin:0 0 6px; letter-spacing:-.01em;}
+  header.doc .sub{color:var(--muted); font-size:14px; margin:2px 0;}
+  .intro{background:var(--accent-bg); border:1px solid #d6e3f1; border-radius:10px;
+    padding:14px 18px; margin:0 0 14px; font-size:14px;}
+  .intro strong{color:var(--accent);}
+  .note{color:var(--muted); font-size:13px; font-style:italic; margin:0 0 28px;}
+
+  .q{margin:0 0 30px; padding:0; page-break-inside:avoid; break-inside:avoid;}
+  .q h2{font-size:17px; margin:0 0 4px; color:var(--ink);}
+  .q .qno{color:var(--accent); font-weight:700;}
+  .q .prompt{color:var(--muted); font-size:14px; margin:0 0 12px; font-style:italic;}
+
+  .correct{
+    background:var(--green-bg); border:1px solid var(--green-line);
+    border-left:5px solid var(--green); border-radius:8px;
+    padding:11px 15px; margin:0 0 12px;
+  }
+  .correct .tag{color:var(--green); font-weight:700; font-size:12px; letter-spacing:.06em;
+    text-transform:uppercase; display:block; margin-bottom:3px;}
+  .correct .ans{font-weight:600;}
+  .correct .why{margin-top:6px; font-size:14px;}
+
+  .wrong-h{font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--red); font-weight:700; margin:0 0 6px;}
+  ul.wrong{list-style:none; margin:0; padding:0;}
+  ul.wrong li{position:relative; padding:5px 0 5px 22px; font-size:14px;
+    border-top:1px solid var(--line);}
+  ul.wrong li:before{content:"✗"; color:var(--red); position:absolute; left:2px; top:5px; font-weight:700;}
+  ul.wrong li .opt{font-weight:600;}
+
+  code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace; font-size:.88em;
+    background:var(--code-bg); color:var(--code-ink); padding:1px 5px; border-radius:4px;}
+
+  hr.sep{border:none; border-top:1px solid var(--line); margin:0 0 26px;}
+
+  h2.tablehead{font-size:18px; margin:34px 0 12px; padding-top:8px; border-top:2px solid var(--ink);}
+  table{border-collapse:collapse; width:100%; font-size:13.5px;}
+  th,td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{background:#f7f9fc; font-size:12px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted);}
+  td.num{font-weight:700; color:var(--accent); width:28px;}
+  td.proj{color:var(--muted); white-space:nowrap;}
+
+  footer.doc{margin-top:36px; padding-top:14px; border-top:1px solid var(--line);
+    color:var(--muted); font-size:12px;}
+
+  @page{ margin:14mm 16mm; }
+  @media print{
+    .wrap{padding:0; max-width:none;}
+    body{font-size:11.5pt;}
+    .q{margin-bottom:18px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc">
+  <h1>Navigation Quiz — Answer Key</h1>
+  <div class="sub">Detailed rationale, including why each incorrect option is wrong.</div>
+  <div class="sub">Projects: NavDetailList · NavThreeScreen · NavFourScreen · NavViewModelState · NavDataLayer</div>
+</header>
+
+<div class="intro">
+  All six projects use <strong>Navigation 3 (Nav3)</strong>: a single Activity holds a back stack of
+  <code>NavKey</code> objects, and <code>NavDisplay</code> swaps the screen whenever the top key changes.
+  There is <strong>no</strong> <code>NavController</code>, <code>NavHost</code>, <code>navigate("route")</code>,
+  or XML nav graph in any of these projects — which is why many distractors (drawn from the older Navigation
+  Compose API) are wrong.
+</div>
+<p class="note">Blackboard randomizes option order on screen, so match answers by their text, not by position.</p>
+
+<!-- Q1 -->
+<div class="q">
+  <h2><span class="qno">Q1.</span> What renders the top of the back stack?</h2>
+  <p class="prompt">Which composable renders whichever key is currently on top of the back stack?</p>
+  <div class="correct">
+    <span class="tag">✓ Correct — NavDisplay</span>
+    <div class="why"><code>NavDisplay</code> reads the back stack, draws whichever key is on top, and animates the transition when the top changes. In every project: <code>NavDisplay(backStack = backStack, onBack = …, entryProvider = …)</code>.</div>
+  </div>
+  <div class="wrong-h">Why the others are wrong</div>
+  <ul class="wrong">
+    <li><span class="opt">NavHost</span> — the Navigation Compose (Nav2) host; not used here. It needs a <code>NavController</code> and string routes.</li>
+    <li><span class="opt">Scaffold</span> — a Material 3 layout frame supplying insets/<code>innerPadding</code>; it hosts the UI but knows nothing about the back stack.</li>
+    <li><span class="opt">NavController</span> — the Nav2 object that drives navigation; it does not exist in Nav3. The back stack (a list of keys) plays that role instead.</li>
+    <li><span class="opt">LazyColumn</span> — a scrolling list used inside a screen to render rows; unrelated to switching screens.</li>
+  </ul>
+</div>
+
+<!-- Q2 -->
+<div class="q">
+  <h2><span class="qno">Q2.</span> Creating and seeding the back stack</h2>
+  <p class="prompt">Which call creates the back stack, seeds it with the first key, and preserves it across recomposition and rotation?</p>
+  <div class="correct">
+    <span class="tag">✓ Correct — rememberNavBackStack(CategoriesKey)</span>
+    <div class="why">This Nav3 function builds the back stack, seeds it with the start key, and <strong>remembers</strong> it across recomposition and configuration changes. Pushing a key navigates forward; popping navigates back.</div>
+  </div>
+  <div class="wrong-h">Why the others are wrong</div>
+  <ul class="wrong">
+    <li><span class="opt"><code>remember { mutableStateOf(CategoriesKey) }</code></span> — holds a single key, not a stack, and is lost on rotation. It cannot represent <code>[Categories, Items, Detail]</code>.</li>
+    <li><span class="opt"><code>rememberNavController()</code></span> — a Nav2 API; there is no <code>NavController</code> in Nav3, so it would not compile here.</li>
+    <li><span class="opt"><code>rememberSaveable { CategoriesKey }</code></span> — saves a small Bundle-able value; it is not a back stack and offers no push/pop.</li>
+    <li><span class="opt"><code>NavBackStack(CategoriesKey)</code></span> — calling it raw (without <code>remember…</code>) would rebuild a fresh stack every recomposition, losing all history.</li>
+  </ul>
+</div>
+
+<!-- Q3 -->
+<div class="q">
+  <h2><span class="qno">Q3.</span> <code>data object</code> key vs <code>data class</code> key</h2>
+  <p class="prompt">CategoriesKey is a <code>data object</code> but DetailKey is a <code>data class</code>. Why the difference?</p>
+  <div class="correct">
+    <span class="tag">✓ Correct</span>
+    <div class="ans">DetailKey needs an itemId argument; the list screen needs none.</div>
+    <div class="why">A key names a destination <em>and</em> carries its arguments. <code>CategoriesKey</code>/<code>ListKey</code> is a singleton <code>data object</code> (one screen, no data). <code>DetailKey(val itemId: Int)</code> is a <code>data class</code> so each instance carries a different argument — <code>DetailKey(1)</code> vs <code>DetailKey(5)</code> land on the same entry block with different data.</div>
+  </div>
+  <div class="wrong-h">Why the others are wrong</div>
+  <ul class="wrong">
+    <li><span class="opt">"A data object cannot implement NavKey"</span> — false; <code>data object CategoriesKey : NavKey</code> does exactly that in the code.</li>
+    <li><span class="opt">"A data class loads measurably faster"</span> — no performance difference; the choice is about carrying arguments, not speed.</li>
+    <li><span class="opt">"The first screen must always be a data object"</span> — not a rule; a start destination could carry arguments and be a data class.</li>
+    <li><span class="opt">"Only a data class can be @Serializable"</span> — false; <code>@Serializable data object CategoriesKey</code> is valid and required.</li>
+  </ul>
+</div>
+
+<!-- Q4 -->
+<div class="q">
+  <h2><span class="qno">Q4.</span> What <code>backStack.add(DetailKey(id))</code> does</h2>
+  <p class="prompt">In NavDetailList, tapping a row runs <code>onOpen = { id -> backStack.add(DetailKey(id)) }</code>. What does this do?</p>
+  <div class="correct">
+    <span class="tag">✓ Correct</span>
+    <div class="ans">It adds a key to the back stack for NavDisplay to match.</div>
+    <div class="why">"The jump." The tap does not name or call a screen — it appends a key. <code>NavDisplay</code> matches that key's <strong>type</strong> to the matching <code>entry&lt;…&gt; { }</code> block and runs it; the <code>id</code> only chooses which data the screen shows.</div>
+  </div>
+  <div class="wrong-h">Why the others are wrong</div>
+  <ul class="wrong">
+    <li><span class="opt">"It calls <code>navController.navigate("detail")</code>"</span> — that is the Nav2 string-route API, not used here; there is no <code>NavController</code>.</li>
+    <li><span class="opt">"It fires an Intent that starts a separate Activity"</span> — Nav3 is single-Activity; no Intents, no new Activities.</li>
+    <li><span class="opt">"It directly invokes the DetailScreen composable by name"</span> — screens are invoked only by <code>NavDisplay</code> via the matched entry block.</li>
+    <li><span class="opt">"It tears down NavDisplay and builds a replacement"</span> — <code>NavDisplay</code> stays mounted and re-renders the new top key; the previous key stays in the stack.</li>
+  </ul>
+</div>
+
+<!-- Q5 -->
+<div class="q">
+  <h2><span class="qno">Q5.</span> NavFourScreen "Start over"</h2>
+  <p class="prompt"><code>while (backStack.size > 1) backStack.removeLastOrNull()</code> — what is the result?</p>
+  <div class="correct">
+    <span class="tag">✓ Correct</span>
+    <div class="ans">All keys but the first pop, returning to the root.</div>
+    <div class="why">The loop pops keys until only the bottom one (<code>CategoriesKey</code>) remains, jumping back to the first screen in one action — no matter how deep the user drilled (Categories → Items → Detail → Fact).</div>
+  </div>
+  <div class="wrong-h">Why the others are wrong</div>
+  <ul class="wrong">
+    <li><span class="opt">"The app exits because the back stack is emptied"</span> — the condition is <code>size &gt; 1</code>, so it stops at one key; the stack is never emptied.</li>
+    <li><span class="opt">"Only the single top key pops"</span> — that describes a plain <code>removeLastOrNull()</code>; the <code>while</code> loop pops repeatedly.</li>
+    <li><span class="opt">"The back stack is duplicated, doubling every screen"</span> — <code>removeLastOrNull()</code> only removes; nothing adds or copies keys.</li>
+    <li><span class="opt">"It navigates forward and opens a fifth screen"</span> — removing keys is the opposite of navigating forward.</li>
+  </ul>
+</div>
+
+<!-- Q6 -->
+<div class="q">
+  <h2><span class="qno">Q6.</span> What <code>entry&lt;DetailKey&gt; { key -> DetailScreen(…) }</code> does</h2>
+  <p class="prompt">Inside <code>entryProvider</code>, what does this block do?</p>
+  <div class="correct">
+    <span class="tag">✓ Correct</span>
+    <div class="ans">It registers the screen for that key and passes the key in.</div>
+    <div class="why">Like a <code>case</code> in a switch, <code>entry&lt;KeyType&gt; { }</code> <strong>registers</strong> which composable to show when that key type is on top. The body runs only when a matching key reaches the top, and the lambda receives the key instance so it can read its arguments (<code>key.itemId</code>).</div>
+  </div>
+  <div class="wrong-h">Why the others are wrong</div>
+  <ul class="wrong">
+    <li><span class="opt">"It renders DetailScreen immediately at launch"</span> — registration is not execution; it runs only when a <code>DetailKey</code> is on top, never at launch.</li>
+    <li><span class="opt">"It permanently removes every DetailKey from the stack"</span> — <code>entry</code> registers a destination; it never mutates the back stack.</li>
+    <li><span class="opt">"It converts the DetailKey data class into a data object"</span> — <code>entry</code> does no type conversion.</li>
+    <li><span class="opt">"It sets the back-button behavior for every screen"</span> — back behavior is set by <code>NavDisplay</code>'s <code>onBack = { backStack.removeLastOrNull() }</code>.</li>
+  </ul>
+</div>
+
+<!-- Q7 -->
+<div class="q">
+  <h2><span class="qno">Q7.</span> Why keys carry only an id, not the whole object</h2>
+  <p class="prompt">Why does a key carry <code>DetailKey(itemId)</code> instead of the whole Item?</p>
+  <div class="correct">
+    <span class="tag">✓ Correct</span>
+    <div class="ans">The id stays small and serializable; the screen looks it up.</div>
+    <div class="why">Keys must be <code>@Serializable</code> (to survive process death). An <code>Int</code> id keeps the key tiny; the screen resolves the full object via a lookup — e.g. <code>itemById(key.itemId)</code> — keeping a single source of truth.</div>
+  </div>
+  <div class="wrong-h">Why the others are wrong</div>
+  <ul class="wrong">
+    <li><span class="opt">"Nav3 keys are forbidden from holding properties"</span> — false; <code>DetailKey(val itemId: Int)</code> holds one. The aim is to keep it small and serializable.</li>
+    <li><span class="opt">"Passing the whole object is faster but drains battery"</span> — not a battery issue; the concerns are serialization size and a single source of truth.</li>
+    <li><span class="opt">"The Item class cannot be referenced inside a composable"</span> — it is referenced constantly (e.g. <code>DetailScreen(item: Item)</code>).</li>
+    <li><span class="opt">"The id is the only field Item contains"</span> — Item has several fields (<code>title</code>, <code>blurb</code>, <code>categoryId</code>, sometimes <code>fact</code>).</li>
+  </ul>
+</div>
+
+<!-- Q8 -->
+<div class="q">
+  <h2><span class="qno">Q8.</span> Why ViewModel state survives rotation but <code>remember {}</code> does not</h2>
+  <p class="prompt">In NavViewModelState, why does the favorites set survive rotation while a <code>remember {}</code> value would not?</p>
+  <div class="correct">
+    <span class="tag">✓ Correct</span>
+    <div class="ans">It is scoped to the Activity and re-attached after recreation.</div>
+    <div class="why">A <code>ViewModel</code> lives in a <code>ViewModelStore</code> owned by the Activity. On a configuration change Android hands the <em>same</em> store to the recreated Activity, so <code>viewModel()</code> returns the same <code>FavoritesViewModel</code> with its data intact. A <code>remember {}</code> value lives only in the composition, which rotation discards.</div>
+  </div>
+  <div class="wrong-h">Why the others are wrong</div>
+  <ul class="wrong">
+    <li><span class="opt">"<code>remember</code> clears its value every few seconds"</span> — it has no timer; it is lost only when the composition leaves (e.g. rotation).</li>
+    <li><span class="opt">"The ViewModel writes each value to a remote server"</span> — no network involved; survival comes purely from scoping. (Process death would need <code>SavedStateHandle</code>.)</li>
+    <li><span class="opt">"Rotation never recreates the Activity"</span> — it does by default; that recreation is the problem the ViewModel solves.</li>
+    <li><span class="opt">"A ViewModel keeps its data inside the nav key"</span> — it does not; favorites live in the ViewModel, keys carry only ids.</li>
+  </ul>
+</div>
+
+<!-- Q9 -->
+<div class="q">
+  <h2><span class="qno">Q9.</span> How the Detail screen changes a favorite (UDF)</h2>
+  <p class="prompt">In NavViewModelState's unidirectional data flow, how does the Detail screen change a favorite?</p>
+  <div class="correct">
+    <span class="tag">✓ Correct</span>
+    <div class="ans">It calls <code>viewModel.toggleFavorite(id)</code>; state flows back down.</div>
+    <div class="why">UDF: events flow up, state flows down. The button calls <code>toggleFavorite(item.id)</code>; the ViewModel updates its private <code>MutableStateFlow</code>; the new value emits through the read-only <code>StateFlow</code>, observed via <code>collectAsStateWithLifecycle()</code>, recomposing the screens. The composable never owns or mutates the data.</div>
+  </div>
+  <div class="wrong-h">Why the others are wrong</div>
+  <ul class="wrong">
+    <li><span class="opt">"The composable mutates the favorites Set directly"</span> — breaks UDF and is exactly what the project forbids; <code>_favorites</code> is private to the ViewModel.</li>
+    <li><span class="opt">"It writes the change into a <code>rememberSaveable</code> variable"</span> — that is used only for a local contrast counter; it is per-composable and could not be shared with the Items list.</li>
+    <li><span class="opt">"It edits the static <code>sampleItems</code> list"</span> — that is fixed sample data with no favorite flag; favorites are a separate <code>Set&lt;Int&gt;</code> of ids.</li>
+    <li><span class="opt">"It pushes a new key onto the back stack"</span> — toggling is a state change, not navigation; you stay on the Detail screen.</li>
+  </ul>
+</div>
+
+<!-- Q10 -->
+<div class="q">
+  <h2><span class="qno">Q10.</span> NavDataLayer's sealed <code>PlanetsUiState</code></h2>
+  <p class="prompt">The list screen renders from a sealed <code>PlanetsUiState</code>. Which set of states does it model?</p>
+  <div class="correct">
+    <span class="tag">✓ Correct</span>
+    <div class="ans">Loading, Empty, Error, and Success.</div>
+    <div class="why">A <code>sealed interface</code> with exactly these four subtypes makes the screen's <code>when (uiState)</code> <strong>exhaustive</strong> — the compiler forces handling of every case. <code>Loading</code> shows a spinner, <code>Empty</code> a note, <code>Error(message)</code> a message + Retry, <code>Success(planets)</code> the list.</div>
+  </div>
+  <div class="wrong-h">Why the others are wrong</div>
+  <ul class="wrong">
+    <li><span class="opt">"Start, Running, Paused, Stopped"</span> — a generic state machine / thread states, not this UI model.</li>
+    <li><span class="opt">"Foreground, Background, Created, Destroyed"</span> — Android lifecycle terms, a different concept.</li>
+    <li><span class="opt">"Push, Pop, Peek, Clear"</span> — stack operations (relevant to the back stack), not UI states.</li>
+    <li><span class="opt">"Idle, Tap, Drag, Release"</span> — gesture/input phases, unrelated to data-loading state.</li>
+  </ul>
+</div>
+
+<h2 class="tablehead">Quick answer summary</h2>
+<table>
+  <thead><tr><th>#</th><th>Correct answer</th><th>Project</th></tr></thead>
+  <tbody>
+    <tr><td class="num">1</td><td>NavDisplay</td><td class="proj">all</td></tr>
+    <tr><td class="num">2</td><td><code>rememberNavBackStack(CategoriesKey)</code></td><td class="proj">all</td></tr>
+    <tr><td class="num">3</td><td>DetailKey needs an itemId argument; the list screen needs none</td><td class="proj">all</td></tr>
+    <tr><td class="num">4</td><td>It adds a key to the back stack for NavDisplay to match</td><td class="proj">NavDetailList</td></tr>
+    <tr><td class="num">5</td><td>All keys but the first pop, returning to the root</td><td class="proj">NavFourScreen</td></tr>
+    <tr><td class="num">6</td><td>It registers the screen for that key and passes the key in</td><td class="proj">all</td></tr>
+    <tr><td class="num">7</td><td>The id stays small and serializable; the screen looks it up</td><td class="proj">all</td></tr>
+    <tr><td class="num">8</td><td>It is scoped to the Activity and re-attached after recreation</td><td class="proj">NavViewModelState</td></tr>
+    <tr><td class="num">9</td><td>It calls <code>viewModel.toggleFavorite(id)</code>; state flows back down</td><td class="proj">NavViewModelState</td></tr>
+    <tr><td class="num">10</td><td>Loading, Empty, Error, and Success</td><td class="proj">NavDataLayer</td></tr>
+  </tbody>
+</table>
+
+<footer class="doc">
+  Navigation 3 answer key · 10 questions · generated for the Compose navigation teaching projects.
+</footer>
+
+</div>
+</body>
+</html>
