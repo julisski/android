@@ -1,0 +1,1085 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jetpack Compose Quiz — Detailed Solutions &amp; Explanations</title>
+<style>
+  :root{
+    --ink:#1c1b1f; --muted:#5b5b66; --line:#e3e1e8; --bg:#f6f5fa; --card:#ffffff;
+    --purple:#6650a4; --purple-d:#4a3a86;
+    --ok:#1b7f3b; --ok-bg:#e7f5ec; --ok-line:#bfe3cb;
+    --no:#b3261e; --no-bg:#fcebe9; --no-line:#f0c4bf;
+    --warn:#8a5a00; --warn-bg:#fff6e6; --warn-line:#f0dcae;
+    --code-bg:#f1eff7; --code-ink:#33304a;
+    --kt-bg:#1e1b2e; --kt-ink:#e7e4f5; --kt-kw:#c792ea; --kt-str:#9ece6a; --kt-cmt:#7f8aa6; --kt-ann:#7dd3fc;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:32px 20px 80px}
+  header.page{
+    background:linear-gradient(135deg,var(--purple),var(--purple-d));
+    color:#fff; border-radius:16px; padding:26px 28px; margin-bottom:18px;
+    box-shadow:0 6px 20px rgba(74,58,134,.18);
+  }
+  header.page h1{margin:0 0 6px; font-size:1.55rem; letter-spacing:.2px}
+  header.page p{margin:0; opacity:.93; font-size:.96rem}
+
+  .legend{
+    display:flex; gap:18px; flex-wrap:wrap; margin:0 0 16px;
+    background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 16px; font-size:.9rem;
+  }
+  .legend .pill{display:inline-flex; align-items:center; gap:8px}
+  .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+  .dot.ok{background:var(--ok)} .dot.no{background:var(--no)}
+  .legend .note{color:var(--muted)}
+
+  .toc{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:0 0 22px; font-size:.9rem; color:var(--muted)}
+  .toc strong{color:var(--ink); margin-right:4px}
+  .toc a{
+    display:inline-block; text-decoration:none; color:var(--purple-d); font-weight:600;
+    background:#fff; border:1px solid var(--line); border-radius:999px; padding:4px 12px;
+  }
+  .toc a:hover{background:var(--code-bg)}
+
+  .q{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px 22px 16px; margin-bottom:22px; box-shadow:0 1px 2px rgba(0,0,0,.03); scroll-margin-top:16px;
+  }
+  .q-num{
+    display:inline-block; background:var(--purple); color:#fff; font-weight:700;
+    font-size:.78rem; padding:3px 10px; border-radius:999px; margin-bottom:10px; letter-spacing:.4px;
+  }
+  .q-prompt{font-weight:600; font-size:1.08rem; margin:2px 0 14px}
+  .q-prompt code{font-size:.95em}
+
+  .atglance{
+    background:#f3f1fa; border:1px solid var(--line); border-left:5px solid var(--purple);
+    border-radius:10px; padding:10px 14px; margin:0 0 16px; font-size:.95rem;
+  }
+  .ag-tag{
+    display:inline-block; background:var(--purple); color:#fff; font-size:.68rem; font-weight:700;
+    letter-spacing:.4px; padding:2px 8px; border-radius:999px; margin-right:8px; vertical-align:middle;
+  }
+
+  .opt{border:1px solid var(--line); border-radius:11px; padding:12px 14px; margin:0 0 12px; border-left-width:5px}
+  .opt.correct{background:var(--ok-bg); border-color:var(--ok-line); border-left-color:var(--ok)}
+  .opt.incorrect{background:var(--no-bg); border-color:var(--no-line); border-left-color:var(--no)}
+  .opt-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px}
+  .badge{font-size:.72rem; font-weight:700; padding:3px 9px; border-radius:999px; letter-spacing:.3px; white-space:nowrap}
+  .badge.ok{background:var(--ok); color:#fff}
+  .badge.no{background:var(--no); color:#fff}
+  .opt-label{font-size:.8rem; color:var(--muted); font-weight:600}
+  .opt-body{margin:2px 0 0}
+  .opt-body p{margin:0}
+
+  code{
+    font-family:"SF Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    background:var(--code-bg); color:var(--code-ink); padding:1px 5px; border-radius:5px; font-size:.9em;
+  }
+  code.block{display:block; padding:9px 12px; white-space:pre-wrap; word-break:break-word; font-size:.9rem; line-height:1.45}
+  .why{margin-top:10px; padding-top:10px; border-top:1px dashed rgba(0,0,0,.12); font-size:.94rem}
+  .why strong{color:var(--ink)}
+  .fix{margin-top:8px; font-size:.9rem}
+  .fix code{background:#fff; border:1px solid var(--line)}
+
+  .sec-h{font-size:.82rem; text-transform:uppercase; letter-spacing:.6px; color:var(--purple-d); margin:18px 0 10px}
+
+  .examples{margin-top:8px}
+  .example{margin:0 0 14px}
+  .ex-title{font-size:.9rem; font-weight:700; color:var(--ink); margin:0 0 6px}
+  pre.kt{
+    margin:0; background:var(--kt-bg); color:var(--kt-ink); border-radius:10px; padding:14px 16px;
+    overflow-x:auto; font-size:.86rem; line-height:1.55;
+    font-family:"SF Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
+  }
+  pre.kt code{background:none; color:inherit; padding:0; font-size:inherit}
+  pre.kt .kw{color:var(--kt-kw); font-weight:600}
+  pre.kt .str{color:var(--kt-str)}
+  pre.kt .cmt{color:var(--kt-cmt); font-style:italic}
+  pre.kt .ann{color:var(--kt-ann)}
+  .ex-note{font-size:.9rem; color:var(--muted); margin-top:8px}
+  .ex-note code{font-size:.86em}
+
+  .diagram-wrap{margin-top:6px}
+  pre.diagram{
+    margin:0; background:#fbfaff; border:1px solid var(--line); border-left:5px solid var(--purple);
+    border-radius:10px; padding:14px 16px; overflow-x:auto; font-size:.82rem; line-height:1.45; color:#3a3550;
+    font-family:"SF Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+
+  .traps{
+    background:var(--warn-bg); border:1px solid var(--warn-line); border-left:5px solid #d9a300;
+    border-radius:11px; padding:12px 16px; margin:16px 0 4px; font-size:.92rem; color:#5e4a14;
+  }
+  .traps h4{margin:0 0 6px; font-size:.92rem; color:var(--warn)}
+  .traps ul{margin:0; padding-left:20px}
+  .traps li{margin:4px 0}
+  .traps code{background:#fff; border:1px solid var(--warn-line)}
+
+  .callout{
+    background:#fbfaff; border:1px solid var(--line); border-left:5px solid var(--purple);
+    border-radius:11px; padding:14px 16px; margin:16px 0 4px; font-size:.93rem;
+  }
+  .callout h3{margin:0 0 8px; font-size:.95rem; color:var(--purple-d)}
+  .callout p{margin:0}
+  table.ref{width:100%; border-collapse:collapse; margin-top:6px; font-size:.88rem; background:#fff}
+  table.ref th, table.ref td{border:1px solid var(--line); padding:7px 10px; text-align:left; vertical-align:top}
+  table.ref th{background:#f3f1fa}
+  table.ref td code, table.ref th code{font-size:.86em}
+
+  .glossary{margin:0}
+  .gloss-item{padding:10px 0; border-bottom:1px dashed var(--line)}
+  .gloss-item:last-child{border-bottom:none}
+  .glossary dt{font-weight:700; color:var(--purple-d); margin:0}
+  .glossary dd{margin:3px 0 0; font-size:.93rem; color:var(--ink)}
+  .glossary code{font-size:.86em}
+
+  .reviewnote{
+    background:#eef7f0; border:1px solid var(--ok-line); border-left:5px solid var(--ok);
+    border-radius:11px; padding:10px 14px; margin:0 0 22px; font-size:.86rem; color:#225c36;
+  }
+  .reviewnote strong{color:#184a2a}
+
+  footer{color:var(--muted); font-size:.82rem; text-align:center; margin-top:30px}
+  @media print{
+    body{background:#fff}
+    .q,.legend,.callout,.traps,.atglance{box-shadow:none}
+    header.page{background:var(--purple-d) !important; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+    .opt,.badge,.dot,pre.kt,.traps,.atglance{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    .toc{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <h1>Jetpack Compose Quiz — Detailed Solutions &amp; Explanations</h1>
+    <p><![CDATA[This answer key covers the core building blocks of a beginning Jetpack Compose UI: how to call <code>Text()</code> correctly, where root content lands when you pass it to <code>setContent { }</code>, and how to lay out children with <code>Column</code>, <code>Row</code>, and a Material 3 <code>Card</code>. Read the quick-reference tables first to confirm the "right answer," then use the glossary to check any term you were unsure about.]]></p>
+  </header>
+
+  <div class="legend">
+    <span class="pill"><span class="dot ok"></span> <strong>Green</strong> = correct (should be selected)</span>
+    <span class="pill"><span class="dot no"></span> <strong>Red</strong> = incorrect (leave unselected)</span>
+    <span class="pill note">Multiple-answer questions — picking a red option or missing a green one loses credit.</span>
+  </div>
+
+  <nav class="toc"><strong>Jump to:</strong><a href="#q1">Q1</a><a href="#q2">Q2</a><a href="#q3">Q3</a><a href="#q4">Q4</a><a href="#q5">Q5</a><a href="#reference">Reference</a><a href="#glossary">Glossary</a></nav>
+
+  <div class="reviewnote"><strong>Quality note:</strong> every explanation below passed an adversarial technical-accuracy audit against the real Compose / Material&nbsp;3 APIs (32 corrections were applied to the first draft) before publishing.</div>
+
+  <!-- ================= QUESTION 1 ================= -->
+  <section class="q" id="q1">
+    <span class="q-num">QUESTION 1</span>
+    <div class="q-prompt">Which of the following are valid Jetpack Compose <code>Text()</code> calls? Assume all required imports (<code>Text</code>, <code>FontWeight</code>, <code>Color</code>, <code>sp</code>, <code>MaterialTheme</code>) are present. Select ALL that are valid.</div>
+    <div class="atglance"><span class="ag-tag">At a glance</span> <strong>Options 1, 2, and 3 are valid;</strong> they all pass a non-null <code>String</code> as the required <code>text</code> argument and only add parameters that genuinely exist on the <code>Text()</code> signature (<code>style</code>, <code>fontWeight</code>, <code>color</code>), while options 4, 5, and 6 each break a hard rule (missing closing paren, a non-existent <code>size</code> parameter, and a missing required <code>text</code> argument).</div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ VALID — correct answer</span><span class="opt-label">Option 1</span></div>
+      <div class="opt-body"><code class="block">Text("Hello")</code></div>
+      <div class="why"><strong>Why:</strong> The Material 3 <code>Text()</code> composable has exactly one required parameter, <code>text: String</code> (a separate overload takes <code>text: AnnotatedString</code>); every other parameter such as <code>modifier</code>, <code>color</code>, <code>fontSize</code>, <code>fontWeight</code>, and <code>style</code> has a default value. Passing a single string literal therefore satisfies the signature, and the omitted parameters fall back to their defaults: <code>color = Color.Unspecified</code>, <code>fontSize = TextUnit.Unspecified</code>, <code>fontWeight = null</code>, <code>style = LocalTextStyle.current</code>. When a value is <em>Unspecified</em>, <code>Text</code> resolves it from the effective <code>style</code> (which by default is <code>LocalTextStyle.current</code>, supplied by <code>MaterialTheme</code>), so the call is both syntactically and semantically complete. This is the canonical minimal Compose text call.</div>
+    </div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ VALID — correct answer</span><span class="opt-label">Option 2</span></div>
+      <div class="opt-body"><code class="block">Text("Body text in bodyMedium", style = MaterialTheme.typography.bodyMedium)</code></div>
+      <div class="why"><strong>Why:</strong> The first argument is supplied positionally as the required <code>text</code>, and <code>style</code> is supplied as a named argument of type <code>TextStyle</code>. <code>MaterialTheme.typography</code> returns the active <code>Typography</code> object, and <code>bodyMedium</code> is one of its predefined <code>TextStyle</code> roles, so the type matches <code>style: TextStyle = LocalTextStyle.current</code>. The supplied style becomes the baseline, and any explicit per-call parameters (none here) would override individual fields on top of it. Mixing one positional argument with later named arguments is legal Kotlin as long as the positional arguments come first.</div>
+    </div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ VALID — correct answer</span><span class="opt-label">Option 3</span></div>
+      <div class="opt-body"><code class="block">Text("Bold + primary color", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)</code></div>
+      <div class="why"><strong>Why:</strong> All three parameters exist on <code>Text()</code> and the types match: <code>fontWeight: FontWeight?</code> accepts <code>FontWeight.Bold</code>, and <code>color: Color</code> accepts <code>MaterialTheme.colorScheme.primary</code>, which returns a <code>Color</code> from the active color scheme. These are independent <em>style axes</em> that override only their own field of the resolved <code>TextStyle</code>; setting weight and color does not disturb font size or family. Using <code>colorScheme.primary</code> instead of a hardcoded literal is the theme-aware, dark-mode-safe way to color text. Once the positional <code>text</code> comes first, the named arguments may appear in any order.</div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ INVALID</span><span class="opt-label">Option 4</span></div>
+      <div class="opt-body"><code class="block">Text("Big and red", fontSize = 22.sp, color = Color.Red</code></div>
+      <div class="why"><strong>Why:</strong> Conceptually every part of this call is fine: <code>fontSize</code> is a real parameter of type <code>TextUnit</code> and <code>22.sp</code> produces a <code>TextUnit</code> via the <code>Int.sp</code> extension, while <code>color = Color.Red</code> is a valid <code>Color</code>. The failure is purely mechanical: the closing parenthesis of the call is missing. Kotlin cannot find the end of the argument list, so the compiler reports a syntax error such as <em>Expecting ')'</em>. A balanced-delimiter mistake aborts parsing before any type checking matters.<div class="fix"><strong>Fix:</strong> Add the closing parenthesis: <code>Text("Big and red", fontSize = 22.sp, color = Color.Red)</code></div></div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ INVALID</span><span class="opt-label">Option 5</span></div>
+      <div class="opt-body"><code class="block">Text("Sized", size = 20.sp)</code></div>
+      <div class="why"><strong>Why:</strong> There is no parameter named <code>size</code> on the <code>Text()</code> composable, so the compiler fails with <em>Cannot find a parameter with this name: size</em>. The confusion comes from two separate concepts: the text's character size is controlled by <code>fontSize: TextUnit</code>, whereas <code>size</code> is a <code>Modifier</code> function (<code>Modifier.size(...)</code>) that sets the layout bounds of a composable, not its glyph size. The value <code>20.sp</code> is itself a valid <code>TextUnit</code>; it is simply being bound to a name that does not exist. Naming a parameter that the signature does not declare is a name-resolution error, distinct from a type mismatch.<div class="fix"><strong>Fix:</strong> Use the real text-size parameter: <code>Text("Sized", fontSize = 20.sp)</code></div></div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ INVALID</span><span class="opt-label">Option 6</span></div>
+      <div class="opt-body"><code class="block">Text(color = Color.Blue)</code></div>
+      <div class="why"><strong>Why:</strong> <code>color</code> is a real, optional parameter, but the call never supplies the one required parameter, <code>text</code>. Because <code>text</code> has no default, the compiler reports <em>No value passed for parameter 'text'</em>. Optional parameters can be omitted; required ones cannot, and naming an optional parameter does not satisfy the requirement for the mandatory one. There is also no meaningful way to render colored text when there is no text content to color.<div class="fix"><strong>Fix:</strong> Provide the required <code>text</code> argument: <code>Text("Blue text", color = Color.Blue)</code></div></div>
+    </div>
+    <div class="examples">
+      <h4 class="sec-h">Worked code examples</h4>
+      <figure class="example">
+        <figcaption class="ex-title">Correct minimal-to-styled Text() calls (options 1-3)</figcaption>
+        <pre class="kt"><code><span class="cmt">// Import the Material 3 Text composable (androidx.compose.material3.Text).</span>
+<span class="kw">import</span> androidx.compose.material3.Text
+<span class="cmt">// MaterialTheme gives access to typography and colorScheme.</span>
+<span class="kw">import</span> androidx.compose.material3.MaterialTheme
+<span class="cmt">// FontWeight holds named weights (Normal, Bold, etc.).</span>
+<span class="kw">import</span> androidx.compose.ui.text.font.FontWeight
+<span class="cmt">// Color is the type used by the `color` parameter.</span>
+<span class="kw">import</span> androidx.compose.ui.graphics.Color
+<span class="cmt">// @Composable marks a function that can emit UI.</span>
+<span class="kw">import</span> androidx.compose.runtime.Composable
+
+<span class="ann">@Composable</span>                                  <span class="cmt">// This function may call other composables.</span>
+<span class="kw">fun</span> ValidTextSamples() {                     <span class="cmt">// A container composable for our examples.</span>
+    <span class="cmt">// Option 1: only the required `text` arg; everything else uses defaults.</span>
+    Text(<span class="str">"Hello"</span>)
+
+    <span class="cmt">// Option 2: positional text + named `style` taken from the theme typography.</span>
+    Text(
+        <span class="str">"Body text in bodyMedium"</span>,           <span class="cmt">// positional -&gt; binds to required `text`</span>
+        style = MaterialTheme.typography.bodyMedium  <span class="cmt">// a TextStyle role from the theme</span>
+    )
+
+    <span class="cmt">// Option 3: override two independent style axes (weight + color).</span>
+    Text(
+        <span class="str">"Bold + primary color"</span>,              <span class="cmt">// required text first</span>
+        fontWeight = FontWeight.Bold,        <span class="cmt">// FontWeight? -&gt; bold glyphs</span>
+        color = MaterialTheme.colorScheme.primary  <span class="cmt">// Color from the active scheme</span>
+    )
+}</code></pre>
+        <div class="ex-note">This snippet shows all three <strong>valid</strong> answers compiling together. It demonstrates that <code>text</code> is the only mandatory argument, that <code>style</code> accepts a <code>TextStyle</code> from <code>MaterialTheme.typography</code>, and that <code>fontWeight</code> and <code>color</code> are independent axes you can override individually while leaving the rest at their defaults.</div>
+      </figure>
+      <figure class="example">
+        <figcaption class="ex-title">Fixing the three invalid calls (options 4-6)</figcaption>
+        <pre class="kt"><code><span class="kw">import</span> androidx.compose.material3.Text          <span class="cmt">// Material 3 Text.</span>
+<span class="kw">import</span> androidx.compose.ui.graphics.Color        <span class="cmt">// Color type for `color`.</span>
+<span class="kw">import</span> androidx.compose.ui.unit.sp               <span class="cmt">// Int.sp extension -&gt; TextUnit.</span>
+<span class="kw">import</span> androidx.compose.runtime.Composable       <span class="cmt">// Composable annotation.</span>
+
+<span class="ann">@Composable</span>                                      <span class="cmt">// Emits UI.</span>
+<span class="kw">fun</span> FixedTextSamples() {
+    <span class="cmt">// FIX for option 4: add the missing closing parenthesis ')'.</span>
+    Text(<span class="str">"Big and red"</span>, fontSize = 22.sp, color = Color.Red)  <span class="cmt">// balanced parens now</span>
+
+    <span class="cmt">// FIX for option 5: there is no `size` param; the text-size param is `fontSize`.</span>
+    Text(<span class="str">"Sized"</span>, fontSize = 20.sp)              <span class="cmt">// 20.sp is a TextUnit -&gt; fontSize</span>
+
+    <span class="cmt">// FIX for option 6: supply the REQUIRED `text` arg, not just `color`.</span>
+    Text(<span class="str">"Blue text"</span>, color = Color.Blue)        <span class="cmt">// text first, then the optional color</span>
+}</code></pre>
+        <div class="ex-note">Each line corrects one <strong>invalid</strong> option. Option 4 only needed its closing <code>)</code>; option 5 needed the real parameter name <code>fontSize</code> instead of the non-existent <code>size</code> (which is a <code>Modifier</code> function, not a <code>Text</code> parameter); option 6 needed the mandatory <code>text</code> argument supplied before any optional ones.</div>
+      </figure>
+      <figure class="example">
+        <figcaption class="ex-title">Layering style: theme style + per-call overrides</figcaption>
+        <pre class="kt"><code><span class="kw">import</span> androidx.compose.material3.Text            <span class="cmt">// Text composable.</span>
+<span class="kw">import</span> androidx.compose.material3.MaterialTheme    <span class="cmt">// Theme access.</span>
+<span class="kw">import</span> androidx.compose.ui.text.font.FontWeight    <span class="cmt">// Weight axis.</span>
+<span class="kw">import</span> androidx.compose.ui.graphics.Color          <span class="cmt">// Color type.</span>
+<span class="kw">import</span> androidx.compose.ui.unit.sp                 <span class="cmt">// sp extension.</span>
+<span class="kw">import</span> androidx.compose.runtime.Composable         <span class="cmt">// Composable.</span>
+
+<span class="ann">@Composable</span>                                        <span class="cmt">// Emits UI.</span>
+<span class="kw">fun</span> LayeredText() {
+    Text(
+        <span class="str">"Headline, but heavier"</span>,                   <span class="cmt">// required text</span>
+        style = MaterialTheme.typography.titleLarge, <span class="cmt">// baseline TextStyle from theme</span>
+        fontWeight = FontWeight.ExtraBold,         <span class="cmt">// overrides ONLY the weight field</span>
+        fontSize = 28.sp,                          <span class="cmt">// overrides ONLY the size field</span>
+        color = MaterialTheme.colorScheme.secondary <span class="cmt">// overrides ONLY the color field</span>
+    )
+}</code></pre>
+        <div class="ex-note">This illustrative variation shows how an explicit <code>style</code> sets the baseline <code>TextStyle</code> while individual parameters like <code>fontWeight</code>, <code>fontSize</code>, and <code>color</code> override single fields on top of it. The mental model is: <em>theme style first, then per-call overrides win field-by-field.</em></div>
+      </figure>
+    </div>
+    <div class="diagram-wrap">
+      <h4 class="sec-h">How it lays out</h4>
+      <pre class="diagram">Text() PARAMETER vs MODIFIER  (why option 5 fails)
+
+  Text("Sized", fontSize = 20.sp)
+       |  \________________/
+       |          |
+       |          +--&gt; fontSize: TextUnit   &lt;- changes GLYPH height (the letters)
+       |
+       +--&gt; "size" is NOT a Text parameter.
+            Modifier.size(...) changes the LAYOUT BOX, not the glyphs:
+
+   Modifier.size(120.dp)            fontSize = 20.sp
+   +----------------------+         +----------------------+
+   |                      |         |                      |
+   |   Sized              |         |   Sized   (taller    |
+   |   (box is 120dp,     |         |    letters, box just |
+   |    text stays small) |         |    wraps the text)   |
+   +----------------------+         +----------------------+
+        layout bounds                  character size
+
+  Required vs optional (why option 6 fails):
+
+   Text( text = REQUIRED , color = optional , fontSize = optional , ... )
+          ^^^^^^^^^^^^^^
+          must be supplied; all others default to Unspecified/null/theme</pre>
+    </div>
+    <div class="traps">
+      <h4>⚠ Common traps</h4>
+      <ul>
+        <li><strong>Confusing <code>size</code> with <code>fontSize</code>.</strong> <code>Modifier.size()</code> sets the composable's layout box; the character size is the <code>fontSize: TextUnit</code> parameter. There is no <code>size</code> parameter on <code>Text()</code>, so <code>size = 20.sp</code> fails with <em>Cannot find a parameter with this name: size</em>.</li>
+        <li><strong>Forgetting that <code>text</code> is the only required argument.</strong> Naming optional parameters like <code>color</code> alone does not satisfy the call; you still get <em>No value passed for parameter 'text'</em>.</li>
+        <li><strong>Unbalanced parentheses.</strong> A perfectly correct argument list still fails to compile if the closing <code>)</code> is missing. This is a syntax error caught during parsing, before type checking, so the message points at punctuation (<em>Expecting ')'</em>), not types.</li>
+        <li><strong>Hardcoding colors instead of using the scheme.</strong> <code>Color.Red</code> compiles, but <code>MaterialTheme.colorScheme.primary</code> is the theme-aware, dark-mode-safe choice; both are valid Kotlin, only one survives a theme change gracefully.</li>
+      </ul>
+    </div>
+    <div class="callout">
+      <h3>Key concept</h3>
+      <p><strong>Memorize the <code>Text()</code> contract:</strong> the only required argument is <code>text</code> (a <code>String</code>, or an <code>AnnotatedString</code> via a separate overload); everything else (<code>modifier</code>, <code>color: Color</code>, <code>fontSize: TextUnit</code>, <code>fontWeight: FontWeight?</code>, <code>style: TextStyle</code>, ...) is optional with a default, and the <em>Unspecified</em> defaults resolve from the effective <code>style</code> / ambient <code>MaterialTheme</code>. To validate any <code>Text()</code> call, check three things in order: <strong>(1) syntax</strong> — are the parentheses balanced? <strong>(2) the required arg</strong> — is <code>text</code> supplied (positionally first, or named)? <strong>(3) parameter names and types</strong> — does each named argument actually exist on the signature with a matching type? Remember the two classic gotchas: the text-size parameter is <code>fontSize</code> (fed by <code>Int.sp</code>), <em>not</em> <code>size</code> (which is a <code>Modifier</code> function affecting layout bounds), and an explicit <code>style</code> sets a baseline <code>TextStyle</code> that individual parameters then override field-by-field.</p>
+    </div>
+  </section>
+
+  <!-- ================= QUESTION 2 ================= -->
+  <section class="q" id="q2">
+    <span class="q-num">QUESTION 2</span>
+    <div class="q-prompt">A single <code>Text("Hello")</code> is placed directly inside <code>setContent { }</code> with no Modifier, Scaffold, Surface, or other layout wrapper. Which of the following are TRUE about where and how it is displayed by default? Select ALL that apply.</div>
+    <div class="atglance"><span class="ag-tag">At a glance</span> <strong>Options 1, 2, and 3 are TRUE</strong> — because raw content passed to <code>setContent</code> is placed at the composition root's origin (top-start, i.e. top-left in LTR) with <em>no</em> implicit centering, <em>no</em> window-inset padding, and a <code>Text</code> measures to <em>wrap-content</em> rather than filling the screen.</div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 1</span></div>
+      <div class="opt-body"><p>It appears in the top-left corner of the screen (the top-start position in a left-to-right layout).</p></div>
+      <div class="why"><strong>Why:</strong> <code>setContent</code> installs your composables into an <code>AndroidComposeView</code> whose root acts like a single-child container that places its child at coordinate <code>(0, 0)</code> — the top-start corner. In a left-to-right (LTR) layout direction, top-start resolves to top-<em>left</em>; in an RTL locale the same code would render top-<em>right</em> because Compose expresses placement in start/end terms, not hard left/right. There is no parent <code>Box</code> with <code>contentAlignment</code>, no <code>Column</code>/<code>Row</code> arrangement, and no gravity, so nothing shifts the child away from the origin. The <code>Text</code> is therefore laid out flush against the top-left of the available space. This is the single most important default to memorize: unwrapped root content lands at the top-start origin.</div>
+    </div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 2</span></div>
+      <div class="opt-body"><p>It sits at the very top and can overlap the status bar, because no padding or window insets are applied by default.</p></div>
+      <div class="why"><strong>Why:</strong> Window insets (the status bar, navigation bar, display cutout, IME, etc.) are <em>not</em> applied automatically to raw content handed to <code>setContent</code> — they are only consumed when you opt in via something like <code>Scaffold</code> (which hands you <code>innerPadding</code>) or modifiers such as <code>Modifier.statusBarsPadding()</code> / <code>Modifier.safeDrawingPadding()</code>. Because modern apps draw edge-to-edge (and <code>enableEdgeToEdge()</code> makes the system bars transparent), the composition fills the whole window including the area behind the status bar. With the <code>Text</code> pinned at the top origin and no inset padding, its glyphs can render <em>underneath</em> the status-bar clock and icons. The fix is to consume insets yourself; the default does not do it for you.</div>
+    </div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 3</span></div>
+      <div class="opt-body"><p>It takes up only as much width as its text needs, wrapping its content instead of filling the screen width.</p></div>
+      <div class="why"><strong>Why:</strong> During the measure pass, <code>Text</code> reports a measured size just large enough to hold its rendered string (subject to the incoming constraints) — this is <em>wrap-content</em> behavior, the default for nearly every leaf composable. Without a width modifier, the measured width equals the text's line width, not the parent's max width, so the node occupies only the leftmost slice of the available space. The parent's <code>maxWidth</code> constraint is the screen width, but a child is free to choose any size between the min and max constraint, and <code>Text</code> chooses the minimum it needs. To make it span the screen you must explicitly opt into a larger size with <code>Modifier.fillMaxWidth()</code>. Wrap-content is the rule; fill is the exception you request.</div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 4</span></div>
+      <div class="opt-body"><p>It is automatically centered horizontally and vertically on the screen.</p></div>
+      <div class="why"><strong>Why:</strong> There is no implicit centering anywhere in Compose's layout system — centering is always an <em>explicit</em> opt-in. The root behaves like a single-child container placing its child at the top-start origin, with no <code>contentAlignment</code> applied. To actually center on both axes you must wrap the text in a <code>Box</code> that fills the window and set its <code>contentAlignment</code>, or use a <code>Column</code>/<code>Row</code> with matching arrangement (main axis) and alignment (cross axis). The exam trap is assuming a phone screen 'naturally' centers a lone widget the way some other UI toolkits' default gravity might; Compose does not.<div class="fix"><strong>Fix:</strong> Wrap it in a full-size <code>Box</code> with <code>contentAlignment</code>: <br><code>Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Hello") }</code></div></div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 5</span></div>
+      <div class="opt-body"><p>It appears in the bottom-left corner of the screen by default.</p></div>
+      <div class="why"><strong>Why:</strong> The default origin for root content is the <em>top</em>-start corner, not the bottom. Compose's coordinate system has its y-axis increasing <em>downward</em> from <code>(0, 0)</code> at the top-left, and the root container places its single child at that top origin. Nothing pushes the child toward the bottom unless you deliberately add vertical space (for example a <code>Column</code> filling the height with <code>verticalArrangement = Arrangement.Bottom</code>, or <code>Alignment.BottomStart</code> in a full-size <code>Box</code>). So 'bottom-left by default' is simply the wrong corner.<div class="fix"><strong>Fix:</strong> To deliberately pin to the bottom-left, fill the height and align to bottom-start: <br><code>Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomStart) { Text("Hello") }</code></div></div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 6</span></div>
+      <div class="opt-body"><p>It automatically stretches to fill the entire width of the screen.</p></div>
+      <div class="why"><strong>Why:</strong> A leaf composable never auto-stretches; it measures to wrap-content and chooses the minimum width it needs, as covered in option 3. Filling the available width is an explicit request you make with <code>Modifier.fillMaxWidth()</code> (or <code>fillMaxSize()</code>, or <code>Modifier.width(...)</code>), which sets the child's width to the parent's max width. Even when a <code>Text</code> fills its width, the <em>glyphs</em> still start at the start edge unless you also set <code>textAlign = TextAlign.Center</code> — filling the box and centering the text are two separate steps. Without any modifier, the node is exactly as wide as the word 'Hello'.<div class="fix"><strong>Fix:</strong> Make the text span and center its glyphs: <br><code>Text("Hello", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)</code></div></div>
+    </div>
+    <div class="examples">
+      <h4 class="sec-h">Worked code examples</h4>
+      <figure class="example">
+        <figcaption class="ex-title">The default: raw Text lands top-start, wrapping its content</figcaption>
+        <pre class="kt"><code><span class="cmt">// MainActivity.kt — the bare-bones case described by the question.</span>
+<span class="kw">import</span> android.os.Bundle                       <span class="cmt">// Bundle: saved-instance-state passed to onCreate.</span>
+<span class="kw">import</span> androidx.activity.ComponentActivity     <span class="cmt">// Base Activity that knows how to host Compose.</span>
+<span class="kw">import</span> androidx.activity.compose.setContent     <span class="cmt">// The bridge from Android Activity -&gt; Compose UI.</span>
+<span class="kw">import</span> androidx.compose.material3.Text          <span class="cmt">// Material 3 Text composable (a leaf node).</span>
+
+<span class="kw">class</span> MainActivity : ComponentActivity() {       <span class="cmt">// Our screen is a ComponentActivity.</span>
+    <span class="kw">override</span> <span class="kw">fun</span> onCreate(savedInstanceState: Bundle?) { <span class="cmt">// Android calls this when the screen is created.</span>
+        <span class="kw">super</span>.onCreate(savedInstanceState)        <span class="cmt">// Always call through to the base implementation first.</span>
+        setContent {                              <span class="cmt">// Everything inside this lambda IS the UI tree.</span>
+            <span class="cmt">// No Box, no Column, no Modifier, no Scaffold, no Surface — exactly the question's scenario.</span>
+            Text(<span class="str">"Hello"</span>)                         <span class="cmt">// Placed at root origin (0,0) = top-start; wrap-content width.</span>
+        }                                         <span class="cmt">// &lt;- It can sit UNDER the status bar; it does NOT center or fill.</span>
+    }
+}</code></pre>
+        <div class="ex-note">This is the literal scenario from the question and demonstrates options <strong>1, 2, and 3</strong> at once: with nothing wrapping it, <code>Text("Hello")</code> renders at the <strong>top-start</strong> origin, can <strong>overlap the status bar</strong> (no insets consumed), and is only as wide as the word 'Hello' (<strong>wrap-content</strong>). It does not center and does not fill.</div>
+      </figure>
+      <figure class="example">
+        <figcaption class="ex-title">The fix for the wrong options: center, fill, and respect insets</figcaption>
+        <pre class="kt"><code><span class="cmt">// Same Activity, but now we explicitly position and size the content.</span>
+<span class="kw">import</span> android.os.Bundle
+<span class="kw">import</span> androidx.activity.ComponentActivity
+<span class="kw">import</span> androidx.activity.compose.setContent
+<span class="kw">import</span> androidx.activity.enableEdgeToEdge        <span class="cmt">// Opt into edge-to-edge so insets matter.</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.Box    <span class="cmt">// Box: a single-child-friendly container that supports alignment.</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.fillMaxSize     <span class="cmt">// Modifier: take ALL available width AND height.</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.safeDrawingPadding <span class="cmt">// Modifier: pad away from status/nav bars + cutouts.</span>
+<span class="kw">import</span> androidx.compose.material3.Text
+<span class="kw">import</span> androidx.compose.runtime.Composable
+<span class="kw">import</span> androidx.compose.ui.Alignment             <span class="cmt">// Holds Alignment.Center and the corner alignments.</span>
+<span class="kw">import</span> androidx.compose.ui.Modifier              <span class="cmt">// The chainable styling/layout object.</span>
+
+<span class="kw">class</span> MainActivity : ComponentActivity() {
+    <span class="kw">override</span> <span class="kw">fun</span> onCreate(savedInstanceState: Bundle?) {
+        <span class="kw">super</span>.onCreate(savedInstanceState)
+        enableEdgeToEdge()                        <span class="cmt">// System bars become transparent; we now owe inset handling.</span>
+        setContent {                              <span class="cmt">// Begin the Compose UI tree.</span>
+            CenteredHello()                       <span class="cmt">// Delegate to a named, previewable composable.</span>
+        }
+    }
+}
+
+<span class="ann">@Composable</span>                                       <span class="cmt">// Marks this function as emitting UI.</span>
+<span class="kw">fun</span> CenteredHello() {
+    Box(                                          <span class="cmt">// A container we can size and align children within.</span>
+        modifier = Modifier
+            .fillMaxSize()                        <span class="cmt">// Box now spans the WHOLE window (fixes "doesn't fill").</span>
+            .safeDrawingPadding(),                <span class="cmt">// Push content inside the bars (fixes status-bar overlap).</span>
+        contentAlignment = Alignment.Center       <span class="cmt">// Center the single child on BOTH axes (fixes "not centered").</span>
+    ) {
+        Text(<span class="str">"Hello"</span>)                             <span class="cmt">// Now genuinely centered and clear of the status bar.</span>
+    }
+}</code></pre>
+        <div class="ex-note">This snippet corrects options <strong>4, 5, and 6</strong>'s false assumptions by doing them <em>explicitly</em>: <code>Modifier.fillMaxSize()</code> makes the <code>Box</code> occupy the whole window, <code>contentAlignment = Alignment.Center</code> centers the child on both axes, and <code>safeDrawingPadding()</code> keeps content out from under the system bars. The takeaway: centering, filling, and inset-handling never happen by default — you request each one.</div>
+      </figure>
+      <figure class="example">
+        <figcaption class="ex-title">Variation: make the Text itself fill the width and center its glyphs</figcaption>
+        <pre class="kt"><code><span class="cmt">// Sometimes you want the TEXT NODE to span the row, not just a wrapping container.</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.fillMaxWidth     <span class="cmt">// Width-only fill (height stays wrap-content).</span>
+<span class="kw">import</span> androidx.compose.material3.Text
+<span class="kw">import</span> androidx.compose.runtime.Composable
+<span class="kw">import</span> androidx.compose.ui.Modifier
+<span class="kw">import</span> androidx.compose.ui.text.style.TextAlign            <span class="cmt">// Controls horizontal alignment of glyphs WITHIN the node.</span>
+
+<span class="ann">@Composable</span>                                                <span class="cmt">// UI-emitting function.</span>
+<span class="kw">fun</span> FullWidthHello() {
+    Text(                                                  <span class="cmt">// A single Text leaf...</span>
+        text = <span class="str">"Hello"</span>,                                    <span class="cmt">// ...whose visible string is "Hello".</span>
+        modifier = Modifier.fillMaxWidth(),                <span class="cmt">// The NODE now spans the full parent width...</span>
+        textAlign = TextAlign.Center                       <span class="cmt">// ...and the GLYPHS are centered inside that span.</span>
+    )                                                      <span class="cmt">// Without textAlign, glyphs would hug the start edge.</span>
+}</code></pre>
+        <div class="ex-note">This illustrates the two-step nature of 'centering text across the screen' that trips up beginners: <code>Modifier.fillMaxWidth()</code> stretches the <em>node's</em> width (the box the text lives in), while <code>textAlign = TextAlign.Center</code> centers the <em>glyphs</em> inside that box. Filling and centering are independent operations — doing only one leaves the other at its default.</div>
+      </figure>
+    </div>
+    <div class="diagram-wrap">
+      <h4 class="sec-h">How it lays out</h4>
+      <pre class="diagram">Phone screen — raw `setContent { Text("Hello") }`  (LTR)
+
+(0,0) = top-start origin
+  |
+  v
++----------------------------------------+  &lt;- top edge of window
+|Hello  9:41        ===  status bar  ===  |  &lt;- "Hello" can sit UNDER the
+|  ^                                      |     status-bar icons (no insets)
+|  |  wrap-content: only as wide as the   |
+|  |  text needs -- NOT full width        |
+|                                         |
+|                                         |
+|              (empty space)              |
+|         no centering happens            |
+|                                         |
+|                                         |
+|                                         |
++----------------------------------------+  &lt;- bottom edge of window
+
+Axes / coordinate system:
+  x increases  -&gt;  (start = left in LTR)
+  y increases  v   (top -&gt; bottom; origin is at the TOP, not bottom)
+
+What it is NOT:
+  [ ] centered            +--------------------+
+  [ ] bottom-left         |                    |
+  [ ] full width          |       Hello        |  &lt;- option 4 (centered) = FALSE
+                          |                    |
+                          +--------------------+
+
+  +--------------------+   |Hello..............|  &lt;- option 6 (full width
+  |                    |   +--------------------+     stretch) = FALSE
+  |Hello               |  &lt;- option 5 (bottom-left) = FALSE
+  +--------------------+</pre>
+    </div>
+    <div class="traps">
+      <h4>⚠ Common traps</h4>
+      <ul>
+        <li><strong>Assuming a phone 'naturally' centers a single widget.</strong> Compose never centers implicitly — the root places its child at the top-start origin. Centering requires a full-size <code>Box</code> with <code>contentAlignment = Alignment.Center</code> (or a <code>Column</code>/<code>Row</code> with matching arrangement and alignment).</li>
+        <li><strong>Forgetting that edge-to-edge means no free inset padding.</strong> With <code>enableEdgeToEdge()</code> (or by default for raw content), your UI draws behind the status and navigation bars. Use <code>Scaffold</code>'s <code>innerPadding</code>, or <code>Modifier.statusBarsPadding()</code> / <code>Modifier.safeDrawingPadding()</code>, or the clock will overlap your text.</li>
+        <li><strong>Confusing <code>fillMaxWidth()</code> with centering the text.</strong> <code>Modifier.fillMaxWidth()</code> only stretches the node's width; the glyphs still hug the start edge unless you also pass <code>textAlign = TextAlign.Center</code>. They are two separate steps.</li>
+        <li><strong>Thinking 'left/right' instead of 'start/end'.</strong> Compose resolves placement by layout direction. The default top-<em>left</em> is really top-<em>start</em>, so under an RTL locale the very same code renders top-<em>right</em>.</li>
+        <li><strong>Mixing up arrangement and alignment.</strong> For a <code>Row</code>/<code>Column</code>, <code>Arrangement</code> positions children along the <em>main</em> axis (horizontal for <code>Row</code>, vertical for <code>Column</code>) while <code>Alignment</code> positions them on the <em>cross</em> axis — they are not interchangeable.</li>
+      </ul>
+    </div>
+    <div class="callout">
+      <h3>Key concept</h3>
+      <p><strong>Raw content in <code>setContent</code> gets zero free layout.</strong> The composition root behaves like a single-child container that places its child at the <strong>top-start origin <code>(0,0)</code></strong> (top-left in LTR, top-right in RTL), applies <strong>no window insets</strong> (so content can sit under the status bar), and lets each leaf measure to <strong>wrap-content</strong>. Every desirable layout behavior is opt-in: <code>Modifier.fillMaxWidth()</code>/<code>fillMaxSize()</code> to grow, <code>Box(..., contentAlignment = Alignment.Center)</code> or a <code>Column</code>/<code>Row</code> (Arrangement = main axis, Alignment = cross axis) to position, <code>textAlign</code> to align glyphs, and <code>Scaffold</code> innerPadding or <code>statusBarsPadding()</code>/<code>safeDrawingPadding()</code> to respect insets. Memorize the default — <em>top-start, no insets, wrap-content, no centering, no fill</em> — and treat anything else as something you must explicitly request.</p>
+    </div>
+  </section>
+
+  <!-- ================= QUESTION 3 ================= -->
+  <section class="q" id="q3">
+    <span class="q-num">QUESTION 3</span>
+    <div class="q-prompt">Which of the following statements about the Jetpack Compose <code>Column</code> composable are TRUE? Select ALL that apply.</div>
+    <div class="atglance"><span class="ag-tag">At a glance</span> <strong>Options 1, 2, and 3 are TRUE</strong> — because <code>Column</code> is Compose's vertical layout primitive whose <strong>main axis is vertical</strong> (controlled by <code>verticalArrangement</code>) and whose <strong>cross axis is horizontal</strong> (controlled by <code>horizontalAlignment</code>), stacking children top-to-bottom in declaration order.</div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 1</span></div>
+      <div class="opt-body"><p>Column places its children vertically, one above the next, in the order they are declared (first child at the top).</p></div>
+      <div class="why"><strong>Why:</strong> This is the defining behavior of <code>Column</code>. Its measure/layout policy treats the <strong>vertical axis as the main axis</strong>, so it measures each child and stacks them one beneath the previous, advancing a vertical cursor by each child's height. Because the layout walks the children in <strong>source/declaration order</strong>, the <em>first</em> composable you write lands at the top and the last at the bottom. The content lambda has the signature <code>content: @Composable ColumnScope.() -&gt; Unit</code>, and that ordered emission is exactly what determines the visual stacking. This is the vertical counterpart to <code>Row</code>, which stacks horizontally.</div>
+    </div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 2</span></div>
+      <div class="opt-body"><p>The verticalArrangement parameter controls how children are positioned and spaced along the vertical (main) axis.</p></div>
+      <div class="why"><strong>Why:</strong> <code>verticalArrangement: Arrangement.Vertical</code> governs the <strong>main axis</strong> of a <code>Column</code> — both the block's overall position when there is leftover vertical space and the spacing <em>between</em> children. Values come from the <code>Arrangement</code> object: positional ones like <code>Arrangement.Top</code> (the default), <code>Arrangement.Center</code>, and <code>Arrangement.Bottom</code>; distributive ones like <code>Arrangement.SpaceBetween</code>, <code>Arrangement.SpaceAround</code>, and <code>Arrangement.SpaceEvenly</code>; and the gap helper <code>Arrangement.spacedBy(8.dp)</code>. Note that distribution only has visible effect when the <code>Column</code> is <em>taller</em> than the sum of its children (for example with <code>Modifier.fillMaxHeight()</code>). This is the correct, idiomatic way to space a Column's children apart.</div>
+    </div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 3</span></div>
+      <div class="opt-body"><p>The horizontalAlignment parameter controls how children line up along the horizontal (cross) axis, for example Alignment.CenterHorizontally.</p></div>
+      <div class="why"><strong>Why:</strong> In a <code>Column</code> the <strong>cross axis is horizontal</strong>, and <code>horizontalAlignment: Alignment.Horizontal</code> decides where each child sits left-to-right within the Column's width. The legal values are <code>Alignment.Start</code> (the default), <code>Alignment.CenterHorizontally</code>, and <code>Alignment.End</code> — these are <code>Alignment.Horizontal</code> instances, distinct from the 2D <code>Alignment</code> values (such as <code>Alignment.Center</code>) used by <code>Box</code>. Alignment is a <em>single value applied to every child</em>, whereas spacing/distribution belongs to <code>verticalArrangement</code>; do not confuse the two. A child can also override the Column-wide setting per-item with <code>Modifier.align(Alignment.End)</code> inside <code>ColumnScope</code>.</div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 4</span></div>
+      <div class="opt-body"><p>Column places its children horizontally, side by side.</p></div>
+      <div class="why"><strong>Why:</strong> This describes <code>Row</code>, not <code>Column</code>. A <code>Column</code> never lays children side by side — its main axis is vertical, so children always stack top-to-bottom. Placing items horizontally is a different layout primitive entirely; swapping the composable name changes the whole measure/layout policy, the arrangement type, and the alignment type. The mistake still compiles, but produces the wrong UI, so it is a <strong>semantic/layout error</strong>, not a build error.<div class="fix"><strong>Fix:</strong> Use <code>Row</code> when you want side-by-side children: <code>Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { Text("A"); Text("B") }</code>. Keep <code>Column</code> only when you genuinely want vertical stacking.</div></div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 5</span></div>
+      <div class="opt-body"><p>A Column scrolls vertically by default, with no extra modifier needed.</p></div>
+      <div class="why"><strong>Why:</strong> <code>Column</code> is <strong>not scrollable by default</strong>. It measures and places <em>all</em> children eagerly and installs no scroll gesture, so content taller than the available height is simply <strong>cut off</strong> — there is no scrollbar and no automatic clip indicator (a plain <code>Column</code> does not even clip by default; overflowing children draw out of bounds until some ancestor, such as the window or a <code>Scaffold</code>, bounds them). To make a <code>Column</code> scroll you must opt in with <code>Modifier.verticalScroll(rememberScrollState())</code>, which still composes and measures every child up front. For long or unbounded lists prefer <code>LazyColumn</code>, which only composes the visible items and is the performant choice. Assuming automatic scrolling is a very common beginner bug that manifests as cut-off content.<div class="fix"><strong>Fix:</strong> Add the scroll modifier explicitly: <code>Column(modifier = Modifier.verticalScroll(rememberScrollState())) { /* many items */ }</code>. For large data sets use <code>LazyColumn { items(list) { item -&gt; Text(item) } }</code> instead.</div></div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 6</span></div>
+      <div class="opt-body"><p>You space the children of a Column apart by setting a horizontalArrangement parameter.</p></div>
+      <div class="why"><strong>Why:</strong> <code>Column</code> has <strong>no <code>horizontalArrangement</code> parameter</strong> — that parameter belongs to <code>Row</code>, where horizontal is the main axis. Spacing a Column's children apart is a <em>main-axis</em> (vertical) concern, so it is controlled by <code>verticalArrangement</code>. Passing <code>horizontalArrangement = ...</code> to a <code>Column</code> is a <strong>compile error</strong>: the Kotlin compiler reports <code>Cannot find a parameter with this name: horizontalArrangement</code>. The horizontal axis of a Column is its cross axis and is governed by <code>horizontalAlignment</code> (an alignment), not by an arrangement.<div class="fix"><strong>Fix:</strong> Use <code>verticalArrangement</code> for spacing: <code>Column(verticalArrangement = Arrangement.spacedBy(12.dp)) { Text("A"); Text("B") }</code>. Use <code>horizontalAlignment</code> only to position children left/center/right on the cross axis.</div></div>
+    </div>
+    <div class="examples">
+      <h4 class="sec-h">Worked code examples</h4>
+      <figure class="example">
+        <figcaption class="ex-title">Correct Column usage — both axes labeled</figcaption>
+        <pre class="kt"><code><span class="kw">import</span> androidx.compose.foundation.layout.Arrangement   <span class="cmt">// arrangement values for the main axis</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.Column         <span class="cmt">// the vertical layout primitive</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.fillMaxSize    <span class="cmt">// make the Column take all available space</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.padding        <span class="cmt">// outer spacing modifier</span>
+<span class="kw">import</span> androidx.compose.material3.Text                   <span class="cmt">// Material 3 text composable</span>
+<span class="kw">import</span> androidx.compose.runtime.Composable               <span class="cmt">// marks a function as composable</span>
+<span class="kw">import</span> androidx.compose.ui.Alignment                     <span class="cmt">// cross-axis alignment values</span>
+<span class="kw">import</span> androidx.compose.ui.Modifier                      <span class="cmt">// modifier chain for sizing/spacing</span>
+<span class="kw">import</span> androidx.compose.ui.unit.dp                        <span class="cmt">// density-independent pixel unit</span>
+
+<span class="ann">@Composable</span>                                              <span class="cmt">// this UI function emits composables</span>
+<span class="kw">fun</span> ColumnDemo() {                                        <span class="cmt">// a simple demo screen</span>
+    Column(                                               <span class="cmt">// start a vertical stack</span>
+        modifier = Modifier                              <span class="cmt">// build the modifier chain</span>
+            .fillMaxSize()                               <span class="cmt">// fill the whole parent so arrangement has room</span>
+            .padding(16.dp),                             <span class="cmt">// 16dp breathing room on all sides</span>
+        verticalArrangement = Arrangement.spacedBy(8.dp),<span class="cmt">// MAIN axis: 8dp gap BETWEEN each child</span>
+        horizontalAlignment = Alignment.CenterHorizontally <span class="cmt">// CROSS axis: center each child left-to-right</span>
+    ) {                                                   <span class="cmt">// ColumnScope content lambda begins here</span>
+        Text(<span class="str">"First (top)"</span>)                              <span class="cmt">// declared first -&gt; rendered at the TOP</span>
+        Text(<span class="str">"Second (middle)"</span>)                          <span class="cmt">// declared second -&gt; below the first</span>
+        Text(<span class="str">"Third (bottom)"</span>)                           <span class="cmt">// declared last  -&gt; rendered at the BOTTOM</span>
+    }                                                     <span class="cmt">// end Column; children stacked in order</span>
+}</code></pre>
+        <div class="ex-note">Shows the canonical <code>Column</code> contract: children stack <strong>top-to-bottom in declaration order</strong>, <code>verticalArrangement</code> sets the <em>main-axis</em> gap (here 8dp between items via <code>Arrangement.spacedBy</code>), and <code>horizontalAlignment</code> sets the <em>cross-axis</em> position (here centered). This single snippet validates Options 1, 2, and 3 at once.</div>
+      </figure>
+      <figure class="example">
+        <figcaption class="ex-title">Fixing Options 5 and 6 — scroll explicitly, space with verticalArrangement</figcaption>
+        <pre class="kt"><code><span class="kw">import</span> androidx.compose.foundation.layout.Arrangement   <span class="cmt">// arrangement values (main axis)</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.Column         <span class="cmt">// vertical layout primitive</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.fillMaxWidth   <span class="cmt">// stretch children across the width</span>
+<span class="kw">import</span> androidx.compose.foundation.rememberScrollState   <span class="cmt">// remembers scroll offset across recompositions</span>
+<span class="kw">import</span> androidx.compose.foundation.verticalScroll        <span class="cmt">// the modifier that ENABLES scrolling</span>
+<span class="kw">import</span> androidx.compose.material3.Text                   <span class="cmt">// Material 3 text</span>
+<span class="kw">import</span> androidx.compose.runtime.Composable               <span class="cmt">// composable marker</span>
+<span class="kw">import</span> androidx.compose.ui.Modifier                      <span class="cmt">// modifier chain</span>
+<span class="kw">import</span> androidx.compose.ui.unit.dp                        <span class="cmt">// dp unit</span>
+
+<span class="ann">@Composable</span>                                              <span class="cmt">// composable demo</span>
+<span class="kw">fun</span> ScrollableColumn() {                                  <span class="cmt">// a Column that actually scrolls</span>
+    <span class="kw">val</span> scrollState = rememberScrollState()              <span class="cmt">// create + remember the scroll position</span>
+    Column(                                               <span class="cmt">// vertical stack</span>
+        modifier = Modifier                              <span class="cmt">// begin modifier chain</span>
+            .fillMaxWidth()                              <span class="cmt">// take full width</span>
+            .verticalScroll(scrollState),                <span class="cmt">// FIX for Option 5: scrolling is opt-in, not default</span>
+        verticalArrangement = Arrangement.spacedBy(12.dp)<span class="cmt">// FIX for Option 6: space children on the MAIN axis</span>
+        <span class="cmt">// NOTE: there is NO horizontalArrangement parameter on Column -&gt; it would fail to compile</span>
+    ) {                                                   <span class="cmt">// ColumnScope content</span>
+        repeat(50) { index -&gt;                            <span class="cmt">// emit 50 rows so content overflows the screen</span>
+            Text(<span class="str">"Row #$index"</span>)                          <span class="cmt">// each row; without verticalScroll these are cut off</span>
+        }                                                 <span class="cmt">// end loop</span>
+    }                                                     <span class="cmt">// end Column</span>
+}</code></pre>
+        <div class="ex-note">Corrects the two false claims. Option 5: a plain <code>Column</code> installs no scroll gesture, so its overflow is cut off; scrolling requires <code>Modifier.verticalScroll(rememberScrollState())</code> (or use <code>LazyColumn</code> for big lists). Option 6: there is no <code>horizontalArrangement</code> on <code>Column</code> — adding it triggers the compiler error <code>Cannot find a parameter with this name: horizontalArrangement</code>; spacing is done with <code>verticalArrangement</code>.</div>
+      </figure>
+      <figure class="example">
+        <figcaption class="ex-title">Per-child override and the Row contrast (Option 4)</figcaption>
+        <pre class="kt"><code><span class="kw">import</span> androidx.compose.foundation.layout.Arrangement   <span class="cmt">// arrangement values</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.Column         <span class="cmt">// vertical primitive</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.Row            <span class="cmt">// HORIZONTAL primitive (the Option 4 contrast)</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.fillMaxWidth   <span class="cmt">// width-stretch modifier</span>
+<span class="kw">import</span> androidx.compose.material3.Text                   <span class="cmt">// Material 3 text</span>
+<span class="kw">import</span> androidx.compose.runtime.Composable               <span class="cmt">// composable marker</span>
+<span class="kw">import</span> androidx.compose.ui.Alignment                     <span class="cmt">// alignment values</span>
+<span class="kw">import</span> androidx.compose.ui.Modifier                      <span class="cmt">// modifier chain</span>
+<span class="kw">import</span> androidx.compose.ui.unit.dp                        <span class="cmt">// dp unit</span>
+
+<span class="ann">@Composable</span>                                              <span class="cmt">// demo composable</span>
+<span class="kw">fun</span> OverrideAndRowContrast() {                            <span class="cmt">// shows align override + Row vs Column</span>
+    Column(                                               <span class="cmt">// outer vertical stack</span>
+        modifier = Modifier.fillMaxWidth(),              <span class="cmt">// fill width so alignment is visible</span>
+        horizontalAlignment = Alignment.Start            <span class="cmt">// Column-wide cross-axis default: Start (left in LTR)</span>
+    ) {                                                   <span class="cmt">// ColumnScope begins</span>
+        Text(<span class="str">"Start-aligned (inherits Start)"</span>)           <span class="cmt">// uses the Column-wide Start alignment</span>
+        Text(                                             <span class="cmt">// this child overrides the Column setting</span>
+            text = <span class="str">"I align myself to the End"</span>,          <span class="cmt">// its displayed text</span>
+            modifier = Modifier.align(Alignment.End)     <span class="cmt">// ColumnScope.align: per-child cross-axis override</span>
+        )                                                <span class="cmt">// end overriding child</span>
+        Row(                                             <span class="cmt">// Option 4 is about THIS: Row = side by side</span>
+            horizontalArrangement = Arrangement.spacedBy(8.dp) <span class="cmt">// Row's MAIN axis is horizontal</span>
+        ) {                                              <span class="cmt">// RowScope content</span>
+            Text(<span class="str">"A"</span>)                                    <span class="cmt">// placed at the start</span>
+            Text(<span class="str">"B"</span>)                                    <span class="cmt">// placed after A (side by side)</span>
+        }                                                <span class="cmt">// end Row</span>
+    }                                                     <span class="cmt">// end Column</span>
+}</code></pre>
+        <div class="ex-note">Demonstrates two refinements. First, <code>Modifier.align(Alignment.End)</code> inside <code>ColumnScope</code> overrides the Column-wide <code>horizontalAlignment</code> for a single child. Second, it directly contrasts the layout in Option 4: side-by-side placement is <code>Row</code> (main axis horizontal, uses <code>horizontalArrangement</code>), never <code>Column</code>.</div>
+      </figure>
+    </div>
+    <div class="diagram-wrap">
+      <h4 class="sec-h">How it lays out</h4>
+      <pre class="diagram">COLUMN  (main axis = VERTICAL, cross axis = HORIZONTAL)
+
+ cross axis (horizontalAlignment): Start ........ Center ........ End
+            |&lt;------------------ Column width ------------------&gt;|
+   main     +---------------------------------------------------+
+   axis     |  [ First child  ]   &lt;- declared 1st, at the TOP   |
+    |       |                       (gap = verticalArrangement) |
+    |       |  [ Second child ]   &lt;- declared 2nd               |
+    v       |                       (gap = verticalArrangement) |
+ (vertical, |  [ Third child  ]   &lt;- declared 3rd, at the BOTTOM|
+  spacing &amp; +---------------------------------------------------+
+  position =
+  verticalArrangement)
+
+Overflow with no scroll modifier (not scrollable by default):
+   +-----------------+
+   | item 1          |
+   | item 2          |
+   | item 3          |
+   | item 4          |
+   +-----------------+   &lt;- bottom of the visible/bounded area
+     item 5  (CUT OFF - no scroll gesture, no scrollbar)
+     item 6  (CUT OFF)   -&gt; add Modifier.verticalScroll(...) or use LazyColumn
+
+
+ROW  (the Option 4 / Option 6 contrast: main axis = HORIZONTAL)
+
+   [ A ] [ B ] [ C ]    &lt;- side by side; spacing = horizontalArrangement</pre>
+    </div>
+    <div class="traps">
+      <h4>⚠ Common traps</h4>
+      <ul>
+        <li><strong>Axis/parameter swap:</strong> for a <code>Column</code>, spacing lives on <code>verticalArrangement</code> and alignment on <code>horizontalAlignment</code> — for a <code>Row</code> it is the reverse. Writing <code>horizontalArrangement</code> on a <code>Column</code> is a <strong>compile error</strong> (<code>Cannot find a parameter with this name: horizontalArrangement</code>).</li>
+        <li><strong>Assuming Columns scroll:</strong> a plain <code>Column</code> has no scroll gesture, so overflow is cut off (and not even clipped by the Column itself by default). You must add <code>Modifier.verticalScroll(rememberScrollState())</code>, or use <code>LazyColumn</code> for long/dynamic lists (it composes only visible items).</li>
+        <li><strong>Arrangement vs Alignment confusion:</strong> <code>verticalArrangement</code> takes <code>Arrangement.Vertical</code> values (<code>Top</code>, <code>SpaceBetween</code>, <code>spacedBy</code>), while <code>horizontalAlignment</code> takes <code>Alignment.Horizontal</code> values (<code>Start</code>, <code>CenterHorizontally</code>, <code>End</code>) — they are not interchangeable types.</li>
+        <li><strong>Distribution does nothing in a wrap-content Column:</strong> <code>Arrangement.SpaceBetween</code>/<code>SpaceEvenly</code> only show an effect when the Column is taller than its children (e.g. with <code>Modifier.fillMaxHeight()</code>); otherwise there is no extra space to distribute.</li>
+      </ul>
+    </div>
+    <div class="callout">
+      <h3>Key concept</h3>
+      <p><strong>A <code>Column</code> is Compose's vertical layout primitive: main axis = vertical, cross axis = horizontal.</strong> Children stack <strong>top-to-bottom in declaration order</strong>. Control the <em>main</em> (vertical) axis — both position and inter-child spacing — with <code>verticalArrangement</code> (an <code>Arrangement.Vertical</code>: <code>Top</code>, <code>Center</code>, <code>Bottom</code>, <code>SpaceBetween</code>, <code>spacedBy(dp)</code>). Control the <em>cross</em> (horizontal) axis with <code>horizontalAlignment</code> (an <code>Alignment.Horizontal</code>: <code>Start</code>, <code>CenterHorizontally</code>, <code>End</code>), overridable per child via <code>Modifier.align(...)</code>. A <code>Column</code> has <strong>no <code>horizontalArrangement</code></strong> (that belongs to <code>Row</code>) and is <strong>not scrollable by default</strong> — add <code>Modifier.verticalScroll(rememberScrollState())</code> or reach for <code>LazyColumn</code>. Mnemonic: <em>Column = down the column = vertical main axis; Row = across the row = horizontal main axis; arrangement = main axis, alignment = cross axis.</em></p>
+    </div>
+  </section>
+
+  <!-- ================= QUESTION 4 ================= -->
+  <section class="q" id="q4">
+    <span class="q-num">QUESTION 4</span>
+    <div class="q-prompt">Which of the following statements about the Jetpack Compose <code>Row</code> composable are TRUE? Select ALL that apply.</div>
+    <div class="atglance"><span class="ag-tag">At a glance</span> <strong>Options 1, 2, and 3</strong> are TRUE because <code>Row</code> is the horizontal layout primitive whose <em>main axis is horizontal</em> (controlled by <code>horizontalArrangement</code>) and whose <em>cross axis is vertical</em> (controlled by <code>verticalAlignment</code>); options 4, 5, and 6 are FALSE because they describe <code>Column</code>, assume scrolling that <code>Row</code> does not provide, and invent a <code>horizontalAlignment</code> parameter that does not exist on <code>Row</code>.</div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 1</span></div>
+      <div class="opt-body"><p>Row places its children horizontally, side by side, in the order they are declared (first child at the leading edge).</p></div>
+      <div class="why"><strong>Why:</strong> <code>Row</code> is the canonical horizontal layout container in Compose Foundation, with signature <code>Row(modifier, horizontalArrangement, verticalAlignment, content: @Composable RowScope.() -&gt; Unit)</code>. It measures and places each direct child one after another along the <strong>horizontal main axis</strong>, so children sit side by side rather than overlapping. Placement follows <em>declaration order</em>: the first composable in the lambda is positioned at the leading (start) edge, the next to its right, and so on. In a left-to-right (LTR) locale the leading edge is the left; in an RTL locale Compose automatically mirrors so the leading edge becomes the right. This declaration-order, leading-to-trailing packing is the defining behavior of <code>Row</code>.</div>
+    </div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 2</span></div>
+      <div class="opt-body"><p>The horizontalArrangement parameter controls how children are positioned and spaced along the horizontal (main) axis, for example Arrangement.SpaceBetween.</p></div>
+      <div class="why"><strong>Why:</strong> Because the main axis of a <code>Row</code> is horizontal, the parameter that distributes children along that axis is <code>horizontalArrangement</code>, and it takes an <code>Arrangement.Horizontal</code>. Its default is <code>Arrangement.Start</code>, which packs children at the leading edge with no extra gaps. You can change it to <code>Arrangement.End</code>, <code>Arrangement.Center</code>, or the spacing variants <code>Arrangement.SpaceBetween</code> (first/last flush to the edges, equal gaps between), <code>Arrangement.SpaceAround</code> (equal space around each child, so half-size gaps at the two ends), and <code>Arrangement.SpaceEvenly</code> (equal gaps everywhere, including the ends). You can also request a fixed gap with <code>Arrangement.spacedBy(8.dp)</code>. Note the spreading arrangements (<code>SpaceBetween</code>, <code>SpaceAround</code>, <code>SpaceEvenly</code>, <code>End</code>, <code>Center</code>) only have a visible effect when the <code>Row</code> is wider than the sum of its children (e.g. it has <code>Modifier.fillMaxWidth()</code>).</div>
+    </div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 3</span></div>
+      <div class="opt-body"><p>The verticalAlignment parameter controls how children line up along the vertical (cross) axis, for example Alignment.CenterVertically.</p></div>
+      <div class="why"><strong>Why:</strong> The cross axis of a <code>Row</code> is vertical, so alignment perpendicular to the flow direction is set with <code>verticalAlignment</code>, which takes an <code>Alignment.Vertical</code>. Its default is <code>Alignment.Top</code>, meaning children of differing heights are pinned to the top edge of the row. The other built-in options are <code>Alignment.CenterVertically</code> (children centered within the row's height — extremely common when mixing an icon with text so they look balanced) and <code>Alignment.Bottom</code>. This row-wide default can be overridden per child inside <code>RowScope</code> with <code>Modifier.align(Alignment.CenterVertically)</code>. The alignment only produces a visible difference when the children have <em>different heights</em> or the row is taller than its tallest child.</div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 4</span></div>
+      <div class="opt-body"><p>Row stacks its children vertically, top to bottom.</p></div>
+      <div class="why"><strong>Why:</strong> This describes <code>Column</code>, not <code>Row</code>. <code>Column</code> is the vertical layout primitive whose main axis is vertical, stacking children top to bottom and using <code>verticalArrangement</code> + <code>horizontalAlignment</code>. <code>Row</code> does the opposite: it lays children out along a horizontal main axis (leading to trailing). Confusing the two is the single most common beginner mistake because their signatures are mirror images of each other. The failure here is purely conceptual (no compiler error) — using a <code>Row</code> expecting a vertical stack just renders everything side by side and may overflow off the trailing (right in LTR) edge.<div class="fix"><strong>Fix:</strong> To stack children vertically, use <code>Column</code> instead of <code>Row</code>:<br><code>Column { Text("Top"); Text("Bottom") }</code></div></div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 5</span></div>
+      <div class="opt-body"><p>A Row scrolls horizontally by default, with no extra modifier needed.</p></div>
+      <div class="why"><strong>Why:</strong> <code>Row</code> is a plain, eager layout that measures and lays out <em>all</em> of its children at once and does <strong>not</strong> scroll by default. If the children are wider than the available space, the content simply clips/overflows rather than becoming scrollable. To make a finite set of children scroll horizontally you must add <code>Modifier.horizontalScroll(rememberScrollState())</code> to the <code>Row</code>. For a long or unbounded list you should instead use <code>LazyRow</code>, which only composes and measures the items currently visible (lazy/virtualized), making it far more performant than a scrollable <code>Row</code>.<div class="fix"><strong>Fix:</strong> Add the scroll modifier (or switch to <code>LazyRow</code> for long lists):<br><code>Row(Modifier.horizontalScroll(rememberScrollState())) { /* children */ }</code></div></div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 6</span></div>
+      <div class="opt-body"><p>You align the children of a Row on the cross axis by setting a horizontalAlignment parameter.</p></div>
+      <div class="why"><strong>Why:</strong> <code>Row</code> has <strong>no</strong> <code>horizontalAlignment</code> parameter — that parameter belongs to <code>Column</code> (whose cross axis is horizontal). For a <code>Row</code> the cross axis is vertical, so cross-axis alignment is done with <code>verticalAlignment</code>. Passing <code>horizontalAlignment</code> to <code>Row</code> is a compile error; the Kotlin compiler reports <code>Cannot find a parameter with this name: horizontalAlignment</code>. The horizontal direction in a <code>Row</code> is the <em>main</em> axis, which is governed by <code>horizontalArrangement</code>, not by an alignment parameter.<div class="fix"><strong>Fix:</strong> Use <code>verticalAlignment</code> for cross-axis alignment in a <code>Row</code>:<br><code>Row(verticalAlignment = Alignment.CenterVertically) { /* children */ }</code></div></div>
+    </div>
+    <div class="examples">
+      <h4 class="sec-h">Worked code examples</h4>
+      <figure class="example">
+        <figcaption class="ex-title">Correct Row usage: arrangement + alignment together</figcaption>
+        <pre class="kt"><code><span class="ann">@Composable</span>                                              <span class="cmt">// Marks this as a Compose UI function</span>
+<span class="kw">fun</span> ProfileBar() {                                       <span class="cmt">// A reusable composable component</span>
+    Row(                                                 <span class="cmt">// Horizontal container: children go side by side</span>
+        modifier = Modifier                              <span class="cmt">// Start building modifiers for the Row itself</span>
+            .fillMaxWidth()                              <span class="cmt">// Row takes the full available width (gives arrangement room to spread)</span>
+            .padding(16.dp),                             <span class="cmt">// 16dp of breathing room around the Row's content</span>
+        horizontalArrangement = Arrangement.SpaceBetween,<span class="cmt">// MAIN (horizontal) axis: push first child to start, last to end</span>
+        verticalAlignment = Alignment.CenterVertically   <span class="cmt">// CROSS (vertical) axis: center children of different heights</span>
+    ) {                                                  <span class="cmt">// Everything below is RowScope content</span>
+        Text(<span class="str">"Jane Doe"</span>)                                 <span class="cmt">// 1st child -&gt; leading (left) edge in LTR</span>
+        Icon(                                            <span class="cmt">// 2nd child -&gt; trailing (right) edge due to SpaceBetween</span>
+            imageVector = Icons.Default.Settings,        <span class="cmt">// The vector asset to draw</span>
+            contentDescription = <span class="str">"Settings"</span>              <span class="cmt">// Accessibility label for screen readers</span>
+        )                                                <span class="cmt">// Icon is shorter than text, so CenterVertically aligns them</span>
+    }                                                    <span class="cmt">// End of Row content lambda</span>
+}                                                        <span class="cmt">// End of composable</span></code></pre>
+        <div class="ex-note">Shows the three TRUE statements in action: children render in declaration order (<code>Text</code> then <code>Icon</code>), <code>horizontalArrangement = Arrangement.SpaceBetween</code> spreads them along the horizontal main axis, and <code>verticalAlignment = Alignment.CenterVertically</code> lines them up on the vertical cross axis. The <code>fillMaxWidth()</code> is what gives <code>SpaceBetween</code> room to do its job.</div>
+      </figure>
+      <figure class="example">
+        <figcaption class="ex-title">Fix for options 4, 5, 6: Column vs scrollable Row vs correct alignment param</figcaption>
+        <pre class="kt"><code><span class="ann">@Composable</span>                                              <span class="cmt">// Compose UI function</span>
+<span class="kw">fun</span> Fixes() {                                            <span class="cmt">// Demonstrates the corrected versions</span>
+
+    <span class="cmt">// FIX for Option 4: to stack vertically, use Column (NOT Row)</span>
+    Column {                                              <span class="cmt">// Column = vertical main axis, top-to-bottom</span>
+        Text(<span class="str">"Top"</span>)                                      <span class="cmt">// 1st child sits at the top</span>
+        Text(<span class="str">"Bottom"</span>)                                   <span class="cmt">// 2nd child sits below it</span>
+    }                                                    <span class="cmt">// End Column</span>
+
+    <span class="cmt">// FIX for Option 5: a Row does NOT scroll by default; add the modifier</span>
+    Row(                                                 <span class="cmt">// Plain Row (eager, non-scrolling)</span>
+        modifier = Modifier                              <span class="cmt">// Begin modifier chain</span>
+            .horizontalScroll(rememberScrollState())     <span class="cmt">// THIS is what enables horizontal scrolling</span>
+    ) {                                                  <span class="cmt">// RowScope content</span>
+        repeat(20) { i -&gt;                                <span class="cmt">// Add 20 wide children to force overflow</span>
+            Text(text = <span class="str">"Item $i"</span>, modifier = Modifier.padding(8.dp)) <span class="cmt">// Each item with padding</span>
+        }                                                <span class="cmt">// End repeat</span>
+    }                                                    <span class="cmt">// End scrollable Row</span>
+
+    <span class="cmt">// FIX for Option 6: Row has no horizontalAlignment; use verticalAlignment</span>
+    Row(                                                 <span class="cmt">// Horizontal container</span>
+        verticalAlignment = Alignment.CenterVertically   <span class="cmt">// CORRECT cross-axis parameter for a Row</span>
+    ) {                                                  <span class="cmt">// (horizontalAlignment here would NOT compile)</span>
+        Text(<span class="str">"A"</span>)                                        <span class="cmt">// Child centered vertically within the Row</span>
+        Text(<span class="str">"B"</span>)                                        <span class="cmt">// Child centered vertically within the Row</span>
+    }                                                    <span class="cmt">// End Row</span>
+}                                                        <span class="cmt">// End composable</span></code></pre>
+        <div class="ex-note">Each block repairs one wrong option: <code>Column</code> replaces <code>Row</code> for vertical stacking (Option 4); <code>Modifier.horizontalScroll(rememberScrollState())</code> adds the scrolling that a bare <code>Row</code> lacks (Option 5); and <code>verticalAlignment</code> is the real cross-axis alignment parameter, since <code>horizontalAlignment</code> does not exist on <code>Row</code> and triggers <code>Cannot find a parameter with this name: horizontalAlignment</code> (Option 6).</div>
+      </figure>
+      <figure class="example">
+        <figcaption class="ex-title">Variation: per-child alignment and fixed spacing with spacedBy</figcaption>
+        <pre class="kt"><code><span class="ann">@Composable</span>                                              <span class="cmt">// Compose UI function</span>
+<span class="kw">fun</span> MixedRow() {                                         <span class="cmt">// Demonstrates spacedBy + per-child override</span>
+    Row(                                                 <span class="cmt">// Horizontal container</span>
+        horizontalArrangement = Arrangement.spacedBy(12.dp), <span class="cmt">// Fixed 12dp gap BETWEEN each child</span>
+        verticalAlignment = Alignment.Top               <span class="cmt">// Row-wide default: pin children to the top</span>
+    ) {                                                  <span class="cmt">// RowScope content</span>
+        Box(Modifier.size(40.dp).background(Color.Red))  <span class="cmt">// Tall-ish 40dp box, stays at top (row default)</span>
+        Text(                                            <span class="cmt">// A child that overrides the row default</span>
+            text = <span class="str">"Centered"</span>,                           <span class="cmt">// The label</span>
+            modifier = Modifier.align(Alignment.CenterVertically) <span class="cmt">// Per-child override: center THIS child only</span>
+        )                                                <span class="cmt">// RowScope.Modifier.align changes just this item</span>
+        Box(Modifier.size(24.dp).background(Color.Blue)) <span class="cmt">// Short 24dp box, uses row default (top)</span>
+    }                                                    <span class="cmt">// End Row</span>
+}                                                        <span class="cmt">// End composable</span></code></pre>
+        <div class="ex-note">Illustrates two finer points beyond the basics: <code>Arrangement.spacedBy(12.dp)</code> inserts an equal fixed gap between children along the main axis (no <code>fillMaxWidth()</code> required), and a single child can opt out of the row-wide <code>verticalAlignment</code> using <code>Modifier.align(...)</code> from <code>RowScope</code> — here only the <em>Centered</em> text is centered while the two boxes keep the row's <code>Alignment.Top</code> default.</div>
+      </figure>
+    </div>
+    <div class="diagram-wrap">
+      <h4 class="sec-h">How it lays out</h4>
+      <pre class="diagram">ROW  (main axis = HORIZONTAL  -&gt; )   (cross axis = VERTICAL  v )
+
+        leading/start edge                       trailing/end edge
+        (left in LTR)                            (right in LTR)
+        |                                                       |
+        v                                                       v
+   +---------------------------------------------------------------+
+   |  [ child 1 ]   [ child 2 ]   [ child 3 ]   [ child 4 ]        |   ^ cross
+   |   declared      declared      declared      declared          |   | axis
+   |   first         second        third         fourth            |   v (vertical)
+   +---------------------------------------------------------------+
+        ------------------&gt; MAIN AXIS (horizontal) ------------------&gt;
+        horizontalArrangement controls spacing along THIS axis
+        (Start / End / Center / SpaceBetween / SpaceAround / SpaceEvenly / spacedBy)
+
+   verticalAlignment controls position on the CROSS axis (Top / CenterVertically / Bottom)
+
+
+Contrast — COLUMN (main axis = VERTICAL, the OPPOSITE of Row):
+
+   +----------------+
+   | [ child 1 ]    |   first  (top)
+   | [ child 2 ]    |   second
+   | [ child 3 ]    |   third  (bottom)
+   +----------------+
+   Column uses verticalArrangement (main) + horizontalAlignment (cross)</pre>
+    </div>
+    <div class="traps">
+      <h4>⚠ Common traps</h4>
+      <ul>
+        <li><strong>Swapping the parameter names.</strong> <code>Row</code> uses <code>horizontalArrangement</code> + <code>verticalAlignment</code>; <code>Column</code> uses <code>verticalArrangement</code> + <code>horizontalAlignment</code>. Writing <code>horizontalAlignment</code> on a <code>Row</code> is a compile error (<code>Cannot find a parameter with this name: horizontalAlignment</code>).</li>
+        <li><strong>Expecting SpaceBetween/Center to do anything in a wrap-content Row.</strong> Spreading arrangements only show an effect when the <code>Row</code> is wider than its children — add <code>Modifier.fillMaxWidth()</code> or a fixed width, otherwise the Row shrinks to its content and there is no extra space to distribute.</li>
+        <li><strong>Assuming a Row scrolls.</strong> A bare <code>Row</code> clips/overflows when content is too wide. Add <code>Modifier.horizontalScroll(rememberScrollState())</code> for a few items, or use <code>LazyRow</code> for long/dynamic lists so items are composed lazily.</li>
+        <li><strong>Forgetting alignment needs a height difference to be visible.</strong> <code>verticalAlignment</code> only changes the picture when children have different heights (or the Row is taller than its tallest child); with equal-height children Top/Center/Bottom look identical.</li>
+      </ul>
+    </div>
+    <div class="callout">
+      <h3>Key concept</h3>
+      <p><strong>Row = horizontal main axis, vertical cross axis.</strong> A <code>Row</code> lays its children out leading-to-trailing (left-to-right in LTR) in declaration order — the first child at the leading/start edge, mirrored automatically in RTL. Because the <em>main</em> axis runs horizontally, spacing along it is set with <code>horizontalArrangement</code> (an <code>Arrangement.Horizontal</code> like <code>Start</code>, <code>SpaceBetween</code>, or <code>spacedBy</code>), and because the <em>cross</em> axis runs vertically, alignment perpendicular to the flow is set with <code>verticalAlignment</code> (an <code>Alignment.Vertical</code> like <code>Top</code>, <code>CenterVertically</code>, <code>Bottom</code>). <code>Column</code> is the exact mirror image (vertical main axis -&gt; <code>verticalArrangement</code> + <code>horizontalAlignment</code>). Memorize the rule: <em>the parameter prefix matches the axis it acts on — arrangement always names the main axis, alignment always names the cross axis.</em> Finally, a <code>Row</code> is eager and non-scrolling by default — reach for <code>Modifier.horizontalScroll(...)</code> or <code>LazyRow</code> when content exceeds the available width.</p>
+    </div>
+  </section>
+
+  <!-- ================= QUESTION 5 ================= -->
+  <section class="q" id="q5">
+    <span class="q-num">QUESTION 5</span>
+    <div class="q-prompt">Which of the following statements about the Jetpack Compose Material 3 <code>Card</code> composable are TRUE? Select ALL that apply.</div>
+    <div class="atglance"><span class="ag-tag">At a glance</span> <strong>Options 1, 2, and 3 are TRUE.</strong> The Material 3 <code>Card</code> is a <code>Surface</code>-based container that applies a default rounded shape and themed colors, exposes a <code>ColumnScope</code> content lambda (so children stack vertically like a <code>Column</code>), and ships a clickable overload taking <code>onClick</code> and <code>enabled</code>.</div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 1</span></div>
+      <div class="opt-body"><p>Card is a Material 3 container (built on top of Surface) used to group related content, and it applies a themed background color and rounded-corner shape by default.</p></div>
+      <div class="why"><strong>Why:</strong> Internally <code>androidx.compose.material3.Card</code> delegates to a <code>Surface</code>, which is the Material 3 primitive responsible for drawing background color, shape clipping, elevation/shadow, and tonal overlays. The defaults are supplied by the <code>CardDefaults</code> object: <code>shape = CardDefaults.shape</code> (a medium rounded corner from the theme's <code>Shapes</code>), <code>colors = CardDefaults.cardColors()</code> (container color <code>surfaceContainerLow</code> and a matching <code>contentColor</code> from the <code>ColorScheme</code>), and <code>elevation = CardDefaults.cardElevation()</code>. Because these defaults are pre-filled parameters, calling <code>Card { ... }</code> with no styling still renders a themed, rounded, slightly raised panel. This is exactly its job: a self-contained visual grouping of related content.</div>
+    </div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 2</span></div>
+      <div class="opt-body"><p>The content you pass to a Card is a ColumnScope lambda, so by default its children are stacked vertically, the same way a Column lays them out.</p></div>
+      <div class="why"><strong>Why:</strong> The trailing lambda parameter of <code>Card</code> has the receiver type <code>@Composable ColumnScope.() -&gt; Unit</code>. A receiver of <code>ColumnScope</code> means the content is composed inside a real <code>Column</code>, so children are placed one below another along the vertical main axis in source order. It also means <code>ColumnScope</code>-only modifiers such as <code>Modifier.align(Alignment.CenterHorizontally)</code> and <code>Modifier.weight(1f)</code> are in scope and compile. So a <code>Card</code> behaves like a styled, elevated <code>Column</code> for layout purposes.</div>
+    </div>
+    <div class="opt correct">
+      <div class="opt-head"><span class="badge ok">✓ TRUE — correct answer</span><span class="opt-label">Option 3</span></div>
+      <div class="opt-body"><p>A Card can handle taps directly by using the Card overload that takes an onClick parameter (and an enabled flag).</p></div>
+      <div class="why"><strong>Why:</strong> Material 3 ships two <code>Card</code> overloads. The display overload has no click handling, but the second overload's signature begins <code>fun Card(onClick: () -&gt; Unit, modifier: Modifier = Modifier, enabled: Boolean = true, ...)</code>. Passing <code>onClick</code> selects this overload, which internally routes through a clickable <code>Surface</code> so the entire card becomes one tappable target with a ripple indication and the correct accessibility/semantics (role, click action). The <code>enabled</code> flag, defaulting to <code>true</code>, gates both the click callback and the visual/semantic enabled state. No external <code>Button</code> or manual <code>Modifier.clickable</code> is required.</div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 4</span></div>
+      <div class="opt-body"><p>By default a Card lays out its children horizontally, the same way a Row does.</p></div>
+      <div class="why"><strong>Why:</strong> This inverts the axis. The <code>Card</code> content lambda is a <code>ColumnScope</code> receiver, not a <code>RowScope</code>, so children stack <em>vertically</em> along the main vertical axis, exactly like a <code>Column</code> — never side by side. Assuming horizontal layout also leads to a compile error if you reach for a <code>RowScope</code> modifier: writing <code>Modifier.align(Alignment.CenterVertically)</code> inside a Card fails because <code>CenterVertically</code> is an <code>Alignment.Vertical</code> value, while <code>ColumnScope.align</code> only accepts an <code>Alignment.Horizontal</code>. To actually get a horizontal arrangement you must add your own <code>Row</code>.<div class="fix"><strong>Fix:</strong> Wrap the children in an explicit <code>Row</code> if you want horizontal layout:<br><code>Card { Row { Text("A"); Text("B") } }</code> — only inside that <code>Row</code> can you use <code>RowScope</code> modifiers like <code>Modifier.weight(1f)</code> and <code>Modifier.align(Alignment.CenterVertically)</code>.</div></div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 5</span></div>
+      <div class="opt-body"><p>A Card has no default shape or container color, so nothing is drawn until you set shape and colors explicitly.</p></div>
+      <div class="why"><strong>Why:</strong> Every styling parameter of <code>Card</code> has a default, so omitting them does not produce a blank/invisible composable. <code>shape</code> defaults to <code>CardDefaults.shape</code>, <code>colors</code> to <code>CardDefaults.cardColors()</code> (a themed <code>surfaceContainerLow</code> container color), and <code>elevation</code> to <code>CardDefaults.cardElevation()</code>. Because the underlying <code>Surface</code> always paints its container color and clips to the shape, a bare <code>Card { Text("Hi") }</code> renders a visible rounded, tinted, slightly raised panel. You only override <code>shape</code>/<code>colors</code> to customize the look, not to make the card appear at all.<div class="fix"><strong>Fix:</strong> Customizing is optional, but if you want a specific look you override the defaults:<br><code>Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) { /* content */ }</code>. With no arguments the card is still fully visible.</div></div>
+    </div>
+    <div class="opt incorrect">
+      <div class="opt-head"><span class="badge no">✗ FALSE</span><span class="opt-label">Option 6</span></div>
+      <div class="opt-body"><p>A Card cannot respond to clicks on its own; you must wrap it in a Button or attach a separate clickable to make it tappable.</p></div>
+      <div class="why"><strong>Why:</strong> This denies the existence of the clickable <code>Card</code> overload. Supplying <code>onClick</code> selects <code>fun Card(onClick: () -&gt; Unit, ...)</code>, which makes the whole card tappable with a built-in ripple and proper click semantics — no wrapping <code>Button</code> needed. Wrapping a card in a <code>Button</code> is actually wrong practice: it nests a container inside an interactive component and produces conflicting padding, shape, and semantics. While you <em>could</em> hand-add <code>Modifier.clickable</code>, the idiomatic and accessibility-correct approach is the <code>onClick</code> overload.<div class="fix"><strong>Fix:</strong> Use the click overload directly:<br><code>Card(onClick = { /* handle tap */ }, enabled = true) { Text("Tap me") }</code> — this gives ripple feedback and correct semantics without any external <code>Button</code> or manual <code>clickable</code>.</div></div>
+    </div>
+    <div class="examples">
+      <h4 class="sec-h">Worked code examples</h4>
+      <figure class="example">
+        <figcaption class="ex-title">Default Card — themed shape and color come for free (Options 1, 2, 5)</figcaption>
+        <pre class="kt"><code><span class="kw">import</span> androidx.compose.foundation.layout.fillMaxWidth  <span class="cmt">// modifier to stretch a child to full width</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.padding        <span class="cmt">// modifier to add inner/outer spacing</span>
+<span class="kw">import</span> androidx.compose.material3.Card                   <span class="cmt">// the Material 3 Card we are studying</span>
+<span class="kw">import</span> androidx.compose.material3.Text                    <span class="cmt">// simple text composable for content</span>
+<span class="kw">import</span> androidx.compose.runtime.Composable                <span class="cmt">// marks a function as emitting UI</span>
+<span class="kw">import</span> androidx.compose.ui.Alignment                      <span class="cmt">// alignment values for ColumnScope.align</span>
+<span class="kw">import</span> androidx.compose.ui.Modifier                       <span class="cmt">// base type for all modifiers</span>
+<span class="kw">import</span> androidx.compose.ui.unit.dp                          <span class="cmt">// density-independent pixels unit</span>
+
+<span class="ann">@Composable</span>                                               <span class="cmt">// this function produces composable UI</span>
+<span class="kw">fun</span> ProfileCard() {                                       <span class="cmt">// a self-contained card example</span>
+    Card(                                                 <span class="cmt">// NO shape/colors passed on purpose...</span>
+        modifier = Modifier                               <span class="cmt">// build the card's modifier chain</span>
+            .fillMaxWidth()                                <span class="cmt">// make the card span the parent's width</span>
+            .padding(16.dp)                                <span class="cmt">// 16dp of space AROUND the whole card</span>
+    ) {                                                   <span class="cmt">// trailing lambda = ColumnScope receiver</span>
+        <span class="cmt">// Everything below stacks VERTICALLY, exactly like a Column.</span>
+        Text(                                             <span class="cmt">// first stacked child</span>
+            text = <span class="str">"Ada Lovelace"</span>,                         <span class="cmt">// the displayed string</span>
+            modifier = Modifier.padding(16.dp)             <span class="cmt">// inner padding so text isn't on the edge</span>
+        )                                                 <span class="cmt">// sits at the top of the card</span>
+        Text(                                             <span class="cmt">// second child renders BELOW the first</span>
+            text = <span class="str">"First computer programmer"</span>,            <span class="cmt">// subtitle string</span>
+            modifier = Modifier                           <span class="cmt">// start a modifier chain for this Text</span>
+                .align(Alignment.CenterHorizontally)       <span class="cmt">// ColumnScope.align is legal here (vertical layout)</span>
+                .padding(16.dp)                            <span class="cmt">// inner spacing for the subtitle</span>
+        )                                                 <span class="cmt">// sits under the title</span>
+    }                                                     <span class="cmt">// Card still shows a rounded, tinted, raised panel</span>
+}                                                         <span class="cmt">// even though we set no shape or colors</span></code></pre>
+        <div class="ex-note">Demonstrates Options 1, 2, and 5 at once: the <code>Card</code> is called with no <code>shape</code> or <code>colors</code>, yet renders a visible rounded, themed, elevated panel because <code>CardDefaults</code> fills those parameters. The trailing lambda is a <code>ColumnScope</code>, so the two <code>Text</code> children stack vertically and <code>Modifier.align(Alignment.CenterHorizontally)</code> — a <code>ColumnScope</code>-only modifier — compiles cleanly.</div>
+      </figure>
+      <figure class="example">
+        <figcaption class="ex-title">Clickable Card via the onClick overload (Options 3 and 6 fix)</figcaption>
+        <pre class="kt"><code><span class="kw">import</span> androidx.compose.foundation.layout.fillMaxWidth   <span class="cmt">// stretch the card horizontally</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.padding         <span class="cmt">// spacing modifier</span>
+<span class="kw">import</span> androidx.compose.material3.Card                     <span class="cmt">// Card has a SECOND, clickable overload</span>
+<span class="kw">import</span> androidx.compose.material3.CardDefaults             <span class="cmt">// supplies default colors/shape/elevation</span>
+<span class="kw">import</span> androidx.compose.material3.MaterialTheme            <span class="cmt">// access to the active ColorScheme</span>
+<span class="kw">import</span> androidx.compose.material3.Text                      <span class="cmt">// content</span>
+<span class="kw">import</span> androidx.compose.runtime.Composable                  <span class="cmt">// composable marker</span>
+<span class="kw">import</span> androidx.compose.runtime.getValue                    <span class="cmt">// delegate for reading state</span>
+<span class="kw">import</span> androidx.compose.runtime.mutableIntStateOf           <span class="cmt">// creates an observable Int state holder</span>
+<span class="kw">import</span> androidx.compose.runtime.remember                    <span class="cmt">// keeps state across recompositions</span>
+<span class="kw">import</span> androidx.compose.runtime.setValue                    <span class="cmt">// delegate for writing state</span>
+<span class="kw">import</span> androidx.compose.ui.Modifier                          <span class="cmt">// modifier base type</span>
+<span class="kw">import</span> androidx.compose.ui.unit.dp                            <span class="cmt">// dp unit</span>
+
+<span class="ann">@Composable</span>                                                 <span class="cmt">// emits UI</span>
+<span class="kw">fun</span> TapCounterCard() {                                       <span class="cmt">// a card that counts its own taps</span>
+    <span class="kw">var</span> taps <span class="kw">by</span> remember { mutableIntStateOf(0) }            <span class="cmt">// survives recomposition; starts at 0</span>
+    Card(                                                   <span class="cmt">// passing onClick selects the CLICKABLE overload</span>
+        onClick = { taps++ },                               <span class="cmt">// whole card is tappable; increment on tap</span>
+        enabled = <span class="kw">true</span>,                                     <span class="cmt">// enabled defaults to true; shown for clarity</span>
+        modifier = Modifier                                 <span class="cmt">// start the card's modifier chain</span>
+            .fillMaxWidth()                                  <span class="cmt">// span available width</span>
+            .padding(16.dp),                                 <span class="cmt">// space around the card</span>
+        colors = CardDefaults.cardColors(                   <span class="cmt">// override only the container color...</span>
+            containerColor = MaterialTheme.colorScheme.primaryContainer <span class="cmt">// themed accent background</span>
+        )                                                   <span class="cmt">// shape/elevation keep their defaults</span>
+    ) {                                                     <span class="cmt">// ColumnScope content lambda</span>
+        Text(                                               <span class="cmt">// single line of content</span>
+            text = <span class="str">"Tapped $taps times"</span>,                     <span class="cmt">// shows the live count</span>
+            modifier = Modifier.padding(24.dp)               <span class="cmt">// inner padding so the ripple has room</span>
+        )                                                   <span class="cmt">// the card itself gives ripple + a11y semantics</span>
+    }                                                       <span class="cmt">// no Button, no manual Modifier.clickable needed</span>
+}                                                           <span class="cmt">// this is the idiomatic tappable card</span></code></pre>
+        <div class="ex-note">Shows the fix for Options 3 and 6: supplying <code>onClick</code> chooses the overload <code>Card(onClick, ..., enabled = true, ...)</code>, making the entire card a single tappable target with a built-in ripple and correct accessibility semantics — no wrapping <code>Button</code> and no separate <code>Modifier.clickable</code>. It also shows how to override just one default (<code>containerColor</code>) while keeping the rest from <code>CardDefaults</code>.</div>
+      </figure>
+      <figure class="example">
+        <figcaption class="ex-title">Horizontal layout inside a Card requires an explicit Row (Option 4 fix)</figcaption>
+        <pre class="kt"><code><span class="kw">import</span> androidx.compose.foundation.layout.Arrangement     <span class="cmt">// controls spacing along the Row's MAIN (horizontal) axis</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.Row             <span class="cmt">// the composable that lays out horizontally</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.fillMaxWidth     <span class="cmt">// stretch helper</span>
+<span class="kw">import</span> androidx.compose.foundation.layout.padding          <span class="cmt">// spacing helper</span>
+<span class="kw">import</span> androidx.compose.material.icons.Icons                <span class="cmt">// built-in icon set</span>
+<span class="kw">import</span> androidx.compose.material.icons.filled.Star          <span class="cmt">// a concrete icon</span>
+<span class="kw">import</span> androidx.compose.material3.Card                      <span class="cmt">// the container; its lambda is still ColumnScope</span>
+<span class="kw">import</span> androidx.compose.material3.Icon                       <span class="cmt">// a leading glyph</span>
+<span class="kw">import</span> androidx.compose.material3.Text                       <span class="cmt">// the label</span>
+<span class="kw">import</span> androidx.compose.runtime.Composable                   <span class="cmt">// composable marker</span>
+<span class="kw">import</span> androidx.compose.ui.Alignment                          <span class="cmt">// alignment values</span>
+<span class="kw">import</span> androidx.compose.ui.Modifier                           <span class="cmt">// modifier base</span>
+<span class="kw">import</span> androidx.compose.ui.unit.dp                             <span class="cmt">// dp unit</span>
+
+<span class="ann">@Composable</span>                                                  <span class="cmt">// emits UI</span>
+<span class="kw">fun</span> RatingRowCard() {                                        <span class="cmt">// a card whose content is side-by-side</span>
+    Card(                                                    <span class="cmt">// Card content lambda is ColumnScope (vertical)...</span>
+        modifier = Modifier                                  <span class="cmt">// card modifier chain</span>
+            .fillMaxWidth()                                   <span class="cmt">// span width</span>
+            .padding(16.dp)                                   <span class="cmt">// outer spacing</span>
+    ) {                                                      <span class="cmt">// ...so to go HORIZONTAL we add our own Row</span>
+        Row(                                                 <span class="cmt">// Row = horizontal main axis</span>
+            modifier = Modifier.padding(16.dp),               <span class="cmt">// inner padding around the row</span>
+            verticalAlignment = Alignment.CenterVertically,   <span class="cmt">// CROSS axis: center children vertically</span>
+            horizontalArrangement = Arrangement.spacedBy(8.dp)<span class="cmt">// MAIN axis: 8dp gap between icon and text</span>
+        ) {                                                  <span class="cmt">// RowScope receiver begins here</span>
+            Icon(                                            <span class="cmt">// first child, placed on the LEFT</span>
+                imageVector = Icons.Filled.Star,              <span class="cmt">// a star glyph</span>
+                contentDescription = <span class="str">"Rating"</span>                 <span class="cmt">// accessibility label</span>
+            )                                                <span class="cmt">// sits at the row's start</span>
+            Text(                                            <span class="cmt">// second child, placed to the RIGHT of the icon</span>
+                text = <span class="str">"4.8 out of 5"</span>,                        <span class="cmt">// the rating label</span>
+                modifier = Modifier.weight(1f)               <span class="cmt">// RowScope.weight: take remaining horizontal space</span>
+            )                                                <span class="cmt">// weight is legal ONLY inside a Row/Column scope</span>
+        }                                                    <span class="cmt">// end of horizontal Row</span>
+    }                                                        <span class="cmt">// the Card stays vertical; the Row is what's horizontal</span>
+}                                                            <span class="cmt">// proves Card is NOT horizontal by default</span></code></pre>
+        <div class="ex-note">Corrects Option 4: a <code>Card</code> never lays children out horizontally on its own. To place an icon beside text you nest an explicit <code>Row</code> inside the card's <code>ColumnScope</code> lambda. Inside that <code>Row</code>, <code>horizontalArrangement</code> spaces children along the main (horizontal) axis while <code>verticalAlignment</code> positions them on the cross axis, and <code>RowScope</code> modifiers like <code>Modifier.weight(1f)</code> become available.</div>
+      </figure>
+    </div>
+    <div class="diagram-wrap">
+      <h4 class="sec-h">How it lays out</h4>
+      <pre class="diagram">Card content lambda receiver = ColumnScope  ==&gt; VERTICAL main axis (like Column)
+
+   +-------------------------------------------+   &lt;- Card: Surface draws rounded
+   |                                           |      shape + themed container color
+   |   [ Text: "Ada Lovelace" ]                |   --- child 1 (top)
+   |                                           |        |
+   |   [ Text: "First programmer" ]            |   --- child 2 (below child 1)
+   |                                           |        |
+   |   [ Text: "1815 - 1852" ]                 |   --- child 3 (below child 2)
+   |                                           |        v
+   +-------------------------------------------+    MAIN AXIS = vertical (down)
+        |&lt;------ cross axis = horizontal ------&gt;|
+        (ColumnScope.align uses the cross axis: Start / CenterHorizontally / End)
+
+
+To get HORIZONTAL placement you must nest a Row yourself:
+
+   +-------------------------------------------+   &lt;- Card (still ColumnScope inside)
+   |  +-------------------------------------+  |
+   |  | [Icon] -&gt; [Text] -&gt; [Text]          |  |  &lt;- Row: MAIN AXIS = horizontal (right)
+   |  +-------------------------------------+  |     cross axis = vertical
+   +-------------------------------------------+
+
+Card by itself: NEVER a Row. Default axis is DOWN.</pre>
+    </div>
+    <div class="traps">
+      <h4>⚠ Common traps</h4>
+      <ul>
+        <li><strong>Confusing the axis.</strong> Because cards often <em>look</em> like horizontal rows in designs, students assume the content lambda is a <code>RowScope</code>. It is a <code>ColumnScope</code> — children stack vertically by default, and horizontal layout requires an explicit nested <code>Row</code>.</li>
+        <li><strong>Thinking a bare Card is invisible.</strong> <code>shape</code>, <code>colors</code>, and <code>elevation</code> all default through <code>CardDefaults</code>, so <code>Card { Text("Hi") }</code> already shows a rounded, tinted, raised panel. You override those parameters to <em>restyle</em>, not to make the card appear.</li>
+        <li><strong>Wrapping a Card in a Button to make it clickable.</strong> Use the <code>Card(onClick = ...)</code> overload instead. Nesting a card in a <code>Button</code> creates conflicting shape, padding, and accessibility semantics; the dedicated overload gives the correct ripple and click role.</li>
+        <li><strong>Using the wrong scope's alignment.</strong> <code>Modifier.align(Alignment.CenterVertically)</code> belongs to <code>RowScope</code> (it takes an <code>Alignment.Vertical</code>); inside a Card's <code>ColumnScope</code> you instead use <code>Modifier.align(Alignment.CenterHorizontally)</code> (an <code>Alignment.Horizontal</code>). <code>Modifier.weight</code> exists in both scopes but distributes the scope's main axis — vertical in a Column/Card, horizontal in a Row. Passing the wrong alignment type is a compile error.</li>
+      </ul>
+    </div>
+    <div class="callout">
+      <h3>Key concept</h3>
+      <p><strong>A Material 3 <code>Card</code> is a themed, elevated <code>Column</code> built on <code>Surface</code>.</strong> Three things follow from that and are worth memorizing: <br><strong>1. Styling is automatic.</strong> <code>shape</code>, <code>colors</code>, and <code>elevation</code> default through <code>CardDefaults</code> (rounded corners, <code>surfaceContainerLow</code> background, slight shadow), so a card is always visible without explicit styling. <br><strong>2. Layout is vertical.</strong> The content lambda is <code>@Composable ColumnScope.() -&gt; Unit</code>, so children stack top-to-bottom along the vertical main axis and you get <code>ColumnScope</code> modifiers; use a nested <code>Row</code> for horizontal arrangement. <br><strong>3. Clicks are first-class.</strong> The overload <code>Card(onClick: () -&gt; Unit, enabled: Boolean = true, ...)</code> makes the whole card tappable with a built-in ripple and proper semantics — never wrap a card in a <code>Button</code> to make it clickable.</p>
+    </div>
+  </section>
+
+  <section class="q" id="reference">
+    <span class="q-num">QUICK REFERENCE</span>
+    <div class="q-prompt">Cheat-sheet tables tying the whole quiz together.</div>
+    <div class="callout">
+      <h3>Text() common parameters</h3>
+      <table class="ref">
+        <tr><th>Parameter</th><th>Type</th><th>What it does</th><th>Example</th></tr>
+        <tr><td><code>text</code></td><td><code>String</code></td><td>The required string to display; it is the first positional argument, so it is usually passed without a name.</td><td><code>Text("Hello")</code></td></tr>
+        <tr><td><code>modifier</code></td><td><code>Modifier</code></td><td>Adjusts layout, size, padding, background, click behavior, etc. for this composable.</td><td><code>Text("Hi", modifier = Modifier.padding(8.dp))</code></td></tr>
+        <tr><td><code>color</code></td><td><code>Color</code></td><td>Sets the text color; <code>Color.Unspecified</code> (the default) inherits from the style/theme.</td><td><code>color = Color.Red</code></td></tr>
+        <tr><td><code>fontSize</code></td><td><code>TextUnit</code></td><td>Sets the glyph size, normally expressed in scalable <code>sp</code> units.</td><td><code>fontSize = 20.sp</code></td></tr>
+        <tr><td><code>fontWeight</code></td><td><code>FontWeight?</code></td><td>Sets thickness such as normal, medium, or bold.</td><td><code>fontWeight = FontWeight.Bold</code></td></tr>
+        <tr><td><code>textAlign</code></td><td><code>TextAlign?</code></td><td>Aligns text horizontally within its own width (start, center, end, justify).</td><td><code>textAlign = TextAlign.Center</code></td></tr>
+        <tr><td><code>maxLines</code></td><td><code>Int</code></td><td>Caps how many lines render before truncation; defaults to <code>Int.MAX_VALUE</code>.</td><td><code>maxLines = 1</code></td></tr>
+        <tr><td><code>overflow</code></td><td><code>TextOverflow</code></td><td>Decides how clipped text is shown, e.g. with an ellipsis.</td><td><code>overflow = TextOverflow.Ellipsis</code></td></tr>
+        <tr><td><code>style</code></td><td><code>TextStyle</code></td><td>Bundles many text attributes at once; usually pulled from <code>MaterialTheme.typography</code>.</td><td><code>style = MaterialTheme.typography.titleLarge</code></td></tr>
+      </table>
+    </div>
+    <div class="callout">
+      <h3>Column vs Row</h3>
+      <table class="ref">
+        <tr><th>Aspect</th><th>Column</th><th>Row</th></tr>
+        <tr><td>Main axis (children stack along)</td><td>Vertical (top to bottom)</td><td>Horizontal (start to end)</td></tr>
+        <tr><td>Cross axis</td><td>Horizontal</td><td>Vertical</td></tr>
+        <tr><td>Arrangement param (spaces along main axis)</td><td><code>verticalArrangement = Arrangement.&hellip;</code></td><td><code>horizontalArrangement = Arrangement.&hellip;</code></td></tr>
+        <tr><td>Alignment param (positions on cross axis)</td><td><code>horizontalAlignment = Alignment.&hellip;</code></td><td><code>verticalAlignment = Alignment.&hellip;</code></td></tr>
+        <tr><td>Scrolls by default?</td><td>No &mdash; add <code>Modifier.verticalScroll(&hellip;)</code></td><td>No &mdash; add <code>Modifier.horizontalScroll(&hellip;)</code></td></tr>
+        <tr><td>Lazy (recycling) variant for long lists</td><td><code>LazyColumn</code></td><td><code>LazyRow</code></td></tr>
+      </table>
+    </div>
+    <div class="callout">
+      <h3>Material 3 Card essentials</h3>
+      <table class="ref">
+        <tr><th>Element</th><th>Default / common value</th><th>Notes</th></tr>
+        <tr><td>Import</td><td><code>androidx.compose.material3.Card</code></td><td>Use the Material 3 package, not the older <code>material</code> one.</td></tr>
+        <tr><td>Content slot</td><td><code>content: @Composable ColumnScope.() -&gt; Unit</code></td><td>The trailing lambda lays children out like a <code>Column</code>, so you do not need to add one yourself.</td></tr>
+        <tr><td>Shape</td><td><code>CardDefaults.shape</code> (rounded corners)</td><td>Override via the <code>shape</code> parameter.</td></tr>
+        <tr><td>Elevation</td><td><code>CardDefaults.cardElevation()</code></td><td>Drives the shadow and tonal surface tint; pass custom <code>dp</code> values to change it.</td></tr>
+        <tr><td>Colors</td><td><code>CardDefaults.cardColors()</code></td><td>Container and content colors derive from the theme's color scheme.</td></tr>
+        <tr><td>Clickable variant</td><td><code>Card(onClick = { &hellip; }) { &hellip; }</code></td><td>The overload with <code>onClick</code> adds a ripple and makes the whole card tappable.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="q" id="glossary">
+    <span class="q-num">GLOSSARY</span>
+    <div class="q-prompt">Key terms used throughout this answer key.</div>
+    <dl class="glossary">
+      <div class="gloss-item"><dt>composable</dt><dd>A function annotated with <code>@Composable</code> that describes a piece of UI; it can call other composables and is re-invoked ("recomposed") when the state it reads changes.</dd></div>
+      <div class="gloss-item"><dt>setContent</dt><dd>The <code>ComponentActivity</code> extension that attaches a Compose UI tree to the activity's window. Whatever composable you place inside its <code>{ }</code> lambda becomes the <strong>root</strong> and is laid out starting at the top-start of the available space, filling it; nothing centers or stacks it for you unless you add a layout like <code>Column</code> or a <code>Scaffold</code>.</dd></div>
+      <div class="gloss-item"><dt>Modifier</dt><dd>An ordered, chainable object passed to a composable to change its size, padding, background, alignment, click behavior, and more; <em>order matters</em> because each modifier wraps the result of the previous one.</dd></div>
+      <div class="gloss-item"><dt>ColumnScope / RowScope</dt><dd>The receiver scopes inside a <code>Column</code> or <code>Row</code> lambda. They unlock layout-only modifiers such as <code>Modifier.weight()</code> and <code>Modifier.align()</code>, which is why a Card's content (a <code>ColumnScope</code>) behaves like a vertical stack.</dd></div>
+      <div class="gloss-item"><dt>Arrangement</dt><dd>Controls spacing of children <em>along the main axis</em> (vertical for <code>Column</code>, horizontal for <code>Row</code>), e.g. <code>Arrangement.spacedBy(8.dp)</code>, <code>SpaceBetween</code>, or <code>Center</code>.</dd></div>
+      <div class="gloss-item"><dt>Alignment</dt><dd>Controls positioning of children <em>across the cross axis</em>, e.g. <code>Alignment.CenterHorizontally</code> in a <code>Column</code> or <code>Alignment.CenterVertically</code> in a <code>Row</code>.</dd></div>
+      <div class="gloss-item"><dt>main axis vs cross axis</dt><dd>The main axis is the direction a container stacks its children (vertical in <code>Column</code>, horizontal in <code>Row</code>); the cross axis is perpendicular to it. Arrangement acts on the main axis, alignment on the cross axis.</dd></div>
+      <div class="gloss-item"><dt>wrap-content</dt><dd>The default sizing behavior where a composable is only as big as its content needs. Opposite of stretching with <code>Modifier.fillMaxWidth()</code> / <code>fillMaxSize()</code>.</dd></div>
+      <div class="gloss-item"><dt>fillMaxWidth</dt><dd>A modifier (<code>Modifier.fillMaxWidth()</code>) that makes a composable take all available horizontal space from its parent; siblings are <code>fillMaxHeight()</code> and <code>fillMaxSize()</code>.</dd></div>
+      <div class="gloss-item"><dt>sp / TextUnit</dt><dd><code>sp</code> ("scale-independent pixels") is the <code>TextUnit</code> recommended for font sizes because it respects the user's system font-scale accessibility setting; written as <code>16.sp</code>.</dd></div>
+      <div class="gloss-item"><dt>dp</dt><dd>"Density-independent pixels," the unit for sizes, padding, and spacing so layouts look consistent across screen densities; written as <code>16.dp</code>. Use <code>dp</code> for dimensions and <code>sp</code> for text.</dd></div>
+      <div class="gloss-item"><dt>Scaffold</dt><dd>A Material composable that provides the standard screen skeleton (top bar, bottom bar, FAB, snackbars) and hands its body a <code>PaddingValues</code> you should apply so content is not hidden behind those bars or the system window insets.</dd></div>
+      <div class="gloss-item"><dt>Surface</dt><dd>A Material container that paints a background color, applies elevation/tonal tint, clips to a shape, and sets the default content color; <code>Card</code> is essentially a styled <code>Surface</code>.</dd></div>
+      <div class="gloss-item"><dt>TextStyle / typography</dt><dd><code>TextStyle</code> bundles font attributes (size, weight, line height, color) into one object; <code>MaterialTheme.typography</code> exposes ready-made styles like <code>titleLarge</code> and <code>bodyMedium</code> for consistent text.</dd></div>
+      <div class="gloss-item"><dt>elevation</dt><dd>The simulated z-height of a surface, expressed in <code>dp</code>; in Material 3 it produces both a drop shadow and a subtle tonal color tint. <code>CardDefaults.cardElevation()</code> supplies a Card's default values.</dd></div>
+      <div class="gloss-item"><dt>ripple</dt><dd>The expanding circular touch feedback shown when an interactive element (such as a clickable <code>Card</code> or <code>Button</code>) is pressed; it is added automatically by clickable Material components.</dd></div>
+    </dl>
+  </section>
+
+  <footer>Detailed answer key — Jetpack Compose (Material&nbsp;3). Correct options in green, incorrect in red, each with full rationale, worked code, and traps.</footer>
+
+</div>
+</body>
+</html>

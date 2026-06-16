@@ -278,6 +278,49 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;paddin
       <p>Pick a project from the tabs at the top. Read <b>What it does</b>, study the <b>code walk-through</b> (the line numbers are real), then do the <b>Try this</b> experiments in Android Studio. Use the <b>Prev / Next</b> buttons — or the ← → arrow keys — to walk the progression in order.</p>
     </div>
 
+    <h3 id="choose-layout">Which layout container should I use?</h3>
+    <p class="tagline" style="margin-top:-6px;">Every Compose screen is built by nesting a handful of containers. This is the first decision you make on any screen — pick the one whose <i>job</i> matches what you're arranging.</p>
+    <div style="overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin:0 0 12px;">
+      <table style="width:100%;border-collapse:collapse;font-size:14px;background:var(--card);">
+        <thead>
+          <tr style="text-align:left;background:var(--accent-deep);color:#fff;">
+            <th style="padding:10px 12px;font-weight:750;">Container</th>
+            <th style="padding:10px 12px;font-weight:750;">Reach for it when…</th>
+            <th style="padding:10px 12px;font-weight:750;">The props you'll set</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top:1px solid var(--line);">
+            <td style="padding:10px 12px;"><code>Column</code></td>
+            <td style="padding:10px 12px;">Stacking a few children <b>top&nbsp;→&nbsp;bottom</b> — a form, a labelled value, a card's body.</td>
+            <td style="padding:10px 12px;"><code>verticalArrangement</code> · <code>horizontalAlignment</code></td>
+          </tr>
+          <tr style="border-top:1px solid var(--line);">
+            <td style="padding:10px 12px;"><code>Row</code></td>
+            <td style="padding:10px 12px;">Placing children <b>side&nbsp;by&nbsp;side</b> — icon + label, a toolbar. The mirror of a Column.</td>
+            <td style="padding:10px 12px;"><code>horizontalArrangement</code> · <code>verticalAlignment</code></td>
+          </tr>
+          <tr style="border-top:1px solid var(--line);">
+            <td style="padding:10px 12px;"><code>Box</code></td>
+            <td style="padding:10px 12px;"><b>Overlapping</b> children — a badge on an avatar, text over an image, a centered spinner.</td>
+            <td style="padding:10px 12px;"><code>contentAlignment</code> · <code>Modifier.align</code></td>
+          </tr>
+          <tr style="border-top:1px solid var(--line);">
+            <td style="padding:10px 12px;"><code>LazyColumn</code> / <code>LazyRow</code></td>
+            <td style="padding:10px 12px;">A <b>long or unbounded scrolling list</b> — it only builds the rows on screen. Don't put a big list in a scrolling Column.</td>
+            <td style="padding:10px 12px;"><code>items(list) { … }</code></td>
+          </tr>
+          <tr style="border-top:1px solid var(--line);">
+            <td style="padding:10px 12px;"><code>Scaffold</code></td>
+            <td style="padding:10px 12px;">The <b>whole-screen skeleton</b> — top bar, bottom bar, FAB and snackbar in their standard Material slots.</td>
+            <td style="padding:10px 12px;"><code>topBar</code> · <code>bottomBar</code> · <code>floatingActionButton</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin:0 0 6px;"><b>Rule of thumb:</b> <code>Scaffold</code> is the outer screen frame; inside it you arrange content with <code>Column</code> / <code>Row</code>, layer things with <code>Box</code>, and scroll long lists with <code>LazyColumn</code>. They nest freely — a Scaffold's content is usually a Column, whose rows may be a LazyColumn, and so on.</p>
+    <p style="font-size:13px;color:var(--muted);margin:0;"><b>See it live:</b> the <a href="./playground.html">Compose Playground</a> (root-layout dropdown + the "Choosing a container" reference cards) and the <b>Layouts</b> tab in the <b>ComposeParts</b> app both let you flip between these and watch the result change.</p>
+
     <div class="callout new" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
       <div style="flex:1;min-width:240px;">
         <b>🧪 Interactive Compose Playground</b>
