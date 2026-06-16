@@ -82,7 +82,7 @@ sealed interface PlanetsUiState {
  * @param repo the data-layer boundary this ViewModel reads from.
  */
 class PlanetsViewModel(
-    private val repo: PlanetRepository = InMemoryPlanetRepository(),
+    private val repo: PlanetRepository = FlakyPlanetRepository(), // C3: swap implementation
 ) : ViewModel() {
 
     // The single source of truth for the list screen. We START in Loading so the

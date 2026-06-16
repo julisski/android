@@ -68,6 +68,7 @@ import androidx.compose.material3.Text                      // draws text
 
 // --- Compose runtime / tooling imports ---------------------------------------
 import androidx.compose.runtime.Composable                  // marks a function as emitting UI
+import androidx.compose.runtime.LaunchedEffect              // B4: for side effects
 import androidx.compose.runtime.getValue                    // enables `by` delegation when reading State
 import androidx.compose.runtime.mutableStateOf              // creates an observable State holder
 import androidx.compose.runtime.saveable.rememberSaveable   // remember that ALSO survives rotation/process death
@@ -291,15 +292,9 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         entryProvider = entryProvider {
             // LEVEL 1 — when CategoriesKey is on top, show the list of categories.
             entry<CategoriesKey> {
-                CategoriesScreen(
+                CategoriesRoute(
                     categories = sampleCategories,
-                    // Tapping a category pushes an ItemsKey carrying THAT category's
-                    // id, navigating forward to its list of planets.
-                    // THE JUMP — how a tap reaches the next screen: this line does NOT name a
-                    // screen, it just ADDS A KEY to the back stack. NavDisplay then matches that
-                    // key by its TYPE to the matching entry<...> { } block above and runs it; the
-                    // id inside the key only chooses WHICH data that screen shows, not WHICH screen
-                    // — so every key of this type lands on the same entry block.
+                    favoritesViewModel = favoritesViewModel,
                     onOpen = { categoryId -> backStack.add(ItemsKey(categoryId)) }
                 )
             }
@@ -372,13 +367,18 @@ fun ItemsRoute(
     //        so X reads as the plain value directly (no .value). Reading X also registers this
     //        composable as a reader, which is what makes Compose recompose it on the next emit.
     val favorites by favoritesViewModel.favorites.collectAsStateWithLifecycle()
+    // B4: ItemsRoute must now collect TWO flows and pass TWO sets down.
+    val visited by favoritesViewModel.visited.collectAsStateWithLifecycle()
 
     // Hand the stateless screen plain data + callbacks only.
     ItemsScreen(
         category = category,
         items = items,
         favoriteIds = favorites,
+        visitedIds = visited, // B4: pass visited set
         onOpen = onOpen,
+        onToggleFavorite = { id -> favoritesViewModel.toggleFavorite(id) }, // B3: wire to VM
+        onClearFavorites = { favoritesViewModel.clearFavorites() }, // B1: wire to VM
         onBack = onBack,
         modifier = modifier,
     )
@@ -397,6 +397,11 @@ fun DetailRoute(
     modifier: Modifier = Modifier,
 ) {
     Log.d("LT", "Entered DetailRoute")
+    // B4: record the visit ONCE per planet shown (not on every recomposition):
+    LaunchedEffect(item.id) {                     // re-runs only when item.id changes
+        favoritesViewModel.markVisited(item.id)
+    }
+
     // Observe the whole favorites set (lifecycle-aware), then derive the single
     // boolean this screen cares about: is THIS item's id in the set?
     val favorites by favoritesViewModel.favorites.collectAsStateWithLifecycle()
@@ -415,6 +420,26 @@ fun DetailRoute(
 }
 
 /**
+ * CategoriesRoute (LEVEL 1, STATEFUL) — B2: observes the shared VM, hands a plain count down.
+ */
+@Composable
+fun CategoriesRoute(
+    categories: List<Category>,
+    favoritesViewModel: FavoritesViewModel,
+    onOpen: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    // Subscribe to the SAME StateFlow the other screens observe.
+    val favorites by favoritesViewModel.favorites.collectAsStateWithLifecycle()
+    CategoriesScreen(
+        categories = categories,
+        favoriteCount = favorites.size,   // the screen needs only the COUNT, so pass only that
+        onOpen = onOpen,
+        modifier = modifier,
+    )
+}
+
+/**
  * Categories screen (LEVEL 1, STATELESS): a scrolling list of categories; tapping
  * one calls [onOpen] with its id.
  *
@@ -423,12 +448,14 @@ fun DetailRoute(
  * [onOpen]. That keeps it reusable and easy to preview/test.
  *
  * @param categories the rows to render.
+ * @param favoriteCount B2: live count of favorited planets.
  * @param onOpen     invoked with a category's id when its row is tapped.
  * @param modifier   optional layout modifier supplied by the caller.
  */
 @Composable
 fun CategoriesScreen(
     categories: List<Category>,
+    favoriteCount: Int, // B2: new parameter
     onOpen: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -436,6 +463,14 @@ fun CategoriesScreen(
     // LazyColumn is the Compose equivalent of a RecyclerView: it only composes
     // and lays out the rows currently visible on screen, so long lists stay fast.
     LazyColumn(modifier = modifier.fillMaxSize()) {
+        // B2: render the count line above the category rows
+        item {
+            Text(
+                text = "★ $favoriteCount favorited so far",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
         // `items(categories) { ... }` emits one block of UI per element.
         items(categories) { category ->                    // draw one row per category
             Column(
@@ -474,7 +509,10 @@ fun CategoriesScreen(
  * @param category    the category whose items are being shown (used for the header).
  * @param items       the items belonging to [category].
  * @param favoriteIds the ids currently favorited (drives the ★ indicator).
+ * @param visitedIds  B4: the ids currently visited.
  * @param onOpen      invoked with an item's id when its row is tapped.
+ * @param onToggleFavorite B3: invoked when the star is tapped.
+ * @param onClearFavorites B1: invoked when "Clear favorites" is tapped.
  * @param onBack      invoked when the user taps "Back to categories".
  * @param modifier    optional layout modifier supplied by the caller.
  */
@@ -483,7 +521,10 @@ fun ItemsScreen(
     category: Category,
     items: List<Item>,
     favoriteIds: Set<Int>,
+    visitedIds: Set<Int>, // B4: new parameter
     onOpen: (Int) -> Unit,
+    onToggleFavorite: (Int) -> Unit, // B3: new parameter
+    onClearFavorites: () -> Unit, // B1: new parameter
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -501,6 +542,11 @@ fun ItemsScreen(
             Button(onClick = onBack) {                      // pop back to categories
                 Text("Back to categories")
             }
+            // B1: Clear favorites button in the header
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = onClearFavorites) {
+                Text("Clear favorites")
+            }
         }
         HorizontalDivider()                                 // separates header from the list
 
@@ -515,17 +561,28 @@ fun ItemsScreen(
                         .clickable { onOpen(item.id) }      // whole row tappable -> open detail
                         .padding(16.dp)
                 ) {
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) { // B3: added weight to push star to end
                         Text(text = item.title, style = MaterialTheme.typography.titleMedium)
-                        Text(text = item.blurb, style = MaterialTheme.typography.bodyMedium)
+                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                            Text(text = item.blurb, style = MaterialTheme.typography.bodyMedium)
+                            // B4: show a small "· visited" label (or a ✓) on each visited row
+                            if (item.id in visitedIds) {
+                                Text(
+                                    text = " · visited",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                        }
                     }
-                    // Favorite indicator: show a ★ only when the ViewModel-owned
-                    // favorites set contains this item's id. Recomposes the instant
-                    // the set changes, because favoriteIds is observed upstream.
-                    if (item.id in favoriteIds) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "★", style = MaterialTheme.typography.titleMedium)
-                    }
+                    // B3: ALWAYS render the star; ★ when favorited, ☆ when not. Its own clickable
+                    // "shadows" the row's — Compose delivers the tap to the innermost handler,
+                    // so tapping the star toggles WITHOUT navigating.
+                    Text(
+                        text = if (item.id in favoriteIds) "★" else "☆",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.clickable { onToggleFavorite(item.id) },
+                    )
                 }
                 HorizontalDivider()
             }
@@ -634,55 +691,58 @@ fun DetailScreen(
 // ===========================================================================
 
 // LEVEL 1 — there is only ONE categories-screen state (the full list).
-//@Preview(name = "Categories", showBackground = true, widthDp = 320, heightDp = 480)
-//@Composable
-//fun CategoriesScreenPreview() {
-//    NavViewModelStateTheme {
-//        CategoriesScreen(categories = sampleCategories, onOpen = {})
-//    }
-//}
-//
-//// Supplies every Category to the items-screen preview (Rocky Planets, Gas Giants).
-//class CategoryPreviewProvider : PreviewParameterProvider<Category> {
-//    override val values: Sequence<Category> = sampleCategories.asSequence()
-//}
-//
-//// LEVEL 2 — one compact card per category. We hand a FIXED favoriteIds set (here
-//// {1, 5}) so the preview shows the ★ indicator WITHOUT any ViewModel.
-//@Preview(name = "Items", showBackground = true, widthDp = 320, heightDp = 480)
-//@Composable
-//fun ItemsScreenPreview(
-//    @PreviewParameter(CategoryPreviewProvider::class) category: Category
-//) {
-//    NavViewModelStateTheme {
-//        ItemsScreen(
-//            category = category,
-//            items = itemsInCategory(category.id),           // resolve this category's planets
-//            favoriteIds = setOf(1, 5),                      // plain state — no viewModel() in previews
-//            onOpen = {},
-//            onBack = {},
-//        )
-//    }
-//}
-//
-//// Supplies every Item to the detail-screen preview — one per planet.
-//class ItemPreviewProvider : PreviewParameterProvider<Item> {
-//    override val values: Sequence<Item> = sampleItems.asSequence()
-//}
-//
-//// LEVEL 3 — one compact card per item, rendered as FAVORITED so the ★ label and
-//// toggle button show. Again: plain isFavorite value, no ViewModel constructed.
-//@Preview(name = "Detail (favorited)", showBackground = true, widthDp = 320, heightDp = 480)
-//@Composable
-//fun DetailScreenPreview(
-//    @PreviewParameter(ItemPreviewProvider::class) item: Item
-//) {
-//    NavViewModelStateTheme {
-//        DetailScreen(
-//            item = item,
-//            isFavorite = true,                              // hand-supplied state — no viewModel()
-//            onToggleFavorite = {},
-//            onBack = {},
-//        )
-//    }
-//}
+@Preview(name = "Categories", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun CategoriesScreenPreview() {
+    NavViewModelStateTheme {
+        CategoriesScreen(categories = sampleCategories, favoriteCount = 2, onOpen = {})
+    }
+}
+
+// Supplies every Category to the items-screen preview (Rocky Planets, Gas Giants).
+class CategoryPreviewProvider : PreviewParameterProvider<Category> {
+    override val values: Sequence<Category> = sampleCategories.asSequence()
+}
+
+// LEVEL 2 — one compact card per category. We hand a FIXED favoriteIds set (here
+// {1, 5}) so the preview shows the ★ indicator WITHOUT any ViewModel.
+@Preview(name = "Items", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun ItemsScreenPreview(
+    @PreviewParameter(CategoryPreviewProvider::class) category: Category
+) {
+    NavViewModelStateTheme {
+        ItemsScreen(
+            category = category,
+            items = itemsInCategory(category.id),           // resolve this category's planets
+            favoriteIds = setOf(1, 5),                      // plain state — no viewModel() in previews
+            visitedIds = setOf(1, 2),                       // B4 preview
+            onOpen = {},
+            onToggleFavorite = {},                          // B3 preview
+            onClearFavorites = {},                          // B1 preview
+            onBack = {},
+        )
+    }
+}
+
+// Supplies every Item to the detail-screen preview — one per planet.
+class ItemPreviewProvider : PreviewParameterProvider<Item> {
+    override val values: Sequence<Item> = sampleItems.asSequence()
+}
+
+// LEVEL 3 — one compact card per item, rendered as FAVORITED so the ★ label and
+// toggle button show. Again: plain isFavorite value, no ViewModel constructed.
+@Preview(name = "Detail (favorited)", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun DetailScreenPreview(
+    @PreviewParameter(ItemPreviewProvider::class) item: Item
+) {
+    NavViewModelStateTheme {
+        DetailScreen(
+            item = item,
+            isFavorite = true,                              // hand-supplied state — no viewModel()
+            onToggleFavorite = {},
+            onBack = {},
+        )
+    }
+}
