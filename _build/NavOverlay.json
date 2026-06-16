@@ -1,0 +1,114 @@
+{
+  "name": "NavOverlay",
+  "tagline": "A list → detail planet sample whose only new idea is a DIALOG OVERLAY — a scene that sits ON TOP of the back stack while the screen beneath stays visible.",
+  "whatItDoes": "You see a flat list of planets. Tapping one REPLACES the list with that planet's detail screen (a normal push). On the detail screen, 'Show fun fact' opens a dialog that floats over the detail with a dimmed scrim — and the detail screen is still visible BEHIND it. The dialog has two buttons that demonstrate two different effects on the back stack: 'OK' pops just the dialog (back to the detail), while 'Jump to list' pops everything above the root (dialog AND detail go away, landing back on the list). The system back gesture and tapping outside the dialog both dismiss it the same way 'OK' does.",
+  "mentalModel": "An overlay is STILL an ordinary key on the back stack: opening the dialog is backStack.add(...) (depth +1) and dismissing it is backStack.removeLastOrNull() (depth -1). The only thing different is RENDERING — a SceneStrategy keeps the entry beneath the dialog composed and draws the dialog over it, instead of replacing the screen.",
+  "domain": "planets",
+  "estTime": "20-30 min",
+  "screens": [
+    {
+      "name": "PlanetsScreen",
+      "role": "SCREEN 1: a LazyColumn of every planet; tapping a row does a NORMAL push to DetailKey (a full-screen replace — the list disappears)."
+    },
+    {
+      "name": "DetailScreen",
+      "role": "SCREEN 2: one planet's title and blurb, with a 'Show fun fact' button (pushes the OVERLAY key) and a 'Back to list' button (pops)."
+    },
+    {
+      "name": "FactDialog",
+      "role": "THE OVERLAY: the content rendered inside Nav3's Dialog when FactDialogKey is on top. 'OK' pops just the dialog; 'Jump to list' pops to the root."
+    }
+  ],
+  "concepts": [
+    {
+      "term": "Overlay vs replace",
+      "plain": "A normal destination REPLACES the screen (only the top entry is composed). An overlay DRAWS ON TOP and keeps the entry below it composed and visible. A dialog — a card over a dimmed scrim with the previous screen showing through — is the classic overlay."
+    },
+    {
+      "term": "An overlay is still a back-stack key",
+      "plain": "Opening the dialog is an ordinary push: backStack.add(FactDialogKey(id)) (depth +1). Dismissing is an ordinary pop: backStack.removeLastOrNull() (depth -1). System back, tapping the scrim, and the 'OK' button all do the same pop — no special back handling."
+    },
+    {
+      "term": "SceneStrategy",
+      "plain": "NavDisplay renders the back stack through a sceneStrategy. A SceneStrategy may claim the top entry(ies) into a 'Scene'. We chain two with 'then': DialogSceneStrategy (try first) and SinglePaneSceneStrategy (fallback for non-dialog entries)."
+    },
+    {
+      "term": "DialogSceneStrategy + dialog() metadata",
+      "plain": "An entry opts IN to being an overlay by attaching DialogSceneStrategy.dialog() to its metadata: entry<FactDialogKey>(metadata = DialogSceneStrategy.dialog()). Nothing about the KEY TYPE makes it a dialog — only that metadata does."
+    },
+    {
+      "term": "overlaidEntries = entries.dropLast(1)",
+      "plain": "Inside DialogSceneStrategy, the DialogScene's overlaidEntries is everything under the dialog — so the detail screen stays composed and on screen behind it. That single fact is why an overlay looks different from a replace."
+    },
+    {
+      "term": "Two stack effects from one dialog",
+      "plain": "The dialog's buttons show an overlay can manipulate the stack arbitrarily: 'OK' calls removeLastOrNull() (pop one → back to detail), while 'Jump to list' loops removeLastOrNull() while size > 1 (pop to the root → back to the list)."
+    },
+    {
+      "term": "rememberNavBackStack / NavDisplay",
+      "plain": "rememberNavBackStack(PlanetsKey) holds the list of keys; backStack.add pushes, backStack.removeLastOrNull pops. NavDisplay renders whichever key is on top — and, via the sceneStrategy, decides whether that top key is a full screen or an overlay."
+    }
+  ],
+  "files": [
+    {
+      "path": "NavOverlay/src/main/java/com/example/navoverlay/MainActivity.kt",
+      "role": "The entire app: nav keys, the SceneStrategy + NavDisplay wiring, the list/detail screens, and the dialog overlay composable plus previews."
+    },
+    {
+      "path": "NavOverlay/src/main/java/com/example/navoverlay/Data.kt",
+      "role": "The in-memory planet list (id, title, blurb, and the fun fact the overlay shows) plus the itemById lookup and a preview provider."
+    }
+  ],
+  "highlights": [
+    {
+      "title": "The overlay key is an ORDINARY NavKey — nothing about its type marks it as a dialog",
+      "file": "NavOverlay/src/main/java/com/example/navoverlay/MainActivity.kt",
+      "start": 141,
+      "end": 153,
+      "explain": "PlanetsKey is a 'data object' (one list screen, no args); DetailKey and FactDialogKey are 'data class' types carrying an itemId. FactDialogKey — the overlay — is declared exactly like the others and is pushed onto the SAME back stack. What turns it into a dialog is the entry metadata further down, not the key. All implement NavKey and are @Serializable so the stack survives process death."
+    },
+    {
+      "title": "Make 'how it affects the stack' visible: log the stack every recomposition",
+      "file": "NavOverlay/src/main/java/com/example/navoverlay/MainActivity.kt",
+      "start": 198,
+      "end": 204,
+      "explain": "Log.d prints backStack.toList() on every frame, so in Logcat (filter 'NavOv') you can watch the depth change as the dialog opens and closes: stack(2): [PlanetsKey, DetailKey(itemId=3)] on the detail, stack(3): [..., FactDialogKey(itemId=3)] when the dialog opens (+1), and back to stack(2) when it is dismissed (-1). The overlay obeys the exact same push/pop mechanics as any screen."
+    },
+    {
+      "title": "The SceneStrategy chain: try dialog first, fall back to single-pane",
+      "file": "NavOverlay/src/main/java/com/example/navoverlay/MainActivity.kt",
+      "start": 206,
+      "end": 217,
+      "explain": "remember keeps one strategy instance across recompositions. DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy() chains two strategies: the dialog one gets first refusal on the top entry and claims it ONLY if it has dialog() metadata (rendering it as an overlay that keeps the screen beneath composed); otherwise it returns null and the single-pane one renders the entry full-screen as usual. Order matters — the overlay strategy must come first."
+    },
+    {
+      "title": "Wiring the strategy into NavDisplay — the one line that enables overlays",
+      "file": "NavOverlay/src/main/java/com/example/navoverlay/MainActivity.kt",
+      "start": 219,
+      "end": 229,
+      "explain": "NavDisplay takes backStack, an onBack that pops the top key (which closes the dialog when one is on top — tapping the scrim routes here too), and sceneStrategy = our chained strategy. Without that sceneStrategy line, NavDisplay would render FactDialogKey as a plain full-screen replacement covering the detail, instead of a dialog floating over it."
+    },
+    {
+      "title": "The overlay entry: dialog() metadata + two different stack effects",
+      "file": "NavOverlay/src/main/java/com/example/navoverlay/MainActivity.kt",
+      "start": 253,
+      "end": 274,
+      "explain": "entry<FactDialogKey>(metadata = DialogSceneStrategy.dialog()) is the opt-in that makes this one entry an overlay; the default DialogProperties already dismiss on back-press and tap-outside, both routed through NavDisplay.onBack. The two callbacks show a dialog can drive the stack however it likes: onDismiss pops just this dialog (depth -1, back to detail), while onJumpToList loops removeLastOrNull() while size > 1 (pop to the root, dialog AND detail gone)."
+    }
+  ],
+  "newVsPrev": "NavDataLayer added a repository + ViewModel behind the same drill-down. NavOverlay sets data-layer concerns aside and isolates ONE rendering idea — the overlay. Every previous project pushed keys that REPLACED the screen; here a key is rendered as a dialog that sits ON TOP of the back stack while the screen below stays visible. It is a sibling to NavTransitions (both customize how NavDisplay renders a key) but via a SceneStrategy instead of transition specs. The whole new payload is: a DialogSceneStrategy chained ahead of SinglePaneSceneStrategy, and one entry tagged with DialogSceneStrategy.dialog() metadata.",
+  "tryThis": [
+    "Open the dialog and watch Logcat (filter 'NavOv'): see the depth go from 2 to 3 on open and back to 2 on dismiss. Press the system back gesture with the dialog open and confirm it pops the dialog (not the detail).",
+    "Delete the 'sceneStrategy = sceneStrategy' argument from NavDisplay and re-run: the fun-fact key now renders as a FULL-SCREEN replacement that covers the detail, proving the overlay behavior came entirely from the strategy.",
+    "Tap 'Jump to list' and watch the stack drop straight from 3 to 1 — one overlay button popped two levels (the dialog and the detail) by looping removeLastOrNull() while size > 1.",
+    "Pass custom DialogProperties to DialogSceneStrategy.dialog() (e.g. dismissOnClickOutside = false) and confirm tapping the scrim no longer closes the dialog.",
+    "Add a second overlay key (e.g. a confirmation dialog) reusing the SAME DialogSceneStrategy — you only tag its entry with dialog() metadata; no new strategy is needed."
+  ],
+  "gotchas": [
+    "DialogSceneStrategy returns null for any entry WITHOUT dialog() metadata, so it must be chained with a non-overlay strategy (here 'then SinglePaneSceneStrategy()') or non-dialog screens would have no scene to render.",
+    "The overlay is its own back-stack entry. If the screen beneath relies on an id that could become invalid, remember the underlying entry is still composed behind the dialog — here itemById uses 'first {}' and would throw on a stale id.",
+    "A dialog 'feels' special but needs no special dismissal code: back-press, scrim tap, and the OK button all just pop the top key. Wiring a separate onDismissRequest that does NOT pop the back stack would desync the dialog's visibility from the stack.",
+    "Order in the strategy chain matters: DialogSceneStrategy must come BEFORE SinglePaneSceneStrategy, because the single-pane strategy claims every top entry and would never let the dialog strategy run."
+  ],
+  "runTest": "Open the project in Android Studio and run on a device/emulator, or from inside the NavOverlay/ folder run './gradlew installDebug', then launch the app. Tap a planet (the list is REPLACED by the detail). Tap 'Show fun fact' and confirm a dialog appears over a dimmed scrim with the detail screen STILL VISIBLE behind it. Filter Logcat by 'NavOv' and watch the stack go stack(2) → stack(3) when the dialog opens and back to stack(2) on 'OK'. Tap 'Jump to list' and confirm the stack drops to depth 1 (back on the planet list)."
+}

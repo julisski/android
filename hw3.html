@@ -1,0 +1,2834 @@
+3<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Homework 3 — Deep Stacks, ViewModel State &amp; the Data Layer</title>
+<style>
+  :root{
+    --ink:#1f2933; --muted:#5b6b7b; --line:#e2e8f0; --bg:#f7f8fa;
+    --accent:#3ddc84;        /* Android green */
+    --accent-deep:#0f9d58;
+    --blue:#2563eb; --blue-soft:#eff4ff;
+    --warn:#b45309; --warn-soft:#fff7ed;
+    --code-bg:#0f172a; --code-ink:#e2e8f0;
+    --pill:#eef2f7;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:0 22px 80px;}
+
+  /* Header */
+  header.hero{
+    background:linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#0f9d58 160%);
+    color:#fff; padding:40px 0 34px; margin-bottom:34px;
+    border-bottom:4px solid var(--accent);
+  }
+  header.hero .wrap{padding-bottom:0;}
+  .eyebrow{letter-spacing:.14em; text-transform:uppercase; font-size:12.5px;
+    color:var(--accent); font-weight:700; margin:0 0 6px;}
+  header.hero h1{margin:0 0 8px; font-size:30px; line-height:1.2; font-weight:800;}
+  header.hero p.sub{margin:0 0 18px; color:#cbd5e1; font-size:16px; max-width:62ch;}
+  .meta{display:flex; flex-wrap:wrap; gap:10px;}
+  .meta span{background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18);
+    color:#e2e8f0; font-size:13px; padding:5px 11px; border-radius:999px;}
+  .meta b{color:#fff;}
+
+  h2{font-size:22px; margin:42px 0 6px; padding-top:10px; border-top:1px solid var(--line);}
+  h2 .part{color:var(--accent-deep); font-weight:800;}
+  h2 + .lead{margin-top:0; color:var(--muted);}
+  h3{font-size:16px; margin:24px 0 6px;}
+  h3 code{font-size:.95em;}
+
+  p{margin:12px 0;}
+  ul,ol{margin:10px 0 10px; padding-left:22px;}
+  li{margin:6px 0;}
+  a{color:var(--blue);}
+  code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace; font-size:.92em;
+    background:#eef2f7; padding:1px 6px; border-radius:5px;}
+  pre{background:var(--code-bg); color:var(--code-ink); padding:16px 18px; border-radius:10px;
+    overflow:auto; font-size:13.5px; line-height:1.55; margin:14px 0;
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace; tab-size:4;}
+  pre .c{color:#7d8aa0;}          /* comment */
+  pre .k{color:#c792ea;}          /* keyword */
+  pre .s{color:#a5e8a0;}          /* string  */
+  pre .f{color:#82aaff;}          /* fn/type */
+  pre.src{font-size:12.5px; line-height:1.5; max-height:560px;}
+
+  /* Problem blocks */
+  .q{background:#fff; border:1px solid var(--line); border-left:4px solid var(--accent);
+     border-radius:10px; padding:16px 18px 6px; margin:16px 0;
+     box-shadow:0 1px 2px rgba(15,23,42,.04);}
+  .q > .qhead{display:flex; align-items:baseline; justify-content:space-between; gap:12px;}
+  .q .qid{font-weight:800; color:var(--ink);}
+  .pts{flex:none; background:var(--pill); color:var(--muted); font-size:12px; font-weight:700;
+    padding:3px 9px; border-radius:999px; white-space:nowrap;}
+  h2 .pts{float:right; margin-left:12px; margin-top:6px;}
+
+  .callout{border-radius:10px; padding:13px 16px; margin:16px 0; font-size:15px;}
+  .callout.proj{background:var(--blue-soft); border:1px solid #d3e0ff;}
+  .callout.tip{background:#ecfdf3; border:1px solid #c5ebd3;}
+  .callout.warn{background:var(--warn-soft); border:1px solid #fde2c0; color:#7c4a12;}
+  .callout b{color:inherit;}
+
+  .progression{display:grid; grid-template-columns:1fr; gap:10px; margin:18px 0;}
+  .step{display:flex; gap:12px; align-items:flex-start; background:#fff; border:1px solid var(--line);
+    border-radius:10px; padding:12px 14px;}
+  .step .n{flex:none; width:26px; height:26px; border-radius:50%; background:var(--accent);
+    color:#063; font-weight:800; display:grid; place-items:center; font-size:13px;}
+  .step h4{margin:0 0 2px; font-size:15px;}
+  .step p{margin:0; color:var(--muted); font-size:14px;}
+  .step code{font-size:.85em;}
+
+  footer{margin-top:46px; padding-top:18px; border-top:1px solid var(--line);
+    color:var(--muted); font-size:13.5px;}
+
+  @media print{
+    body{background:#fff;}
+    header.hero{background:#0f172a !important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    .q,.step,.callout{break-inside:avoid;}
+    pre{break-inside:avoid; background:#0f172a !important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    pre.src{max-height:none;}
+    a{color:var(--ink); text-decoration:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Android · Kotlin · Jetpack Compose · Navigation 3</p>
+    <h1>Homework 3 — Deep Stacks, ViewModel State &amp; the Data Layer</h1>
+    <p class="sub">Twelve coding tasks — no essays, every answer is code you write and run.
+       You will reshape a four-deep back stack, push shared state into a <code>ViewModel</code>,
+       and swap data sources behind a repository without touching a single screen.
+       The complete source for all three apps is included at the end.</p>
+    <div class="meta">
+      <span><b>Projects:</b> NavFourScreen · NavViewModelState · NavDataLayer</span>
+      <span><b>12 tasks</b> · 100 pts</span>
+      <span><b>Est. time:</b> 3–4 hrs</span>
+      <span><b>Tools:</b> Android Studio + emulator/device</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ CONTEXT ============ -->
+  <section>
+    <p>This assignment is built around three projects you have already studied. They share the same
+       planets domain you know from <code>NavDetailList</code> and <code>NavThreeScreen</code>, and each
+       one adds exactly one big idea on top of the navigation foundations from Homework&nbsp;1:</p>
+
+    <div class="progression">
+      <div class="step"><div class="n">1</div><div>
+        <h4>NavFourScreen — the back stack gets deep</h4>
+        <p>Categories → Items → Detail → Fact: a four-deep drill-down. A <code>Button</code> (not a list
+           row) pushes the fourth key, and “Start over” pops <em>multiple</em> keys at once with
+           <code>while (backStack.size &gt; 1) backStack.removeLastOrNull()</code>.</p>
+      </div></div>
+      <div class="step"><div class="n">2</div><div>
+        <h4>NavViewModelState — state moves out of the composables</h4>
+        <p>A shared <code>FavoritesViewModel</code> owns the favorites <code>Set&lt;Int&gt;</code> in a
+           <code>StateFlow</code>. Screens observe it with <code>collectAsStateWithLifecycle()</code> and
+           send events up (<code>toggleFavorite(id)</code>) — so a ★ toggled on Detail appears on the
+           Items list and survives rotation.</p>
+      </div></div>
+      <div class="step"><div class="n">3</div><div>
+        <h4>NavDataLayer — data moves behind a repository</h4>
+        <p>Screens own <em>no</em> data. <code>PlanetsViewModel</code> observes a
+           <code>PlanetRepository</code> interface and renders an explicit, sealed
+           <code>PlanetsUiState</code>: <code>Loading</code> / <code>Empty</code> / <code>Error</code> /
+           <code>Success</code>. Swap the implementation and nothing above the boundary changes.</p>
+      </div></div>
+    </div>
+
+    <div class="callout proj">
+      <b>Before you start.</b> Open each project folder in Android Studio (<code>File ▸ Open…</code>),
+      let Gradle sync, and run it once on an emulator or device so you have seen the real behavior.
+      The full source for all six Kotlin files is in the <a href="#source">Appendix</a> at the bottom
+      of this page.
+    </div>
+
+    <div class="callout warn">
+      <b>How your work is graded.</b> Every task is a code change. Tag each change with a comment naming
+      the task (<code>// A1</code>, <code>// B3</code>, <code>// C4</code> …) so it is easy to find, and
+      comment every line you add or change in the same heavy teaching style as the provided source —
+      uncommented code loses points. When a task says “verify”, run the app and check the behavior
+      yourself before moving on.
+    </div>
+  </section>
+
+  <!-- ============ PART A ============ -->
+  <h2><span class="pts">30 pts</span><span class="part">Part A.</span> NavFourScreen — shaping a deep back stack</h2>
+  <p class="lead">All tasks in the <code>NavFourScreen</code> project. The whole point of this app is that
+     the back stack is just a list of keys — so you can grow it, jump around in it, and pop it in chunks.</p>
+
+  <div class="callout warn">
+    <b>Watch the previews.</b> NavFourScreen's <code>@Preview</code> functions at the bottom of the file
+    are <em>live code</em> that calls <code>CategoriesScreen</code> and <code>FactScreen</code>. Whenever a
+    task below adds a required parameter to a screen, the compiler will also point you at the preview call
+    sites — pass a no-op (<code>{}</code>) there, just like the existing callbacks. The app must keep
+    building after every task.
+  </div>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">A1 — a fifth screen</span><span class="pts">10 pts</span></div>
+    <p>Add a <strong>fifth</strong> level to the drill-down: a <code>CategoryInfoScreen</code> reached by a
+       new <strong>“About its category”</strong> button on <code>FactScreen</code>. It shows which category
+       the current planet belongs to — the category's <code>name</code> as a headline and its
+       <code>description</code> underneath — plus a <strong>Back</strong> button that pops one level. The
+       stack can now be five deep: <code>[Categories, Items, Detail, Fact, CategoryInfo]</code>.</p>
+    <p>You will touch all four places a new screen always needs — a key, an <code>entry</code>, a screen
+       composable, and the button that pushes the key — plus, per the callout above, the
+       <code>FactScreen</code> preview, which now needs the new parameter too.</p>
+<pre><span class="c">// 1) The new key — names the screen AND carries which planet we came from.</span>
+<span class="f">@Serializable</span>
+<span class="k">data class</span> <span class="f">CategoryInfoKey</span>(<span class="k">val</span> itemId: <span class="f">Int</span>) : <span class="f">NavKey</span>
+
+<span class="c">// 2) The new entry — registers the screen for that key type.</span>
+entry&lt;<span class="f">CategoryInfoKey</span>&gt; { key -&gt;
+    <span class="k">val</span> item = itemById(key.itemId)               <span class="c">// resolve the planet from the id in the key</span>
+    CategoryInfoScreen(
+        item = item,
+        category = categoryById(item.categoryId), <span class="c">// follow the "foreign key" to its category</span>
+        onBack = { backStack.removeLastOrNull() } <span class="c">// pop one level, back to the fact screen</span>
+    )
+}</pre>
+    <div class="callout tip"><b>Hint.</b> Model your <code>CategoryInfoScreen</code> on
+       <code>FactScreen</code> — same <code>Column</code>/<code>Text</code>/<code>Button</code> shape. The
+       button on <code>FactScreen</code> needs a new <code>onOpenCategoryInfo: (Int) -&gt; Unit</code>
+       parameter, wired in the <code>entry&lt;FactKey&gt;</code> block to
+       <code>backStack.add(CategoryInfoKey(key.itemId))</code>.</div>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">A2 — jump ahead, then seed the stack</span><span class="pts">10 pts</span></div>
+    <p><strong>(a)</strong> Add a <strong>“Surprise me”</strong> button at the top of
+       <code>CategoriesScreen</code> that jumps <em>straight</em> to a random planet's fun-fact screen:
+       pick <code>sampleItems.random()</code> and push a single <code>FactKey(item.id)</code>. Run it, then
+       press Back from the fact screen and note (in a comment next to your button) where you land —
+       and why: the stack was only <code>[Categories, Fact]</code>.</p>
+    <p><strong>(b)</strong> Now fix the jump so Back behaves as if the user had drilled down by hand:
+       push the <em>whole path</em>, not just the destination.</p>
+<pre><span class="c">// Hand-seed the stack so Back walks down sensibly: push the WHOLE path, not just the end.</span>
+onJumpToFact = {
+    <span class="k">val</span> item = sampleItems.random()              <span class="c">// pick any planet</span>
+    backStack.add(<span class="f">ItemsKey</span>(item.categoryId))     <span class="c">// level 2 — its category's planet list</span>
+    backStack.add(<span class="f">DetailKey</span>(item.id))            <span class="c">// level 3 — its detail</span>
+    backStack.add(<span class="f">FactKey</span>(item.id))              <span class="c">// level 4 — the fact (top = what's shown)</span>
+}</pre>
+    <div class="callout tip"><b>Hint.</b> <code>CategoriesScreen</code> is a bare <code>LazyColumn</code>,
+       so give the button its own slot above the rows with the singular <code>item { }</code> builder:
+       <code>item { Button(onClick = onJumpToFact) { Text("Surprise me") } }</code> — and add the new
+       <code>onJumpToFact: () -&gt; Unit</code> parameter to the screen
+       (<code>CategoriesScreenPreview</code> will need <code>onJumpToFact = {}</code>).</div>
+    <div class="callout warn"><b>Why this matters.</b> Pushing a hand-built chain of keys is exactly how
+       <code>NavDeepLinks</code> reconstructs a sensible back stack when the app is opened from a URI —
+       you are practicing the deep-link trick one project early.</div>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">A3 — pop exactly two</span><span class="pts">6 pts</span></div>
+    <p><code>FactScreen</code> already has “Back” (pops one key) and “Start over” (pops everything but the
+       root). Add a third button between them, <strong>“Back to planet list”</strong>, that pops
+       <em>exactly two</em> keys — <code>FactKey</code> and <code>DetailKey</code> — landing on
+       <code>ItemsScreen</code>. Use <code>repeat(2) { backStack.removeLastOrNull() }</code>, and explain in
+       its comment why <code>removeLastOrNull()</code> is the right call inside the loop rather than
+       <code>removeLast()</code>. In the same comment, note what this button would have done back when your
+       A2(a) jump pushed only <code>[Categories, Fact]</code> — and why finishing A2(b) protects it.</p>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">A4 — preview every state of the new screen</span><span class="pts">4 pts</span></div>
+    <p>Give your A1 screen the same preview treatment the other four screens get: a
+       <code>@Preview(widthDp = 320, heightDp = 480)</code> that uses the existing
+       <code>ItemPreviewProvider</code> with <code>@PreviewParameter</code>, so the design pane renders
+       <strong>one card per planet</strong> (six in all) without running the app. Resolve the category the
+       same way your <code>entry</code> block does.</p>
+  </div>
+
+  <!-- ============ PART B ============ -->
+  <h2><span class="pts">32 pts</span><span class="part">Part B.</span> NavViewModelState — one source of truth, more screens</h2>
+  <p class="lead">All tasks in the <code>NavViewModelState</code> project. The favorites live in
+     <em>one</em> <code>FavoritesViewModel</code> shared by every screen — these tasks make more screens
+     read it, write it, and grow what it owns.</p>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">B1 — a second event: clear all</span><span class="pts">6 pts</span></div>
+    <p>Add a <strong>“Clear favorites”</strong> button to the <code>ItemsScreen</code> header (under
+       “Back to categories”). The screen must stay <em>stateless</em>: give it a new
+       <code>onClearFavorites: () -&gt; Unit</code> parameter and wire it up in <code>ItemsRoute</code>.
+       The only place the set may be mutated is the ViewModel, so the actual clearing is a new function
+       there:</p>
+<pre><span class="c">/** Clears every favorite — the second EVENT the UI can send up. */</span>
+<span class="k">fun</span> <span class="f">clearFavorites</span>() {
+    _favorites.update { emptySet() }   <span class="c">// same atomic update pattern as toggleFavorite</span>
+}</pre>
+    <p>Verify: favorite two planets, tap “Clear favorites” on the list — every ★ disappears at once,
+       and the Detail screen's button reads “☆ Favorite” again.</p>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">B2 — the categories screen joins in</span><span class="pts">10 pts</span></div>
+    <p>The Categories screen is the only one that doesn't read the shared state yet. Show a live count at
+       the top of it: <strong>“★ 2 favorited so far”</strong>. Follow the project's own pattern — a
+       stateful <em>Route</em> that talks to the ViewModel, delegating to a stateless <em>Screen</em>:</p>
+<pre><span class="c">/** CategoriesRoute (STATEFUL) — observes the shared VM, hands a plain count down. */</span>
+<span class="f">@Composable</span>
+<span class="k">fun</span> <span class="f">CategoriesRoute</span>(
+    categories: <span class="f">List&lt;Category&gt;</span>,
+    favoritesViewModel: <span class="f">FavoritesViewModel</span>,
+    onOpen: (<span class="f">Int</span>) -&gt; <span class="f">Unit</span>,
+    modifier: <span class="f">Modifier</span> = <span class="f">Modifier</span>,
+) {
+    <span class="c">// Subscribe to the SAME StateFlow the other screens observe.</span>
+    <span class="k">val</span> favorites <span class="k">by</span> favoritesViewModel.favorites.collectAsStateWithLifecycle()
+    CategoriesScreen(
+        categories = categories,
+        favoriteCount = favorites.size,   <span class="c">// the screen needs only the COUNT, so pass only that</span>
+        onOpen = onOpen,
+        modifier = modifier,
+    )
+}</pre>
+    <p>Then: add the <code>favoriteCount: Int</code> parameter to <code>CategoriesScreen</code>, render the
+       count line above the category rows (an <code>item { }</code> slot in the <code>LazyColumn</code>
+       works), and change <code>entry&lt;CategoriesKey&gt;</code> to call <code>CategoriesRoute</code>,
+       passing the shared <code>favoritesViewModel</code>.</p>
+    <p>Verify: favorite a planet on Detail, walk all the way back — the count on the first screen already
+       reflects it. One ViewModel, three screens, zero copies of the state.</p>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">B3 — toggle straight from the list</span><span class="pts">8 pts</span></div>
+    <p>On <code>ItemsScreen</code>, replace the conditional ★ with a star that is <em>always</em> visible
+       and <em>tappable</em>: ★ when favorited, ☆ when not. Tapping the star toggles the favorite
+       <em>without navigating</em>; tapping anywhere else on the row still opens the detail. Add an
+       <code>onToggleFavorite: (Int) -&gt; Unit</code> parameter and wire it through
+       <code>ItemsRoute</code> to <code>favoritesViewModel::toggleFavorite</code>.</p>
+<pre><span class="c">// ALWAYS render the star; ★ when favorited, ☆ when not. Its own clickable</span>
+<span class="c">// "shadows" the row's — Compose delivers the tap to the innermost handler,</span>
+<span class="c">// so tapping the star toggles WITHOUT navigating.</span>
+Text(
+    text = <span class="k">if</span> (item.id <span class="k">in</span> favoriteIds) <span class="s">"★"</span> <span class="k">else</span> <span class="s">"☆"</span>,
+    style = MaterialTheme.typography.titleMedium,
+    modifier = Modifier.clickable { onToggleFavorite(item.id) },
+)</pre>
+    <p>Verify both directions: toggle on the list, open the detail — the button already says
+       “★ Unfavorite”; toggle on the detail, come back — the row's star already changed.</p>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">B4 — a second piece of shared state: visited</span><span class="pts">8 pts</span></div>
+    <p>Track which planets the user has actually opened. In <code>FavoritesViewModel</code>, add a second
+       <code>StateFlow</code> — <code>visited: Set&lt;Int&gt;</code> — with a <code>markVisited(id)</code>
+       event that only ever <em>adds</em>. Record the visit when the detail screen appears, and show a small
+       “· visited” label (or a ✓) on each visited row in <code>ItemsScreen</code>.</p>
+<pre><span class="c">// In FavoritesViewModel — a SECOND piece of shared state, same recipe:</span>
+<span class="k">private val</span> _visited = <span class="f">MutableStateFlow</span>&lt;<span class="f">Set&lt;Int&gt;</span>&gt;(emptySet())
+<span class="k">val</span> visited: <span class="f">StateFlow&lt;Set&lt;Int&gt;&gt;</span> = _visited.asStateFlow()
+
+<span class="c">/** Marks a planet as seen. Unlike toggleFavorite, this only ever ADDS. */</span>
+<span class="k">fun</span> <span class="f">markVisited</span>(id: <span class="f">Int</span>) {
+    _visited.update { it + id }
+}
+
+<span class="c">// In DetailRoute — record the visit ONCE per planet shown (not on every recomposition):</span>
+LaunchedEffect(item.id) {                     <span class="c">// re-runs only when item.id changes</span>
+    favoritesViewModel.markVisited(item.id)
+}</pre>
+    <div class="callout tip"><b>Hint.</b> You saw <code>LaunchedEffect</code> in
+       <code>NavDataLayer</code>'s detail screen — it runs its block when the screen enters composition
+       (and again only if its key changes), which is exactly “the user opened this detail”. Import it from
+       <code>androidx.compose.runtime.LaunchedEffect</code>. <code>ItemsRoute</code> must now collect
+       <em>two</em> flows and pass <em>two</em> sets down.</div>
+    <p>Verify: open Mercury and Mars, go back — those two rows say “· visited”. Rotate the device — still
+       there. Why? Same reason the favorites survive: the sets live in the ViewModel, not the composition.</p>
+  </div>
+
+  <!-- ============ PART C ============ -->
+  <h2><span class="pts">38 pts</span><span class="part">Part C.</span> NavDataLayer — swapping sources behind the boundary</h2>
+  <p class="lead">All tasks in the <code>NavDataLayer</code> project. The contract is
+     <code>PlanetRepository</code>; everything above it (ViewModel, screens) depends only on the interface.
+     These tasks prove that boundary by changing what's behind it — and finish by giving the detail screen
+     the same sealed-state treatment the list already has.</p>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">C1 — grow the data, touch no screens</span><span class="pts">6 pts</span></div>
+    <p>Add <strong>Uranus</strong> and <strong>Neptune</strong> to <code>samplePlanets</code> in
+       <code>Repository.kt</code> (category 2, with a <code>blurb</code> and a <code>fact</code> each, ids
+       7 and 8). Run the app: after the loading spinner, both new planets appear in the list and their
+       detail screens load — with <strong>zero</strong> changes to <code>MainActivity.kt</code> or
+       <code>PlanetsViewModel.kt</code>. Add one comment above your new rows explaining <em>why</em>
+       nothing else needed to change (where does the UI get its data from?).</p>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">C2 — make every UI state reachable</span><span class="pts">8 pts</span></div>
+    <p>Today, demonstrating the <code>Empty</code> and <code>Error</code> states means hand-editing
+       <code>planets()</code> (the comments in <code>InMemoryPlanetRepository</code> tell you where). Make
+       the demo <em>switchable</em> instead: give the repository a compile-checked mode and branch on it.</p>
+<pre><span class="c">// A compile-checked switch for the demo modes (no stringly-typed "ok"/"error").</span>
+<span class="k">enum class</span> <span class="f">Simulate</span> { OK, EMPTY, ERROR }
+
+<span class="k">class</span> <span class="f">InMemoryPlanetRepository</span>(
+    <span class="k">private val</span> simulate: <span class="f">Simulate</span> = Simulate.OK,   <span class="c">// default: behave normally</span>
+) : <span class="f">PlanetRepository</span> {
+    <span class="c">// ...</span>
+    <span class="k">override fun</span> <span class="f">planets</span>(): <span class="f">Flow&lt;List&lt;Item&gt;&gt;</span> = flow {
+        delay(fakeLatencyMillis)
+        <span class="k">when</span> (simulate) {
+            Simulate.OK    -&gt; emit(samplePlanets)
+            Simulate.EMPTY -&gt; emit(emptyList())      <span class="c">// -&gt; the UI's Empty state</span>
+            Simulate.ERROR -&gt; <span class="k">throw</span> <span class="f">IllegalStateException</span>(<span class="s">"Simulated data-source failure"</span>) <span class="c">// -&gt; Error + Retry</span>
+        }
+    }
+}</pre>
+    <p>Run it once in each mode (change the default, or pass the mode where the repository is constructed)
+       and confirm you can reach all three of <code>Empty</code>, <code>Error</code>, and
+       <code>Success</code>. Then, in a comment above your <code>when (simulate)</code>, note what the
+       Retry button does in <code>ERROR</code> mode — and why it can never succeed there. When you're
+       done, set the default back to <code>Simulate.OK</code>: C3 builds on a working repository.</p>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">C3 — a flaky repository that Retry actually rescues</span><span class="pts">12 pts</span></div>
+    <p>Write a <strong>new</strong> implementation of the interface in <code>Repository.kt</code>:
+       <code>FlakyPlanetRepository</code>, which <em>fails the first time</em> the planet list is collected
+       and succeeds on every attempt after that. Swap it in by changing only the ViewModel's default
+       constructor argument — the screens and the ViewModel body must not change at all.</p>
+<pre><span class="k">class</span> <span class="f">FlakyPlanetRepository</span>(
+    <span class="c">// Explicitly OK — don't inherit whatever demo mode C2 left as the default.</span>
+    <span class="k">private val</span> wrapped: <span class="f">PlanetRepository</span> = <span class="f">InMemoryPlanetRepository</span>(Simulate.OK),
+) : <span class="f">PlanetRepository</span> {
+    <span class="k">private var</span> attempts = 0                       <span class="c">// how many times planets() has been collected</span>
+
+    <span class="k">override fun</span> <span class="f">planets</span>(): <span class="f">Flow&lt;List&lt;Item&gt;&gt;</span> = flow {
+        attempts++                                  <span class="c">// the flow body runs on EVERY collection (cold flow)</span>
+        <span class="k">if</span> (attempts == 1) {
+            delay(800)                              <span class="c">// a little fake latency before failing</span>
+            <span class="k">throw</span> <span class="f">IllegalStateException</span>(<span class="s">"Network hiccup — try again"</span>)  <span class="c">// first try always fails</span>
+        }
+        emitAll(wrapped.planets())                  <span class="c">// afterwards: defer to the real repository</span>
+    }
+
+    <span class="c">// Required by the interface. Note: the app never actually calls THIS delegate —</span>
+    <span class="c">// PlanetDetailScreen builds its OWN InMemoryPlanetRepository (you'll see it in C4).</span>
+    <span class="k">override suspend fun</span> <span class="f">planet</span>(id: <span class="f">Int</span>): <span class="f">Item</span>? = wrapped.planet(id)
+}</pre>
+    <div class="callout tip"><b>Hint.</b> <code>emitAll</code> forwards every value of another Flow into
+       this one — import <code>kotlinx.coroutines.flow.emitAll</code>. The swap is one line:
+       <code>private val repo: PlanetRepository = FlakyPlanetRepository()</code> in
+       <code>PlanetsViewModel</code>'s constructor.</div>
+    <p>Verify the full arc: launch → spinner → <strong>Error</strong> (“Network hiccup — try again”) →
+       tap <strong>Retry</strong> → spinner → <strong>Success</strong>. (If Retry keeps failing, check that
+       C2's default really is back to <code>Simulate.OK</code> — that failure has nothing to do with your
+       new class.) Then answer in a comment above your class: why does Retry reach the flaky code again at
+       all? (What does <code>retry()</code> → <code>observePlanets()</code> →
+       <code>launchIn</code> do to a <em>cold</em> flow?)</p>
+    <p>One subtlety worth noticing: only the <em>list</em> goes through the ViewModel's repository. The
+       detail screen constructs its <em>own</em> <code>InMemoryPlanetRepository</code> as a default
+       parameter — you'll stare straight at that line in C4, and the C4 stretch goal is what finally
+       eliminates it.</p>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><span class="qid">C4 — give the detail screen the sealed-state treatment</span><span class="pts">12 pts</span></div>
+    <p><code>PlanetDetailScreen</code> currently juggles two loose vars (<code>loading</code>,
+       <code>planet</code>) and a <code>when { }</code> with a <code>planet!!</code> inside. Refactor it to
+       the same pattern the list uses: define a sealed <code>DetailUiState</code>, hold <em>one</em> state
+       var, and render with an exhaustive <code>when</code> — making the <code>!!</code> impossible.</p>
+<pre><span class="k">sealed interface</span> <span class="f">DetailUiState</span> {
+    <span class="k">data object</span> <span class="f">Loading</span> : <span class="f">DetailUiState</span>                   <span class="c">// suspend load still running</span>
+    <span class="k">data object</span> <span class="f">NotFound</span> : <span class="f">DetailUiState</span>                  <span class="c">// load finished; id matched nothing</span>
+    <span class="k">data class</span> <span class="f">Success</span>(<span class="k">val</span> planet: <span class="f">Item</span>) : <span class="f">DetailUiState</span> <span class="c">// load finished; planet in hand</span>
+}
+
+<span class="c">// In PlanetDetailScreen — ONE state var replaces the loading/planet pair:</span>
+<span class="k">var</span> state <span class="k">by</span> remember { mutableStateOf&lt;<span class="f">DetailUiState</span>&gt;(DetailUiState.Loading) }
+
+LaunchedEffect(planetId) {
+    state = DetailUiState.Loading
+    state = repo.planet(planetId)                  <span class="c">// suspend call into the data layer...</span>
+        ?.let { DetailUiState.Success(it) }        <span class="c">// ...non-null -&gt; Success carrying the planet</span>
+        ?: DetailUiState.NotFound                  <span class="c">// ...null -&gt; NotFound</span>
+}
+
+<span class="c">// `when (val s = state)` captures the delegated var into a plain val so the</span>
+<span class="c">// compiler can smart-cast `s` inside each branch (a `by`-delegated property</span>
+<span class="c">// can't be smart-cast directly) — and the `when` must cover every subtype.</span>
+<span class="k">when</span> (<span class="k">val</span> s = state) {
+    <span class="k">is</span> DetailUiState.Loading  -&gt; { <span class="c">/* spinner, as before */</span> }
+    <span class="k">is</span> DetailUiState.NotFound -&gt; { <span class="c">/* "Planet not found" + Back */</span> }
+    <span class="k">is</span> DetailUiState.Success  -&gt; { <span class="c">/* s.planet.title, s.planet.blurb, s.planet.fact + Back */</span> }
+}</pre>
+    <p>In a comment above your <code>when</code>, explain why the <code>planet!!</code> from the old code
+       is now gone for good: where does the non-null planet live, and who guarantees it is there?</p>
+    <div class="callout warn"><b>Stretch (no extra points, big bragging rights).</b> Promote the refactor
+       all the way: a <code>PlanetDetailViewModel(planetId, repo)</code> exposing
+       <code>StateFlow&lt;DetailUiState&gt;</code>, modeled on <code>PlanetsViewModel</code> — so the
+       composable holds no load logic at all. One research hint: plain <code>viewModel()</code> only works
+       when every constructor parameter has a default (that is why <code>PlanetsViewModel</code> gets away
+       with it). With a required <code>planetId</code> you need the factory overload, with a per-planet key
+       so two details don't share one instance:
+       <code>viewModel(key = "detail-$planetId") { PlanetDetailViewModel(planetId) }</code>.</div>
+  </div>
+
+  <!-- ============ SUBMIT ============ -->
+  <h2>What to hand in</h2>
+  <ul>
+    <li>The three modified project folders (zip them, or push to your repo) — each app must
+        <strong>build and run</strong>.</li>
+    <li>Every change tagged (<code>// A1</code> … <code>// C4</code>) and commented in the teaching style
+        of the provided source.</li>
+    <li>The small written answers live <em>in code comments</em> where the tasks ask for them (A2's
+        “where does Back land”, A3's <code>removeLastOrNull</code> reason, C1's “why nothing changed”,
+        C2's “why Retry can't succeed in <code>ERROR</code> mode”, C3's “why Retry works”,
+        C4's “why <code>!!</code> is gone”).</li>
+  </ul>
+
+  <!-- ============ APPENDIX: SOURCE ============ -->
+  <h2 id="source">Appendix · Complete source code</h2>
+  <p class="lead">Everything the tasks need, exactly as shipped. Theme files
+     (<code>ui/theme/…</code>) are unchanged across all projects and not repeated here.</p>
+
+  <h3>1 · NavFourScreen — <code>src/main/java/com/example/navfourscreen/MainActivity.kt</code></h3>
+<pre class="src">// =============================================================================
+// MainActivity.kt
+//
+// A minimal FOUR-screen "drill-down" sample app built with:
+//   • Jetpack Compose        — the declarative UI toolkit (no XML layouts).
+//   • Navigation 3 (Nav3)    — the modern, Compose-first navigation library.
+//   • Kotlinx Serialization  — used to mark navigation keys @Serializable.
+//
+// This is the bigger sibling of the three-screen sample. It adds a FOURTH
+// screen — a "Fun Fact" screen — reached by a Button on the Detail screen, so
+// the navigation back stack can now be four deep:
+//
+//   CategoriesScreen   --tap--&gt;   ItemsScreen   --tap--&gt;   DetailScreen
+//   (Rocky / Gas)                 (planets)                (one planet)
+//                                                               |
+//                                                   Button: "View fun fact"
+//                                                               v
+//                                                          FactScreen
+//                                                          (a fun fact + Button)
+//
+//   Back stack grows:  [Categories] -&gt; [..Items] -&gt; [..Detail] -&gt; [..Fact]
+//   System/Back button pops one key at a time, walking back up the chain.
+//
+// Reading order below: package + imports, then DATA, then NAVIGATION KEYS,
+// then the Activity, then each of the four screen Composables.
+// =============================================================================
+
+// The package declaration. Every class/function below lives in this namespace,
+// which also matches the directory structure under src/main/java/.
+package com.example.navfourscreen
+
+// --- Android framework imports ------------------------------------------------
+import android.os.Bundle                                    // savedInstanceState type passed to onCreate
+import androidx.activity.ComponentActivity                  // base Activity class with Compose support
+import androidx.activity.compose.setContent                 // bridges an Activity to a Compose UI tree
+import androidx.activity.enableEdgeToEdge                    // lets the app draw behind the system bars
+
+// --- Compose layout / foundation imports -------------------------------------
+import androidx.compose.foundation.clickable                // makes a row tappable
+import androidx.compose.foundation.layout.Column            // stacks children vertically
+import androidx.compose.foundation.layout.Spacer            // empty box used to add fixed gaps
+import androidx.compose.foundation.layout.fillMaxSize       // modifier: take all available width AND height
+import androidx.compose.foundation.layout.fillMaxWidth      // modifier: take all available width
+import androidx.compose.foundation.layout.height            // modifier: force a specific height
+import androidx.compose.foundation.layout.padding           // modifier: add space around content
+import androidx.compose.foundation.lazy.LazyColumn          // scrolling list (only renders visible rows)
+import androidx.compose.foundation.lazy.items               // iterate a List inside a LazyColumn
+
+// --- Material 3 component imports ---------------------------------------------
+import androidx.compose.material3.Button                    // filled, tappable button
+import androidx.compose.material3.HorizontalDivider         // thin horizontal separator line
+import androidx.compose.material3.MaterialTheme             // access to the current theme's colors/typography
+import androidx.compose.material3.Scaffold                  // standard screen frame (handles insets, bars, etc.)
+import androidx.compose.material3.Text                      // draws text
+
+// --- Compose runtime / tooling imports ---------------------------------------
+import androidx.compose.runtime.Composable                  // marks a function as emitting UI
+import androidx.compose.ui.Modifier                         // the "how to lay out / decorate" object
+import androidx.compose.ui.tooling.preview.Preview          // enables @Preview rendering in Android Studio
+import androidx.compose.ui.tooling.preview.PreviewParameter  // feeds a value into a preview parameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider // supplies the SET of preview values
+import androidx.compose.ui.unit.dp                          // density-independent pixel unit (e.g. 16.dp)
+
+// --- Navigation 3 imports -----------------------------------------------------
+// Navigation 3 is the modern, Compose-first navigation approach: a single
+// Activity holds a back stack of "keys", and Compose swaps the screen whenever
+// the top key changes. No Fragments, no Intents, no XML nav graph.
+import androidx.navigation3.runtime.NavKey                  // marker interface every navigation key implements
+import androidx.navigation3.runtime.entryProvider           // DSL that maps each key type to a screen
+import androidx.navigation3.runtime.rememberNavBackStack    // creates + remembers the back stack across recomposition
+import androidx.navigation3.ui.NavDisplay                   // the composable that renders the current top key
+
+// --- App + misc imports -------------------------------------------------------
+import com.example.navfourscreen.ui.theme.NavFourScreenTheme // our app's Material theme wrapper (see Theme.kt)
+import kotlinx.serialization.Serializable                   // makes Nav3 keys serializable (required by Nav3)
+import android.util.Log                                     // Logcat logging (Log.d, Log.e, ...)
+
+// ===========================================================================
+// DATA
+// A tiny in-memory data source. In a real app this would come from a database
+// (Room), a network call (Retrofit), or a repository; here hardcoded lists are
+// enough to demonstrate a four-level drill-down.
+//
+// The model is two levels deep:
+//   Category 1─┐
+//              ├── many Items   (each Item belongs to exactly one Category)
+//   Category 2─┘
+// ===========================================================================
+
+// A top-level grouping shown on the FIRST screen.
+//   • id   — stable unique identifier; this is what travels in the nav key.
+//   • name — short label shown as the category row.
+//   • description — one-line summary shown under the name.
+data class Category(val id: Int, val name: String, val description: String)
+
+// A single planet shown on the SECOND (list), THIRD (detail), and FOURTH (fact)
+// screens.
+//   • id         — stable unique identifier; travels in the detail/fact nav keys.
+//   • categoryId — which Category this item belongs to (the "foreign key").
+//   • title      — short name shown as the row/headline.
+//   • blurb      — one-line description shown under the title.
+//   • fact       — a longer "fun fact" shown only on the fourth screen.
+data class Item(
+    val id: Int,
+    val categoryId: Int,
+    val title: String,
+    val blurb: String,
+    val fact: String,
+)
+
+// Logcat tag string. Every log line from this app can be filtered in Logcat by
+// searching for "L4" (for "Level 4 nav demo").
+private const val TAG = "L4"
+
+// The two categories rendered on the first screen.
+private val sampleCategories = listOf(
+    Category(1, "Rocky Planets", "Small, dense worlds with solid surfaces."),
+    Category(2, "Gas Giants", "Massive planets made mostly of gas."),
+)
+
+// The planets rendered on the second screen. Each one's `categoryId` ties it
+// back to a Category above (1 = Rocky, 2 = Gas Giant); `fact` powers screen 4.
+private val sampleItems = listOf(
+    Item(1, 1, "Mercury", "The smallest planet and the closest to the Sun.",
+        "A year on Mercury is just 88 Earth days, but a single day lasts 176."),
+    Item(2, 1, "Venus", "The hottest planet, wrapped in thick clouds of acid.",
+        "Venus spins backwards, so the Sun rises in the west and sets in the east."),
+    Item(3, 1, "Earth", "The only planet known to support life — so far.",
+        "Earth is the only planet not named after a Greek or Roman god."),
+    Item(4, 1, "Mars", "The red planet, a frequent target for rovers.",
+        "Mars hosts Olympus Mons, the tallest volcano in the solar system."),
+    Item(5, 2, "Jupiter", "The largest planet, a gas giant with a great red spot.",
+        "Jupiter's Great Red Spot is a storm wider than the entire Earth."),
+    Item(6, 2, "Saturn", "The ringed gas giant, second largest in the system.",
+        "Saturn is so light it would float in water — if you found a big enough tub."),
+)
+
+// --- Lookups ----------------------------------------------------------------
+// The screens receive only an id (inside their nav key) and resolve the full
+// object here. Passing just the id — rather than the whole object — keeps each
+// navigation key tiny and serializable.
+
+// Resolve a Category by its id. `first { }` throws if none match, which is fine
+// here because every CategoryKey/ItemsKey is built from a known category id.
+private fun categoryById(id: Int): Category = sampleCategories.first { it.id == id }
+
+// Resolve a single Item by its id (used by the detail and fact screens).
+private fun itemById(id: Int): Item = sampleItems.first { it.id == id }
+
+// All items belonging to one category (used by the middle/list screen). `filter`
+// returns every match — possibly an empty list, which is also fine to render.
+private fun itemsInCategory(categoryId: Int): List&lt;Item&gt; =
+    sampleItems.filter { it.categoryId == categoryId }
+
+// ===========================================================================
+// NAVIGATION KEYS
+// Each screen is identified by a "key". A key both names the destination AND
+// carries that destination's arguments. Nav3 requires keys to implement NavKey
+// and (for state saving across process death) be @Serializable.
+//   • CategoriesKey has no arguments — there is only one categories screen.
+//   • ItemsKey carries a categoryId — which category's items to list.
+//   • DetailKey carries an itemId   — which single item to show.
+//   • FactKey carries an itemId     — which item's fun fact to show (screen 4).
+// ===========================================================================
+
+// `data object` = a singleton with a generated toString()/equals(). There is
+// only ever one categories screen, so a single shared object is the right model.
+@Serializable
+data object CategoriesKey : NavKey                          // first screen (no arguments)
+
+// `data class` because each items screen differs by which category it lists.
+@Serializable
+data class ItemsKey(val categoryId: Int) : NavKey          // second screen; which category was tapped
+
+// `data class` because each detail screen differs by which item it shows.
+@Serializable
+data class DetailKey(val itemId: Int) : NavKey             // third screen; which item was tapped
+
+// `data class` because each fact screen differs by which item's fact it shows.
+@Serializable
+data class FactKey(val itemId: Int) : NavKey               // fourth screen; which item's fun fact to show
+
+/**
+ * MainActivity — the app's single Activity and the entry point Android launches.
+ *
+ * In a Nav3 app you typically have exactly one Activity; it hosts the Compose UI
+ * and the navigation back stack, and Compose (not the Activity system) swaps
+ * between the four screens.
+ */
+class MainActivity : ComponentActivity() {
+    // onCreate runs once when the Activity is first created. This is where we
+    // install the Compose UI tree as the Activity's content.
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)                 // always call through to the framework first
+        enableEdgeToEdge()                                 // draw under the status/navigation bars for a modern look
+        setContent {                                       // everything inside is the Compose UI
+            // Apply our app theme (colors, typography, dark/light handling).
+            NavFourScreenTheme {
+                // Scaffold provides the standard screen structure and, crucially,
+                // hands us `innerPadding` — the space taken by system bars — so
+                // our content isn't drawn underneath them.
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding -&gt;
+                    // Hand the inset padding down to the navigation host so each
+                    // screen lays out inside the safe area.
+                    AppNavigation(modifier = Modifier.padding(innerPadding))
+                }
+            }
+        }
+    }
+}
+
+/**
+ * AppNavigation — owns the navigation back stack and maps each key to its screen.
+ *
+ * This is the heart of the Nav3 setup. It:
+ *   1. Creates/remembers the back stack (starting at the categories screen).
+ *   2. Renders the top of the stack via NavDisplay.
+ *   3. Defines what "back" does and which composable each of the four keys shows.
+ */
+@Composable
+fun AppNavigation(modifier: Modifier = Modifier) {
+    // The back stack is the list of keys currently "stacked" on screen, bottom
+    // to top. rememberNavBackStack seeds it with CategoriesKey and preserves it
+    // across recompositions (and configuration changes). Pushing a key navigates
+    // forward; popping a key navigates back. In this app the stack can reach four
+    // deep: [CategoriesKey, ItemsKey, DetailKey, FactKey].
+    val backStack = rememberNavBackStack(CategoriesKey)
+
+
+
+    // NavDisplay renders whatever key is on top of the back stack, animating the
+    // transition when the top changes.
+    NavDisplay(
+        backStack = backStack,
+        modifier = modifier,
+        // Called for system back gestures / the hardware back button. Popping the
+        // top key returns to the previous screen; removeLastOrNull is a no-op (and
+        // safe) if the stack is somehow already empty.
+        onBack = { backStack.removeLastOrNull() },          // back = pop the top key
+        // entryProvider is a DSL (a small "language" for one job): it builds the
+        // map of "which key type -&gt; which screen". You call entry&lt;...&gt; once per
+        // screen inside the { } block, and Nav3 runs the block whose key type
+        // matches the key currently on top of the back stack.
+        //
+        // How to read ONE line, e.g.  entry&lt;ItemsKey&gt; { key -&gt; ItemsScreen(...) } :
+        //   • entry           — a Nav3 builder function (from
+        //                       androidx.navigation3.runtime) that registers ONE
+        //                       screen for ONE key type.
+        //   • &lt;ItemsKey&gt;      — a GENERIC TYPE ARGUMENT, in angle brackets (a TYPE
+        //                       slot, not a value in parentheses): the key type this
+        //                       block handles. Nav3 matches it against the top key.
+        //   • { key -&gt; ... }  — the @Composable CONTENT shown while that key is on
+        //                       top. The lambda is handed the key instance, so a
+        //                       data-class key can read its arguments (key.categoryId).
+        //                       CategoriesKey is a data OBJECT (it carries no data),
+        //                       so its block below omits the `key -&gt;` parameter.
+        //
+        // WHEN does an entry block RUN? entry&lt;...&gt; { } only REGISTERS a screen here
+        // (like adding a `case` to a switch) — the { } body does NOT run yet. NavDisplay
+        // runs the body whose key type matches the key currently on TOP of the back
+        // stack: when you push that key (navigate forward), when you pop back to it, and
+        // on recomposition while it is showing. A key in the stack but not on top is kept
+        // (state preserved) but not drawn; popping it off removes its screen from
+        // composition. So pushing a key turns its screen on and popping turns it off —
+        // and `key` is the exact instance on top, so the same block runs with different
+        // data per instance (e.g. ItemsKey(1) vs ItemsKey(5)).
+        entryProvider = entryProvider {
+            // LEVEL 1 — when CategoriesKey is on top, show the list of categories.
+            entry&lt;CategoriesKey&gt; {
+                CategoriesScreen(
+                    categories = sampleCategories,
+                    // Tapping a category pushes an ItemsKey carrying THAT category's
+                    // id, navigating forward to its list of planets.
+                    // THE JUMP — how a tap reaches the next screen: this line does NOT name a
+                    // screen, it just ADDS A KEY to the back stack. NavDisplay then matches that
+                    // key by its TYPE to the matching entry&lt;...&gt; { } block above and runs it; the
+                    // id inside the key only chooses WHICH data that screen shows, not WHICH screen
+                    // — so every key of this type lands on the same entry block.
+                    onOpen = { categoryId -&gt;
+                        Log.d("LT", "In entry&lt;CategoriesKey&gt;, categoryId = ${categoryId}")
+//                        Log.d("LT", "tapped category = ${categoryById(categoryId).name}")
+                        backStack.add(ItemsKey(categoryId))
+                    }
+
+                )
+            }
+            // LEVEL 2 — when an ItemsKey is on top, show that category's planets.
+            entry&lt;ItemsKey&gt; { key -&gt;
+//                Log.d("LT", "category = ${categoryById(key.categoryId).name}")
+                Log.d("LT", "categoryId = ${key.categoryId}")
+                ItemsScreen(
+                    // Resolve the category (for the header) and its items (the rows).
+                    category = categoryById(key.categoryId),
+                    items = itemsInCategory(key.categoryId),
+                    // Tapping a planet pushes a DetailKey carrying THAT item's id.
+                    onOpen = { itemId -&gt;
+                        Log.d("LT", "In entry&lt;ItemsKey&gt;, categoryId = ${key.categoryId}")
+                        backStack.add(DetailKey(itemId)) },
+                    // The on-screen back button pops one level (back to categories).
+                    onBack = { backStack.removeLastOrNull() }
+                )
+            }
+            // LEVEL 3 — when a DetailKey is on top, show that one planet's detail.
+            entry&lt;DetailKey&gt; { key -&gt;
+                DetailScreen(
+                    item = itemById(key.itemId),
+                    // The "View fun fact" button pushes a FactKey for the SAME item,
+                    // navigating forward to the fourth screen.
+                    onOpenFact = { itemId -&gt; backStack.add(FactKey(itemId)) },
+                    // The on-screen back button pops one level (back to the items list).
+                    onBack = { backStack.removeLastOrNull() }
+                )
+            }
+            // LEVEL 4 — when a FactKey is on top, show that planet's fun fact.
+            entry&lt;FactKey&gt; { key -&gt;
+                FactScreen(
+                    item = itemById(key.itemId),
+                    // "Back" pops one level (back to the detail screen).
+                    onBack = { backStack.removeLastOrNull() },
+                    // "Start over" pops EVERY key except the first, returning to the
+                    // categories screen at the root of the stack.
+                    onStartOver = { while (backStack.size &gt; 1) backStack.removeLastOrNull() }
+                )
+            }
+        }
+    )
+}
+
+/**
+ * Categories screen (LEVEL 1): a scrolling list of categories; tapping one calls
+ * [onOpen] with its id.
+ *
+ * This composable is intentionally "dumb" — it knows nothing about navigation.
+ * It only renders the categories it's given and reports taps via [onOpen]. That
+ * keeps it reusable and easy to preview/test.
+ *
+ * @param categories the rows to render.
+ * @param onOpen     invoked with a category's id when its row is tapped.
+ * @param modifier   optional layout modifier supplied by the caller.
+ */
+@Composable
+fun CategoriesScreen(
+    categories: List&lt;Category&gt;,
+    onOpen: (Int) -&gt; Unit,
+    modifier: Modifier = Modifier,
+) {
+    // LazyColumn is the Compose equivalent of a RecyclerView: it only composes
+    // and lays out the rows currently visible on screen, so long lists stay fast.
+    LazyColumn(modifier = modifier.fillMaxSize()) {
+        // `items(categories) { ... }` emits one block of UI per element.
+        items(categories) { category -&gt;                    // draw one row per category
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()                         // row spans the full width...
+                    // OS vs COMPOSE vs YOUR CODE — what a tap really is:
+                    //   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows
+                    //     nothing about rows, items, names, or ids.
+                    //   • Compose hit-tests that pixel to find WHICH composable sits there (this
+                    //     one) and invokes its click lambda.
+                    //   • YOUR code gives the tap its MEANING: the click lambda passes the exact
+                    //     value you wired here (e.g. this row's id). "What was selected" is meaning
+                    //     your code attaches to a raw touch — the OS never knows about it.
+                    .clickable { onOpen(category.id) }      // ...and the WHOLE row is tappable -&gt; navigate
+                    .padding(16.dp)                         // breathing room inside the row
+            ) {
+                // Name: emphasized text style from the theme's type scale.
+                Text(text = category.name, style = MaterialTheme.typography.titleMedium)
+                // Description: smaller body text beneath the name.
+                Text(text = category.description, style = MaterialTheme.typography.bodyMedium)
+            }
+            // A thin line visually separating one row from the next.
+            HorizontalDivider()                             // thin line between rows
+        }
+    }
+}
+
+/**
+ * Items screen (LEVEL 2): a header naming the chosen [category] followed by a
+ * scrolling list of its [items]. Tapping an item calls [onOpen]; the button at
+ * the top calls [onBack].
+ *
+ * @param category the category whose items are being shown (used for the header).
+ * @param items    the items belonging to [category].
+ * @param onOpen   invoked with an item's id when its row is tapped.
+ * @param onBack   invoked when the user taps "Back to categories".
+ * @param modifier optional layout modifier supplied by the caller.
+ */
+@Composable
+fun ItemsScreen(
+    category: Category,
+    items: List&lt;Item&gt;,
+    onOpen: (Int) -&gt; Unit,
+    onBack: () -&gt; Unit,
+    modifier: Modifier = Modifier,
+) {
+    // Outer Column: a fixed header on top, then the scrolling list below it.
+    Column(modifier = modifier.fillMaxSize()) {
+        // --- Header block (does not scroll) ---
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            // The name of the category the user drilled into.
+            Text(text = category.name, style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(8.dp))
+            // A back button that pops one level, returning to the categories list.
+            Button(onClick = onBack) {                      // pop back to categories
+                Text("Back to categories")
+            }
+        }
+        HorizontalDivider()                                 // separates header from the list
+
+        // --- The list of planets in this category (scrolls) ---
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(items) { item -&gt;                          // draw one row per item
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onOpen(item.id) }      // whole row tappable -&gt; open detail
+                        .padding(16.dp)
+                ) {
+                    Text(text = item.title, style = MaterialTheme.typography.titleMedium)
+                    Text(text = item.blurb, style = MaterialTheme.typography.bodyMedium)
+                }
+                HorizontalDivider()
+            }
+        }
+    }
+}
+
+/**
+ * Detail screen (LEVEL 3): shows the single [item] resolved from the id in the
+ * nav key, with TWO buttons — one that drills forward to the fourth screen and
+ * one that goes back.
+ *
+ * @param item       the fully-resolved item to display.
+ * @param onOpenFact invoked with the item's id when "View fun fact" is tapped.
+ * @param onBack     invoked when the user taps "Back to list".
+ * @param modifier   optional layout modifier supplied by the caller.
+ */
+@Composable
+fun DetailScreen(
+    item: Item,
+    onOpenFact: (Int) -&gt; Unit,
+    onBack: () -&gt; Unit,
+    modifier: Modifier = Modifier,
+) {
+    // A single vertical column holding the title, body, and two buttons, with
+    // 16dp of padding around the whole screen.
+    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
+        // Large headline showing the item's title.
+        Text(text = item.title, style = MaterialTheme.typography.headlineSmall)
+        // Fixed 8dp gap between the headline and the body text.
+        Spacer(modifier = Modifier.height(8.dp))
+        // The item's longer description.
+        Text(text = item.blurb, style = MaterialTheme.typography.bodyLarge)
+        // Larger 24dp gap before the action buttons.
+        Spacer(modifier = Modifier.height(24.dp))
+        // Primary action: drill forward to the fourth (fun fact) screen.
+        Button(onClick = { onOpenFact(item.id) }) {
+            Text("View fun fact")
+        }
+        // Small gap between the two buttons.
+        Spacer(modifier = Modifier.height(8.dp))
+        // Secondary action: pop back to the items list. (System back does the
+        // same thing — see AppNavigation's onBack.)
+        Button(onClick = onBack) {                          // pop back to the list
+            Text("Back to list")
+        }
+    }
+}
+
+/**
+ * Fact screen (LEVEL 4 — the new fourth screen): shows a "fun fact" about the
+ * [item] and contains a Button (in fact two) to navigate back.
+ *
+ * @param item        the fully-resolved item whose fact is shown.
+ * @param onBack      invoked when the user taps "Back" (pops one level).
+ * @param onStartOver invoked when the user taps "Start over" (returns to the root).
+ * @param modifier    optional layout modifier supplied by the caller.
+ */
+@Composable
+fun FactScreen(
+    item: Item,
+    onBack: () -&gt; Unit,
+    onStartOver: () -&gt; Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
+        // Headline naming which planet this fun fact is about.
+        Text(
+            text = "Fun fact about ${item.title}",
+            style = MaterialTheme.typography.headlineSmall,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        // The fun fact itself, pulled from the item's `fact` field.
+        Text(text = item.fact, style = MaterialTheme.typography.bodyLarge)
+        Spacer(modifier = Modifier.height(24.dp))
+        // The Button the user asked for: pops one level back to the detail screen.
+        Button(onClick = onBack) {
+            Text("Back")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        // A second Button that clears the whole stack back to the first screen.
+        Button(onClick = onStartOver) {
+            Text("Start over")
+        }
+    }
+}
+
+// ===========================================================================
+// @Preview functions — render EVERY possible screen state in the design pane.
+//
+// These let you see each screen directly in Android Studio's design pane WITHOUT
+// running the app on a device or emulator. Each preview wraps the screen in the
+// app theme and passes no-op callbacks ({}), since previews don't navigate.
+//
+// The Items, Detail, and Fact previews use @PreviewParameter: a
+// PreviewParameterProvider supplies a SEQUENCE of values, and Android Studio
+// renders the screen ONCE PER value. Because the providers read the same
+// sampleCategories / sampleItems the app uses, the preview set updates
+// automatically if you add data.
+//
+// widthDp/heightDp give each preview a small, fixed phone-shaped frame so the
+// full-screen (fillMaxSize) layouts render as compact cards instead of each
+// taking a whole device-height of space — letting several fit on screen at once.
+//
+// Total renderings produced:
+//   • Categories : 1  (there is only one possible list)
+//   • Items      : 2  (one per Category — Rocky Planets, Gas Giants)
+//   • Detail     : 6  (one per Item — every planet)
+//   • Fact       : 6  (one per Item — every planet's fun fact)
+//   ───────────────────────────────────────────────────────────────
+//   = 15 previews, i.e. every reachable screen state.
+// ===========================================================================
+
+// LEVEL 1 — there is only ONE categories-screen state (the full list).
+@Preview(name = "Categories", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun CategoriesScreenPreview() {
+    NavFourScreenTheme {
+        CategoriesScreen(categories = sampleCategories, onOpen = {})
+    }
+}
+
+// Supplies every Category to the items-screen preview (Rocky Planets, Gas Giants).
+class CategoryPreviewProvider : PreviewParameterProvider&lt;Category&gt; {
+    override val values: Sequence&lt;Category&gt; = sampleCategories.asSequence()
+}
+
+// LEVEL 2 — one compact card per category, so BOTH item lists are previewed.
+@Preview(name = "Items", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun ItemsScreenPreview(
+    @PreviewParameter(CategoryPreviewProvider::class) category: Category
+) {
+    NavFourScreenTheme {
+        ItemsScreen(
+            category = category,
+            items = itemsInCategory(category.id),           // resolve this category's planets
+            onOpen = {},
+            onBack = {},
+        )
+    }
+}
+
+// Supplies every Item to the detail- and fact-screen previews — one per planet.
+class ItemPreviewProvider : PreviewParameterProvider&lt;Item&gt; {
+    override val values: Sequence&lt;Item&gt; = sampleItems.asSequence()
+}
+
+// LEVEL 3 — one compact card per item, so ALL six planet details are previewed.
+@Preview(name = "Detail", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun DetailScreenPreview(
+    @PreviewParameter(ItemPreviewProvider::class) item: Item
+) {
+    NavFourScreenTheme {
+        DetailScreen(item = item, onOpenFact = {}, onBack = {})
+    }
+}
+
+// LEVEL 4 — one compact card per item, so ALL six fun-fact screens are previewed.
+@Preview(name = "Fact", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun FactScreenPreview(
+    @PreviewParameter(ItemPreviewProvider::class) item: Item
+) {
+    NavFourScreenTheme {
+        FactScreen(item = item, onBack = {}, onStartOver = {})
+    }
+}</pre>
+
+  <h3>2 · NavViewModelState — <code>src/main/java/com/example/navviewmodelstate/FavoritesViewModel.kt</code></h3>
+<pre class="src">// =============================================================================
+// FavoritesViewModel.kt
+//
+// THE STAR OF THIS SAMPLE. This file holds the screen STATE and the LOGIC that
+// mutates it OUTSIDE of any composable, inside an androidx.lifecycle.ViewModel.
+//
+// WHY A ViewModel AT ALL?  (remember vs. rememberSaveable vs. ViewModel)
+// -----------------------------------------------------------------------------
+// Compose gives you several ways to "hold" state. They differ in WHAT they
+// survive:
+//
+//   remember { ... }
+//     • Survives:    recomposition (Compose re-running your function).
+//     • LOST on:     configuration change (e.g. screen ROTATION), because
+//                    rotation destroys &amp; recreates the Activity, throwing away
+//                    the whole composition (and everything remembered in it).
+//     • LOST on:     process death (system kills the app in the background).
+//
+//   rememberSaveable { ... }
+//     • Survives:    recomposition AND configuration change (rotation) AND
+//                    process death — it writes the value into the saved-instance
+//                    Bundle, so Android can restore it.
+//     • Limited to:  things that fit in a Bundle (primitives, Parcelable, etc.).
+//                    Great for small UI state like a counter or text-field value.
+//
+//   ViewModel  (this file)
+//     • Survives:    recomposition AND configuration change (ROTATION) AND even
+//                    navigating away and back, because the ViewModel is scoped to
+//                    a ViewModelStoreOwner (the Activity / nav entry), NOT to the
+//                    composition. When rotation recreates the Activity, the
+//                    framework RE-ATTACHES the SAME ViewModel instance instead of
+//                    building a new one.
+//     • LOST on:     process death — UNLESS you also use a SavedStateHandle
+//                    (see the note in the ViewModel below). Plain in-memory
+//                    ViewModel fields are gone if the OS kills the process.
+//     • Best for:    screen-level state + business logic + async work that should
+//                    outlive a single composition.
+//
+// WHY does the ViewModel survive rotation while `remember` does not?
+// -----------------------------------------------------------------------------
+// A ViewModel is stored in a ViewModelStore owned by the Activity. During a
+// configuration change Android calls Activity.onRetainNonConfigurationInstance()
+// under the hood and HANDS THE SAME ViewModelStore to the freshly-recreated
+// Activity. So the recreated Activity asks for FavoritesViewModel and gets back
+// the EXACT instance it had before rotation — with the favorites set intact.
+// A `remember {}` value, by contrast, lives only in the composition that the old
+// Activity threw away, so it is reconstructed from scratch (back to its initial
+// value) after rotation.
+//
+// UNIDIRECTIONAL DATA FLOW (UDF) — the pattern this sample teaches
+// -----------------------------------------------------------------------------
+//   1. STATE flows DOWN:   ViewModel exposes immutable state (a StateFlow) that
+//                          the UI observes and renders.
+//   2. EVENTS flow UP:     the UI calls plain functions on the ViewModel
+//                          (here: toggleFavorite(id)) in response to user taps.
+//   3. The ViewModel is the SINGLE SOURCE OF TRUTH: it updates its private
+//      MutableStateFlow, the new value emits, and the observing UI recomposes.
+//
+//   UI  --(event: toggleFavorite)--&gt;  ViewModel  --(new state emits)--&gt;  UI
+//      ^___________________________________________________________________|
+//
+// The composables never own or mutate the favorites set directly; they only
+// READ state and REPORT events. That is what makes the screen testable and what
+// makes the state survive things composables cannot survive on their own.
+// =============================================================================
+
+// Package — same namespace as MainActivity so no import is needed to use this VM.
+package com.example.navviewmodelstate
+
+// --- AndroidX Lifecycle import ------------------------------------------------
+import androidx.lifecycle.ViewModel                          // base class whose instances outlive config changes
+
+// --- Kotlin coroutines Flow imports ------------------------------------------
+import kotlinx.coroutines.flow.MutableStateFlow              // a writable, observable state holder (always has a value)
+import kotlinx.coroutines.flow.StateFlow                     // the read-only view of that state we expose to the UI
+import kotlinx.coroutines.flow.asStateFlow                   // exposes a MutableStateFlow as a read-only StateFlow
+import kotlinx.coroutines.flow.update                        // atomically computes the next value from the current one
+
+/**
+ * FavoritesViewModel — owns the set of "favorited" planet ids and the only logic
+ * allowed to change it.
+ *
+ * State design:
+ *   • [_favorites] is PRIVATE and MUTABLE — only this ViewModel may write it.
+ *   • [favorites]  is PUBLIC and READ-ONLY (a [StateFlow]) — the UI may only read
+ *     it. This encapsulation is the whole point: the UI cannot reach in and
+ *     mutate the set; it must go through [toggleFavorite], keeping the ViewModel
+ *     the single source of truth.
+ *
+ * The value type is `Set&lt;Int&gt;` (planet ids). A Set makes "is this favorited?" an
+ * O(1) `contains` check and makes toggling trivial.
+ *
+ * NOTE ON PROCESS-DEATH SURVIVAL:
+ *   This plain ViewModel keeps [_favorites] in memory, so it survives rotation
+ *   and navigation but NOT process death. To also survive process death you would
+ *   inject a `SavedStateHandle` into the constructor and back the state with it,
+ *   e.g.:
+ *
+ *       class FavoritesViewModel(
+ *           private val state: SavedStateHandle      // &lt;- provided by the framework
+ *       ) : ViewModel() {
+ *           val favorites: StateFlow&lt;Set&lt;Int&gt;&gt; =
+ *               state.getStateFlow("favorites", emptySet())
+ *           fun toggleFavorite(id: Int) {
+ *               val current = favorites.value
+ *               state["favorites"] = if (id in current) current - id else current + id
+ *           }
+ *       }
+ *
+ *   The SavedStateHandle persists into the saved-instance Bundle, so the favorites
+ *   would be restored even after the OS reclaims the process. We keep the simpler
+ *   in-memory version here to focus on the rotation/navigation story.
+ */
+class FavoritesViewModel : ViewModel() {
+    // WHAT THIS ViewModel HOLDS — AND WHAT IT DOES NOT:
+    // This VM owns exactly ONE piece of state: the set of favorited planet ids
+    // (below). It is NOT a store of "all the screens' state". It is shared across
+    // screens only because every screen obtains the SAME instance (viewModel() in
+    // MainActivity, scoped to the Activity), so they all read/write one favorites
+    // set — a ★ toggled on Detail then shows up on Items.
+    //
+    // The rest of the app's state lives elsewhere, on purpose:
+    //   • which screen you are on / the back stack -&gt; rememberNavBackStack(...) in MainActivity
+    //   • which category or item a screen shows     -&gt; the nav KEY (ItemsKey.categoryId, DetailKey.itemId)
+    //   • the planet / category data                -&gt; the static sampleItems / sampleCategories lists
+    //   • transient UI bits (scroll, text fields)   -&gt; remember / rememberSaveable in the composable
+    // Centralize in a ViewModel only the state screens must AGREE on and that must
+    // survive rotation/navigation — here, just the favorites.
+
+    // PRIVATE, MUTABLE source of truth. Seeded with an empty set (no favorites).
+    // A MutableStateFlow ALWAYS holds a current value and emits a new one to every
+    // collector whenever `.value` changes — perfect for observable screen state.
+    private val _favorites = MutableStateFlow&lt;Set&lt;Int&gt;&gt;(emptySet())
+
+    // PUBLIC, READ-ONLY view the UI observes. `asStateFlow()` hands out the same
+    // underlying state but typed as StateFlow, so callers can READ/collect it but
+    // cannot cast it back and write to it. State flows DOWN to the UI through this.
+    val favorites: StateFlow&lt;Set&lt;Int&gt;&gt; = _favorites.asStateFlow()
+
+    /**
+     * toggleFavorite — the single EVENT the UI sends UP to flip a planet's
+     * favorite status. This is the only place the favorites set is mutated.
+     *
+     * `update { }` reads the current set and atomically stores the next one:
+     *   • if [id] is already favorited -&gt; remove it (unfavorite),
+     *   • otherwise                    -&gt; add it (favorite).
+     * Producing a brand-new Set each time (current - id / current + id) keeps the
+     * state IMMUTABLE, so Compose reliably detects the change and recomposes.
+     *
+     * @param id the planet id whose favorite status should be toggled.
+     */
+    fun toggleFavorite(id: Int) {
+        _favorites.update { current -&gt;
+            if (id in current) current - id else current + id  // remove if present, else add
+        }
+    }
+}</pre>
+
+  <h3>3 · NavViewModelState — <code>src/main/java/com/example/navviewmodelstate/MainActivity.kt</code></h3>
+<pre class="src">// =============================================================================
+// MainActivity.kt
+//
+// A THREE-screen "drill-down" sample whose real lesson is STATE OWNERSHIP. It is
+// built with:
+//   • Jetpack Compose        — the declarative UI toolkit (no XML layouts).
+//   • Navigation 3 (Nav3)    — the modern, Compose-first navigation library.
+//   • Kotlinx Serialization  — used to mark navigation keys @Serializable.
+//   • AndroidX Lifecycle     — ViewModel + collectAsStateWithLifecycle (the star).
+//
+// THE CONCEPT THIS PROJECT TEACHES
+// -----------------------------------------------------------------------------
+// Move screen STATE and LOGIC OUT of composables and into a ViewModel. The UI
+// merely OBSERVES that state and SENDS EVENTS to the ViewModel. Because the
+// ViewModel is scoped to the Activity (a ViewModelStoreOwner) rather than to the
+// composition, the state it holds SURVIVES configuration changes (ROTATION) and
+// survives navigating away from and back to a screen — something a plain
+// `remember {}` cannot do. (See FavoritesViewModel.kt for the deep WHY.)
+//
+// We demonstrate this with a "favorite a planet" feature:
+//
+//   CategoriesScreen   --tap--&gt;   ItemsScreen   --tap--&gt;   DetailScreen
+//   (Rocky / Gas)                 (planets,                (one planet +
+//                                  ★ marks favorites)       ★/☆ favorite toggle)
+//
+// The Detail screen's ★/☆ button calls FavoritesViewModel.toggleFavorite(id).
+// Favorite that planet, rotate the device, or navigate back to the list and
+// return — the ★ persists, because the favorites set lives in the ViewModel, not
+// in any composable. The Items list also shows a ★ next to favorited planets,
+// proving every screen reads the SAME single source of truth.
+//
+// CONTRAST: the Detail screen also has a tiny `rememberSaveable` counter, with a
+// comment spelling out remember vs. rememberSaveable vs. ViewModel.
+//
+// Reading order below: package + imports, then DATA, then NAV KEYS, then the
+// Activity, then the navigation host, then each screen Composable, then previews.
+// =============================================================================
+
+// The package declaration. Every class/function below lives in this namespace,
+// which also matches the directory structure under src/main/java/.
+package com.example.navviewmodelstate
+
+// --- Android framework imports ------------------------------------------------
+import android.os.Bundle                                    // savedInstanceState type passed to onCreate
+import androidx.activity.ComponentActivity                  // base Activity class with Compose support
+import androidx.activity.compose.setContent                 // bridges an Activity to a Compose UI tree
+import androidx.activity.enableEdgeToEdge                    // lets the app draw behind the system bars
+
+// --- Compose layout / foundation imports -------------------------------------
+import androidx.compose.foundation.clickable                // makes a row tappable
+import androidx.compose.foundation.layout.Column            // stacks children vertically
+import androidx.compose.foundation.layout.Row               // lays children out horizontally (title + ★)
+import androidx.compose.foundation.layout.Spacer            // empty box used to add fixed gaps
+import androidx.compose.foundation.layout.fillMaxSize       // modifier: take all available width AND height
+import androidx.compose.foundation.layout.fillMaxWidth      // modifier: take all available width
+import androidx.compose.foundation.layout.height            // modifier: force a specific height
+import androidx.compose.foundation.layout.padding           // modifier: add space around content
+import androidx.compose.foundation.layout.width             // modifier: force a specific width (gap in a Row)
+import androidx.compose.foundation.lazy.LazyColumn          // scrolling list (only renders visible rows)
+import androidx.compose.foundation.lazy.items               // iterate a List inside a LazyColumn
+
+// --- Material 3 component imports ---------------------------------------------
+import androidx.compose.material3.Button                    // filled, tappable button
+import androidx.compose.material3.HorizontalDivider         // thin horizontal separator line
+import androidx.compose.material3.MaterialTheme             // access to the current theme's colors/typography
+import androidx.compose.material3.Scaffold                  // standard screen frame (handles insets, bars, etc.)
+import androidx.compose.material3.Text                      // draws text
+
+// --- Compose runtime / tooling imports ---------------------------------------
+import androidx.compose.runtime.Composable                  // marks a function as emitting UI
+import androidx.compose.runtime.getValue                    // enables `by` delegation when reading State
+import androidx.compose.runtime.mutableStateOf              // creates an observable State holder
+import androidx.compose.runtime.saveable.rememberSaveable   // remember that ALSO survives rotation/process death
+import androidx.compose.runtime.setValue                    // enables `by` delegation when WRITING State
+import androidx.compose.ui.Modifier                         // the "how to lay out / decorate" object
+import androidx.compose.ui.tooling.preview.Preview          // enables @Preview rendering in Android Studio
+import androidx.compose.ui.tooling.preview.PreviewParameter  // feeds a value into a preview parameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider // supplies the SET of preview values
+import androidx.compose.ui.unit.dp                          // density-independent pixel unit (e.g. 16.dp)
+
+// --- AndroidX Lifecycle (ViewModel) imports — THE CONCEPT --------------------
+import androidx.lifecycle.compose.collectAsStateWithLifecycle // collects a StateFlow into Compose State, lifecycle-aware
+import androidx.lifecycle.viewmodel.compose.viewModel        // obtains (or reuses) a ViewModel scoped to the owner
+
+// --- Navigation 3 imports -----------------------------------------------------
+// Navigation 3 is the modern, Compose-first navigation approach: a single
+// Activity holds a back stack of "keys", and Compose swaps the screen whenever
+// the top key changes. No Fragments, no Intents, no XML nav graph.
+import androidx.navigation3.runtime.NavKey                  // marker interface every navigation key implements
+import androidx.navigation3.runtime.entryProvider           // DSL that maps each key type to a screen
+import androidx.navigation3.runtime.rememberNavBackStack    // creates + remembers the back stack across recomposition
+import androidx.navigation3.ui.NavDisplay                   // the composable that renders the current top key
+
+// --- App + misc imports -------------------------------------------------------
+import com.example.navviewmodelstate.ui.theme.NavViewModelStateTheme // our app's Material theme wrapper (see Theme.kt)
+import kotlinx.serialization.Serializable                   // makes Nav3 keys serializable (required by Nav3)
+import android.util.Log                                     // Logcat logging (Log.d, Log.e, ...)
+import android.util.Log.d
+
+// ===========================================================================
+// DATA
+// A tiny in-memory data source. In a real app this would come from a database
+// (Room), a network call (Retrofit), or a repository; here hardcoded lists are
+// enough to demonstrate a drill-down plus ViewModel-owned favorite state.
+//
+// The model is two levels deep:
+//   Category 1─┐
+//              ├── many Items   (each Item belongs to exactly one Category)
+//   Category 2─┘
+// ===========================================================================
+
+// A top-level grouping shown on the FIRST screen.
+//   • id   — stable unique identifier; this is what travels in the nav key.
+//   • name — short label shown as the category row.
+//   • description — one-line summary shown under the name.
+data class Category(val id: Int, val name: String, val description: String)
+
+// A single planet shown on the SECOND (list) and THIRD (detail) screens.
+//   • id         — stable unique identifier; also the favorite key in the ViewModel.
+//   • categoryId — which Category this item belongs to (the "foreign key").
+//   • title      — short name shown as the row/headline.
+//   • blurb      — one-line description shown under the title.
+data class Item(
+    val id: Int,
+    val categoryId: Int,
+    val title: String,
+    val blurb: String,
+)
+
+// Logcat tag string. Filter Logcat by "VMState" to see this app's breadcrumbs.
+private const val TAG = "VMState"
+
+// The two categories rendered on the first screen.
+private val sampleCategories = listOf(
+    Category(1, "Rocky Planets", "Small, dense worlds with solid surfaces."),
+    Category(2, "Gas Giants", "Massive planets made mostly of gas."),
+)
+
+// The planets rendered on the second screen. Each one's `categoryId` ties it
+// back to a Category above (1 = Rocky, 2 = Gas Giant). Each `id` doubles as the
+// key the FavoritesViewModel uses to remember which planets are favorited.
+private val sampleItems = listOf(
+    Item(1, 1, "Mercury", "The smallest planet and the closest to the Sun."),
+    Item(2, 1, "Venus", "The hottest planet, wrapped in thick clouds of acid."),
+    Item(3, 1, "Earth", "The only planet known to support life — so far."),
+    Item(4, 1, "Mars", "The red planet, a frequent target for rovers."),
+    Item(5, 2, "Jupiter", "The largest planet, a gas giant with a great red spot."),
+    Item(6, 2, "Saturn", "The ringed gas giant, second largest in the system."),
+)
+
+// --- Lookups ----------------------------------------------------------------
+// The screens receive only an id (inside their nav key) and resolve the full
+// object here. Passing just the id — rather than the whole object — keeps each
+// navigation key tiny and serializable.
+
+// Resolve a Category by its id. `first { }` throws if none match, which is fine
+// here because every CategoryKey/ItemsKey is built from a known category id.
+private fun categoryById(id: Int): Category = sampleCategories.first { it.id == id }
+
+// Resolve a single Item by its id (used by the detail screen).
+private fun itemById(id: Int): Item = sampleItems.first { it.id == id }
+
+// All items belonging to one category (used by the middle/list screen). `filter`
+// returns every match — possibly an empty list, which is also fine to render.
+private fun itemsInCategory(categoryId: Int): List&lt;Item&gt; =
+    sampleItems.filter { it.categoryId == categoryId }
+
+// ===========================================================================
+// NAVIGATION KEYS
+// Each screen is identified by a "key". A key both names the destination AND
+// carries that destination's arguments. Nav3 requires keys to implement NavKey
+// and (for state saving across process death) be @Serializable.
+//   • CategoriesKey has no arguments — there is only one categories screen.
+//   • ItemsKey carries a categoryId — which category's items to list.
+//   • DetailKey carries an itemId   — which single item to show.
+// ===========================================================================
+
+// `data object` = a singleton with a generated toString()/equals(). There is
+// only ever one categories screen, so a single shared object is the right model.
+@Serializable
+data object CategoriesKey : NavKey                          // first screen (no arguments)
+
+// `data class` because each items screen differs by which category it lists.
+@Serializable
+data class ItemsKey(val categoryId: Int) : NavKey          // second screen; which category was tapped
+
+// `data class` because each detail screen differs by which item it shows.
+@Serializable
+data class DetailKey(val itemId: Int) : NavKey             // third screen; which item was tapped
+
+/**
+ * MainActivity — the app's single Activity and the entry point Android launches.
+ *
+ * In a Nav3 app you typically have exactly one Activity; it hosts the Compose UI
+ * and the navigation back stack, and Compose (not the Activity system) swaps
+ * between the screens. This Activity is ALSO the ViewModelStoreOwner that scopes
+ * our FavoritesViewModel — which is exactly why the ViewModel (and the favorites
+ * it holds) survives the Activity being recreated on rotation.
+ */
+class MainActivity : ComponentActivity() {
+    // onCreate runs once when the Activity is first created. This is where we
+    // install the Compose UI tree as the Activity's content.
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)                 // always call through to the framework first
+        enableEdgeToEdge()                                 // draw under the status/navigation bars for a modern look
+        setContent {                                       // everything inside is the Compose UI
+            // Apply our app theme (colors, typography, dark/light handling).
+            NavViewModelStateTheme {
+                // Scaffold provides the standard screen structure and, crucially,
+                // hands us `innerPadding` — the space taken by system bars — so
+                // our content isn't drawn underneath them.
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding -&gt;
+                    // Hand the inset padding down to the navigation host so each
+                    // screen lays out inside the safe area.
+                    AppNavigation(modifier = Modifier.padding(innerPadding))
+                }
+            }
+        }
+    }
+}
+
+/**
+ * AppNavigation — owns the navigation back stack, obtains the shared
+ * [FavoritesViewModel], and maps each key to its screen.
+ *
+ * This is the heart of the Nav3 setup. It:
+ *   1. Creates/remembers the back stack (starting at the categories screen).
+ *   2. Obtains ONE FavoritesViewModel scoped to the Activity, so every screen
+ *      shares the same favorites state.
+ *   3. Renders the top of the stack via NavDisplay.
+ *   4. Defines what "back" does and which composable each of the three keys shows.
+ */
+@Composable
+fun AppNavigation(modifier: Modifier = Modifier) {
+    // The back stack is the list of keys currently "stacked" on screen, bottom
+    // to top. rememberNavBackStack seeds it with CategoriesKey and preserves it
+    // across recompositions (and configuration changes). Pushing a key navigates
+    // forward; popping a key navigates back.
+    val backStack = rememberNavBackStack(CategoriesKey)
+
+    // *** THE KEY LINE ***
+    // viewModel() returns the FavoritesViewModel scoped to the nearest
+    // ViewModelStoreOwner (here the Activity). Call it once and you get a NEW
+    // instance the first time; call it again — even after a ROTATION recreates
+    // the Activity — and the framework returns the SAME instance, with its
+    // favorites set intact. That is why ViewModel state survives rotation while a
+    // `remember {}` value would reset. Because we obtain it HERE (above the nav
+    // entries) and pass it down, all three screens share one source of truth.
+    val favoritesViewModel: FavoritesViewModel = viewModel()
+
+
+
+    // NavDisplay renders whatever key is on top of the back stack, animating the
+    // transition when the top changes.
+    NavDisplay(
+        backStack = backStack,
+        modifier = modifier,
+        // Called for system back gestures / the hardware back button. Popping the
+        // top key returns to the previous screen; removeLastOrNull is a no-op (and
+        // safe) if the stack is somehow already empty.
+        onBack = { backStack.removeLastOrNull() },          // back = pop the top key
+        // entryProvider is a DSL: one `entry&lt;KeyType&gt; { ... }` block per screen.
+        // Nav3 picks the block whose key type matches the current top key.
+        // entryProvider is a DSL (a small "language" for one job): it builds the
+        // map of "which key type -&gt; which screen". You call entry&lt;...&gt; once per
+        // screen inside the { } block, and Nav3 runs the block whose key type
+        // matches the key currently on top of the back stack.
+        //
+        // How to read one  entry&lt;KeyType&gt; { key -&gt; SomeScreen(...) }  line:
+        //   • entry          — a Nav3 builder function (from
+        //                      androidx.navigation3.runtime) that registers ONE
+        //                      screen for ONE key type.
+        //   • &lt;KeyType&gt;      — a GENERIC TYPE ARGUMENT, in angle brackets (a TYPE
+        //                      slot, not a value in parentheses): the key type this
+        //                      block handles. Nav3 matches it against the top key.
+        //   • { key -&gt; ... } — the @Composable CONTENT shown while that key is on
+        //                      top. The lambda is handed the key instance, so a
+        //                      data-class key can read its arguments (e.g. key.itemId).
+        //                      A data-OBJECT key carries no data, so its block can
+        //                      omit the `key -&gt;` parameter.
+        //
+        // WHEN does an entry block RUN? entry&lt;...&gt; { } only REGISTERS a screen here
+        // (like adding a `case` to a switch) — the { } body does NOT run yet. NavDisplay
+        // runs the body whose key type matches the key currently on TOP of the back
+        // stack: when you push that key (navigate forward), when you pop back to it, and
+        // on recomposition while it is showing. A key in the stack but not on top is kept
+        // (state preserved) but not drawn; popping it off removes its screen from
+        // composition. So pushing a key turns its screen on and popping turns it off —
+        // and `key` is the exact instance on top, so the same block runs with different
+        // data per instance (e.g. ItemsKey(1) vs ItemsKey(5)).
+        entryProvider = entryProvider {
+            // LEVEL 1 — when CategoriesKey is on top, show the list of categories.
+            entry&lt;CategoriesKey&gt; {
+                CategoriesScreen(
+                    categories = sampleCategories,
+                    // Tapping a category pushes an ItemsKey carrying THAT category's
+                    // id, navigating forward to its list of planets.
+                    // THE JUMP — how a tap reaches the next screen: this line does NOT name a
+                    // screen, it just ADDS A KEY to the back stack. NavDisplay then matches that
+                    // key by its TYPE to the matching entry&lt;...&gt; { } block above and runs it; the
+                    // id inside the key only chooses WHICH data that screen shows, not WHICH screen
+                    // — so every key of this type lands on the same entry block.
+                    onOpen = { categoryId -&gt; backStack.add(ItemsKey(categoryId)) }
+                )
+            }
+            // LEVEL 2 — when an ItemsKey is on top, show that category's planets.
+            entry&lt;ItemsKey&gt; { key -&gt;
+                ItemsRoute(
+                    category = categoryById(key.categoryId),
+                    items = itemsInCategory(key.categoryId),
+                    // Pass the SHARED ViewModel so the list can show a ★ next to
+                    // any planet the user favorited on the detail screen.
+                    favoritesViewModel = favoritesViewModel,
+                    // Tapping a planet pushes a DetailKey carrying THAT item's id.
+                    onOpen = { itemId -&gt; backStack.add(DetailKey(itemId)) },
+                    // The on-screen back button pops one level (back to categories).
+                    onBack = { backStack.removeLastOrNull() }
+                )
+            }
+            // LEVEL 3 — when a DetailKey is on top, show that one planet's detail.
+            entry&lt;DetailKey&gt; { key -&gt;
+                DetailRoute(
+                    item = itemById(key.itemId),
+                    // The SAME shared ViewModel powers the ★/☆ favorite toggle.
+                    favoritesViewModel = favoritesViewModel,
+                    // The on-screen back button pops one level (back to the items list).
+                    onBack = { backStack.removeLastOrNull() }
+                )
+            }
+        }
+    )
+}
+
+// ===========================================================================
+// "ROUTE" composables (STATEFUL) vs. "SCREEN" composables (STATELESS)
+//
+// A common Compose pattern: a thin STATEFUL wrapper ("Route") talks to the
+// ViewModel — collecting state and forwarding events — then delegates rendering
+// to a STATELESS "Screen" that takes plain values + lambdas. The stateless screen
+// knows nothing about ViewModels, which makes it trivial to @Preview and unit
+// test. This is also why @Preview functions call the *Screen overloads, never the
+// *Route ones (previews must not construct ViewModels — see the preview section).
+// ===========================================================================
+
+/**
+ * ItemsRoute (LEVEL 2, STATEFUL) — bridges the [favoritesViewModel] to the
+ * stateless [ItemsScreen]. It OBSERVES the favorites set and passes a plain
+ * `Set&lt;Int&gt;` down so the list can mark favorited rows with a ★.
+ */
+@Composable
+fun ItemsRoute(
+    category: Category,
+    items: List&lt;Item&gt;,
+    favoritesViewModel: FavoritesViewModel,
+    onOpen: (Int) -&gt; Unit,
+    onBack: () -&gt; Unit,
+    modifier: Modifier = Modifier,
+) {
+    Log.d("LT", "Entered ItemsRoute")
+    // collectAsStateWithLifecycle subscribes to the ViewModel's StateFlow and
+    // turns its latest value into Compose State, so this composable recomposes
+    // whenever favorites change. Unlike a plain collectAsState(), it PAUSES
+    // collection when the UI drops below STARTED (e.g. app backgrounded) and
+    // resumes on return — avoiding wasted work and updates to off-screen UI.
+    // THREE ideas in one line —  val X by someStateFlow.collectAsStateWithLifecycle():
+    //   1. someStateFlow                  — a StateFlow the ViewModel exposes (its live value).
+    //   2. .collectAsStateWithLifecycle() — SUBSCRIBES to it and wraps the latest value in a
+    //        Compose State, so this composable RECOMPOSES whenever the flow emits a new value.
+    //        "WithLifecycle" = collect only while the screen is visible (lifecycle &gt;= STARTED)
+    //        and PAUSE off-screen; the Android-safe version of a plain collectAsState().
+    //   3. `by`                           — a property delegate that unwraps the State's .value,
+    //        so X reads as the plain value directly (no .value). Reading X also registers this
+    //        composable as a reader, which is what makes Compose recompose it on the next emit.
+    val favorites by favoritesViewModel.favorites.collectAsStateWithLifecycle()
+
+    // Hand the stateless screen plain data + callbacks only.
+    ItemsScreen(
+        category = category,
+        items = items,
+        favoriteIds = favorites,
+        onOpen = onOpen,
+        onBack = onBack,
+        modifier = modifier,
+    )
+}
+
+/**
+ * DetailRoute (LEVEL 3, STATEFUL) — bridges the [favoritesViewModel] to the
+ * stateless [DetailScreen]. It OBSERVES whether THIS planet is favorited and
+ * forwards the toggle EVENT up to the ViewModel (unidirectional data flow).
+ */
+@Composable
+fun DetailRoute(
+    item: Item,
+    favoritesViewModel: FavoritesViewModel,
+    onBack: () -&gt; Unit,
+    modifier: Modifier = Modifier,
+) {
+    Log.d("LT", "Entered DetailRoute")
+    // Observe the whole favorites set (lifecycle-aware), then derive the single
+    // boolean this screen cares about: is THIS item's id in the set?
+    val favorites by favoritesViewModel.favorites.collectAsStateWithLifecycle()
+    val isFavorite = item.id in favorites
+
+    DetailScreen(
+        item = item,
+        isFavorite = isFavorite,
+        // EVENT flows UP: the button tap asks the ViewModel to flip the state.
+        // The ViewModel updates its StateFlow, which re-emits, which recomposes
+        // this Route (new `favorites`) — closing the unidirectional loop.
+        onToggleFavorite = { favoritesViewModel.toggleFavorite(item.id) },
+        onBack = onBack,
+        modifier = modifier,
+    )
+}
+
+/**
+ * Categories screen (LEVEL 1, STATELESS): a scrolling list of categories; tapping
+ * one calls [onOpen] with its id.
+ *
+ * This composable is intentionally "dumb" — it knows nothing about navigation or
+ * ViewModels. It only renders the categories it's given and reports taps via
+ * [onOpen]. That keeps it reusable and easy to preview/test.
+ *
+ * @param categories the rows to render.
+ * @param onOpen     invoked with a category's id when its row is tapped.
+ * @param modifier   optional layout modifier supplied by the caller.
+ */
+@Composable
+fun CategoriesScreen(
+    categories: List&lt;Category&gt;,
+    onOpen: (Int) -&gt; Unit,
+    modifier: Modifier = Modifier,
+) {
+    Log.d("LT", "Entered CategoriesScreen")
+    // LazyColumn is the Compose equivalent of a RecyclerView: it only composes
+    // and lays out the rows currently visible on screen, so long lists stay fast.
+    LazyColumn(modifier = modifier.fillMaxSize()) {
+        // `items(categories) { ... }` emits one block of UI per element.
+        items(categories) { category -&gt;                    // draw one row per category
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()                         // row spans the full width...
+                    // OS vs COMPOSE vs YOUR CODE — what a tap really is:
+                    //   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows
+                    //     nothing about rows, items, names, or ids.
+                    //   • Compose hit-tests that pixel to find WHICH composable sits there (this
+                    //     one) and invokes its click lambda.
+                    //   • YOUR code gives the tap its MEANING: the click lambda passes the exact
+                    //     value you wired here (e.g. this row's id). "What was selected" is meaning
+                    //     your code attaches to a raw touch — the OS never knows about it.
+                    .clickable { onOpen(category.id) }      // ...and the WHOLE row is tappable -&gt; navigate
+                    .padding(16.dp)                         // breathing room inside the row
+            ) {
+                // Name: emphasized text style from the theme's type scale.
+                Text(text = category.name, style = MaterialTheme.typography.titleMedium)
+                // Description: smaller body text beneath the name.
+                Text(text = category.description, style = MaterialTheme.typography.bodyMedium)
+            }
+            // A thin line visually separating one row from the next.
+            HorizontalDivider()                             // thin line between rows
+        }
+    }
+}
+
+/**
+ * Items screen (LEVEL 2, STATELESS): a header naming the chosen [category] then a
+ * scrolling list of its [items]. Each row whose id is in [favoriteIds] shows a ★,
+ * proving the list reads the SAME ViewModel state the detail screen writes.
+ *
+ * This screen is stateless: it receives [favoriteIds] as a plain Set and never
+ * touches a ViewModel, so it previews and tests without one.
+ *
+ * @param category    the category whose items are being shown (used for the header).
+ * @param items       the items belonging to [category].
+ * @param favoriteIds the ids currently favorited (drives the ★ indicator).
+ * @param onOpen      invoked with an item's id when its row is tapped.
+ * @param onBack      invoked when the user taps "Back to categories".
+ * @param modifier    optional layout modifier supplied by the caller.
+ */
+@Composable
+fun ItemsScreen(
+    category: Category,
+    items: List&lt;Item&gt;,
+    favoriteIds: Set&lt;Int&gt;,
+    onOpen: (Int) -&gt; Unit,
+    onBack: () -&gt; Unit,
+    modifier: Modifier = Modifier,
+) {
+
+    Log.d("LT", "Entered ItemsScreen")
+
+    // Outer Column: a fixed header on top, then the scrolling list below it.
+    Column(modifier = modifier.fillMaxSize()) {
+        // --- Header block (does not scroll) ---
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            // The name of the category the user drilled into.
+            Text(text = category.name, style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(8.dp))
+            // A back button that pops one level, returning to the categories list.
+            Button(onClick = onBack) {                      // pop back to categories
+                Text("Back to categories")
+            }
+        }
+        HorizontalDivider()                                 // separates header from the list
+
+        // --- The list of planets in this category (scrolls) ---
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(items) { item -&gt;                          // draw one row per item
+                // A Row so the title/blurb sit on the left and a ★ can sit at the
+                // far right when this planet is favorited.
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onOpen(item.id) }      // whole row tappable -&gt; open detail
+                        .padding(16.dp)
+                ) {
+                    Column {
+                        Text(text = item.title, style = MaterialTheme.typography.titleMedium)
+                        Text(text = item.blurb, style = MaterialTheme.typography.bodyMedium)
+                    }
+                    // Favorite indicator: show a ★ only when the ViewModel-owned
+                    // favorites set contains this item's id. Recomposes the instant
+                    // the set changes, because favoriteIds is observed upstream.
+                    if (item.id in favoriteIds) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "★", style = MaterialTheme.typography.titleMedium)
+                    }
+                }
+                HorizontalDivider()
+            }
+        }
+    }
+}
+
+/**
+ * Detail screen (LEVEL 3, STATELESS): shows the single [item] plus a ★/☆ toggle
+ * button wired (by the caller) to the ViewModel, and a small contrast counter.
+ *
+ * Stateless by design: it receives [isFavorite] as a plain Boolean and reports
+ * the toggle via [onToggleFavorite]. It never constructs a ViewModel, so it can
+ * be previewed and tested with hand-supplied values.
+ *
+ * @param item             the fully-resolved item to display.
+ * @param isFavorite       whether THIS item is currently favorited (from the VM).
+ * @param onToggleFavorite invoked when the ★/☆ button is tapped (event flows UP).
+ * @param onBack           invoked when the user taps "Back to list".
+ * @param modifier         optional layout modifier supplied by the caller.
+ */
+@Composable
+fun DetailScreen(
+    item: Item,
+    isFavorite: Boolean,
+    onToggleFavorite: () -&gt; Unit,
+    onBack: () -&gt; Unit,
+    modifier: Modifier = Modifier,
+) {
+    // ----------------------------------------------------------------------
+    // CONTRAST STATE: a local tap counter to compare against the ViewModel.
+    //
+    //   • If this were `remember { mutableStateOf(0) }` the count would reset on
+    //     ROTATION (the composition is discarded when the Activity is recreated).
+    //   • `rememberSaveable` (used here) writes the Int into the saved-instance
+    //     Bundle, so it ALSO survives rotation AND process death — but it is
+    //     confined to a single composable and only handles Bundle-able values.
+    //   • The FAVORITE state, by contrast, lives in FavoritesViewModel and is
+    //     SHARED across screens and survives rotation/navigation; for process
+    //     death it would need a SavedStateHandle (noted in the ViewModel).
+    //
+    // So: remember = recomposition only; rememberSaveable = + rotation + process
+    // death (but local &amp; small); ViewModel = + rotation + navigation + shared &amp;
+    // holds logic (and + process death once backed by SavedStateHandle).
+    // ----------------------------------------------------------------------
+    Log.d("LT", "Entered DetailScreen")
+    var count by rememberSaveable { mutableStateOf(0) }     // survives rotation; resets on a fresh launch
+
+    // A single vertical column holding the title, body, the favorite toggle, the
+    // contrast counter, and a back button, with 16dp padding around the screen.
+    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
+        // Large headline showing the item's title.
+        Text(text = item.title, style = MaterialTheme.typography.headlineSmall)
+        // Fixed 8dp gap between the headline and the body text.
+        Spacer(modifier = Modifier.height(8.dp))
+        // The item's longer description.
+        Text(text = item.blurb, style = MaterialTheme.typography.bodyLarge)
+        // Larger 24dp gap before the action buttons.
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // THE FAVORITE TOGGLE — the concept made tappable. The label reflects the
+        // observed [isFavorite] state; the tap sends an EVENT up via
+        // [onToggleFavorite], which the Route forwards to the ViewModel. Favorite,
+        // then rotate or navigate away and back: the ★ persists.
+        Button(onClick = onToggleFavorite) {
+            Text(if (isFavorite) "★ Unfavorite" else "☆ Favorite")
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // CONTRAST COUNTER — a rememberSaveable Int, to compare survival rules.
+        Text(
+            text = "Local taps (rememberSaveable): $count",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = { count++ }) {                     // increments local-only state
+            Text("Tap me (+1)")
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Pop back to the items list. (System back does the same thing — see
+        // AppNavigation's onBack.)
+        Button(onClick = onBack) {                          // pop back to the list
+            Text("Back to list")
+        }
+    }
+}
+
+// ===========================================================================
+// @Preview functions — render screen states in the design pane.
+//
+// These let you see each screen directly in Android Studio's design pane WITHOUT
+// running the app on a device or emulator. Each preview wraps the screen in the
+// app theme and passes no-op callbacks ({}), since previews don't navigate.
+//
+// IMPORTANT: previews call the STATELESS *Screen composables and NEVER the
+// *Route composables, and they NEVER call viewModel(). Why? viewModel() needs a
+// real ViewModelStoreOwner from the running app; the preview environment has none,
+// so constructing a ViewModel there would fail or behave oddly. Instead we feed
+// the stateless screens plain values (e.g. isFavorite = true, a favoriteIds set)
+// and no-op lambdas — which is exactly what the Route/Screen split is designed
+// to enable.
+//
+// widthDp/heightDp give each preview a small, fixed phone-shaped frame so the
+// full-screen (fillMaxSize) layouts render as compact cards.
+// ===========================================================================
+
+// LEVEL 1 — there is only ONE categories-screen state (the full list).
+//@Preview(name = "Categories", showBackground = true, widthDp = 320, heightDp = 480)
+//@Composable
+//fun CategoriesScreenPreview() {
+//    NavViewModelStateTheme {
+//        CategoriesScreen(categories = sampleCategories, onOpen = {})
+//    }
+//}
+//
+//// Supplies every Category to the items-screen preview (Rocky Planets, Gas Giants).
+//class CategoryPreviewProvider : PreviewParameterProvider&lt;Category&gt; {
+//    override val values: Sequence&lt;Category&gt; = sampleCategories.asSequence()
+//}
+//
+//// LEVEL 2 — one compact card per category. We hand a FIXED favoriteIds set (here
+//// {1, 5}) so the preview shows the ★ indicator WITHOUT any ViewModel.
+//@Preview(name = "Items", showBackground = true, widthDp = 320, heightDp = 480)
+//@Composable
+//fun ItemsScreenPreview(
+//    @PreviewParameter(CategoryPreviewProvider::class) category: Category
+//) {
+//    NavViewModelStateTheme {
+//        ItemsScreen(
+//            category = category,
+//            items = itemsInCategory(category.id),           // resolve this category's planets
+//            favoriteIds = setOf(1, 5),                      // plain state — no viewModel() in previews
+//            onOpen = {},
+//            onBack = {},
+//        )
+//    }
+//}
+//
+//// Supplies every Item to the detail-screen preview — one per planet.
+//class ItemPreviewProvider : PreviewParameterProvider&lt;Item&gt; {
+//    override val values: Sequence&lt;Item&gt; = sampleItems.asSequence()
+//}
+//
+//// LEVEL 3 — one compact card per item, rendered as FAVORITED so the ★ label and
+//// toggle button show. Again: plain isFavorite value, no ViewModel constructed.
+//@Preview(name = "Detail (favorited)", showBackground = true, widthDp = 320, heightDp = 480)
+//@Composable
+//fun DetailScreenPreview(
+//    @PreviewParameter(ItemPreviewProvider::class) item: Item
+//) {
+//    NavViewModelStateTheme {
+//        DetailScreen(
+//            item = item,
+//            isFavorite = true,                              // hand-supplied state — no viewModel()
+//            onToggleFavorite = {},
+//            onBack = {},
+//        )
+//    }
+//}</pre>
+
+  <h3>4 · NavDataLayer — <code>src/main/java/com/example/navdatalayer/Repository.kt</code></h3>
+<pre class="src">// =============================================================================
+// Repository.kt
+//
+// THE DATA LAYER. This file is the entire point of the "Nav Data Layer" lesson.
+//
+// THE LESSON (read this once and the whole app makes sense):
+//   Screens should NOT own or hardcode their data. Instead, data lives behind a
+//   *repository* — a small interface that says WHAT data is available but hides
+//   HOW (and from WHERE) it is fetched. The UI asks the repository for data
+//   through a ViewModel and simply *reacts* to whatever arrives.
+//
+//   Why bother? Because the source of truth can then change — in-memory today,
+//   a Room database or a Retrofit network call tomorrow — WITHOUT editing a
+//   single line of the screens or the ViewModel. They depend on the INTERFACE,
+//   not the implementation. That is the "data boundary".
+//
+// This file contains:
+//   1. The plain data models (Category, Item) — the shapes that cross the boundary.
+//   2. The PlanetRepository INTERFACE — the boundary contract itself.
+//   3. InMemoryPlanetRepository — one concrete implementation (fake/sample data,
+//      with an artificial delay so the UI's Loading state is actually visible).
+//   4. Big sign-posted comments showing EXACTLY where a Room DAO or a Retrofit
+//      service would slot in — by swapping ONLY this implementation.
+// =============================================================================
+
+// Package declaration — must match the folder path under src/main/java/.
+package com.example.navdatalayer
+
+// --- Coroutines / Flow imports -----------------------------------------------
+import kotlinx.coroutines.delay                       // suspends a coroutine for a time, WITHOUT blocking a thread
+import kotlinx.coroutines.flow.Flow                   // a cold, asynchronous stream of values over time
+import kotlinx.coroutines.flow.flow                   // builder that emits values into a Flow (flow { emit(...) })
+
+// ===========================================================================
+// DATA MODELS
+// These are plain, dumb value objects — just the SHAPE of the data that crosses
+// the repository boundary. They contain no logic and know nothing about where
+// they came from (memory, disk, or network) or where they are shown.
+// ===========================================================================
+
+/**
+ * A top-level grouping of planets (e.g. "Rocky Planets", "Gas Giants").
+ *
+ * @property id          stable unique identifier (the "primary key").
+ * @property name        short label shown as the category row.
+ * @property description one-line summary shown under the name.
+ */
+data class Category(val id: Int, val name: String, val description: String)
+
+/**
+ * A single planet — the unit of data shown in the list and detail screens.
+ *
+ * @property id         stable unique identifier (travels inside the nav key).
+ * @property categoryId which Category this item belongs to (the "foreign key").
+ * @property title      short name shown as the row/headline.
+ * @property blurb      one-line description shown under the title.
+ * @property fact       a longer "fun fact" shown on the detail screen.
+ */
+data class Item(
+    val id: Int,
+    val categoryId: Int,
+    val title: String,
+    val blurb: String,
+    val fact: String,
+)
+
+// ===========================================================================
+// SAMPLE DATA
+// The hardcoded planets. NOTE WHERE THIS LIVES: inside the data layer, NOT in
+// the screens. The screens never see this list directly — they only ever get
+// what the repository hands them. This is the whole discipline being taught.
+// ===========================================================================
+
+// The two categories. `internal` so previews/tests in this module can read them,
+// but the screens are expected to receive data via the repository, not reach in.
+internal val sampleCategories = listOf(
+    Category(1, "Rocky Planets", "Small, dense worlds with solid surfaces."),
+    Category(2, "Gas Giants", "Massive planets made mostly of gas."),
+)
+
+// The planets. Each one's `categoryId` ties it back to a Category (1 = Rocky,
+// 2 = Gas Giant). In a real app these rows would come from a database table or
+// a JSON response — see the RoomPlanetRepository / RetrofitPlanetRepository notes.
+internal val samplePlanets = listOf(
+    Item(1, 1, "Mercury", "The smallest planet and the closest to the Sun.",
+        "A year on Mercury is just 88 Earth days, but a single day lasts 176."),
+    Item(2, 1, "Venus", "The hottest planet, wrapped in thick clouds of acid.",
+        "Venus spins backwards, so the Sun rises in the west and sets in the east."),
+    Item(3, 1, "Earth", "The only planet known to support life — so far.",
+        "Earth is the only planet not named after a Greek or Roman god."),
+    Item(4, 1, "Mars", "The red planet, a frequent target for rovers.",
+        "Mars hosts Olympus Mons, the tallest volcano in the solar system."),
+    Item(5, 2, "Jupiter", "The largest planet, a gas giant with a great red spot.",
+        "Jupiter's Great Red Spot is a storm wider than the entire Earth."),
+    Item(6, 2, "Saturn", "The ringed gas giant, second largest in the system.",
+        "Saturn is so light it would float in water — if you found a big enough tub."),
+)
+
+// Resolve a Category by id. Used only by screens that already received an Item
+// (so the category is guaranteed to exist); `first` is therefore safe here.
+internal fun categoryById(id: Int): Category = sampleCategories.first { it.id == id }
+
+// ===========================================================================
+// THE REPOSITORY INTERFACE — *** THE DATA BOUNDARY ***
+//
+// This interface is the contract between the UI side (ViewModel + screens) and
+// the data side (memory / database / network). The UI depends ONLY on this
+// interface. It never references InMemoryPlanetRepository directly, so any class
+// that honours this contract can be dropped in without touching the UI.
+// ===========================================================================
+
+/**
+ * The data-layer boundary for planets.
+ *
+ * The ViewModel talks to THIS — never to a concrete data source. Swapping the
+ * implementation (memory → Room → Retrofit) changes nothing above this line.
+ */
+interface PlanetRepository {
+
+    /**
+     * A STREAM of the planet list.
+     *
+     * Returning a [Flow] (rather than a one-shot `List`) means the data source
+     * can push NEW values over time — e.g. a Room `@Query` re-emits automatically
+     * whenever the underlying table changes. The UI observes the stream and
+     * re-renders on every emission.
+     */
+    fun planets(): Flow&lt;List&lt;Item&gt;&gt;
+
+    /**
+     * Fetch a SINGLE planet by id, or `null` if none exists.
+     *
+     * This is a one-shot `suspend` read (like loading one row, or one network
+     * GET). It is `suspend` because it may take time and must not block the UI.
+     */
+    suspend fun planet(id: Int): Item?
+}
+
+// ===========================================================================
+// CONCRETE IMPLEMENTATION #1 — IN-MEMORY (the only one wired up today)
+// ===========================================================================
+
+/**
+ * An in-memory [PlanetRepository] backed by the hardcoded [samplePlanets] list.
+ *
+ * It deliberately adds an artificial [delay] before emitting so the UI's
+ * **Loading** state is visible during the lesson (a real database or network
+ * call would have genuine latency here). Everything above this class — the
+ * ViewModel and every screen — is written against [PlanetRepository] and is
+ * completely unaware that the data happens to be a fixed Kotlin list.
+ */
+class InMemoryPlanetRepository : PlanetRepository {
+
+    // Tunable fake latency so Loading/Detail-loading states are observable.
+    private val fakeLatencyMillis = 1_200L
+
+    /**
+     * Emit the planet list once, after a simulated delay.
+     *
+     * `flow { ... }` builds a COLD stream: the delay + emit only run when a
+     * collector starts collecting (here, the ViewModel inside viewModelScope).
+     *
+     * ┌──────────────────────────────────────────────────────────────────────┐
+     * │ SWAP POINT — this is the ONLY method a real data source would change.  │
+     * │                                                                        │
+     * │  • RoomPlanetRepository would return planetDao.observePlanets()        │
+     * │    — a Flow&lt;List&lt;Item&gt;&gt; that Room re-emits whenever the table changes. │
+     * │  • RetrofitPlanetRepository would do:                                  │
+     * │        flow { emit(api.getPlanets()) }                                 │
+     * │    (or wrap it in a cache). The `suspend` network call replaces        │
+     * │    `delay + samplePlanets`.                                            │
+     * │                                                                        │
+     * │  In BOTH cases the return TYPE stays Flow&lt;List&lt;Item&gt;&gt;, so the          │
+     * │  ViewModel and the screens do not change AT ALL.                       │
+     * └──────────────────────────────────────────────────────────────────────┘
+     */
+    override fun planets(): Flow&lt;List&lt;Item&gt;&gt; = flow {
+        delay(fakeLatencyMillis)            // pretend we're hitting a disk/network — makes Loading visible
+        emit(samplePlanets)                 // push the list to whoever is collecting (the ViewModel)
+        // To DEMONSTRATE the Empty UI state instead, swap the line above for:
+        //     emit(emptyList())
+        // To DEMONSTRATE the Error UI state, throw here:
+        //     throw IllegalStateException("Simulated data-source failure")
+    }
+
+    /**
+     * Look up one planet by id after a (shorter) simulated delay.
+     *
+     * SWAP POINT: a real implementation would be `planetDao.findById(id)`
+     * (Room) or `api.getPlanet(id)` (Retrofit). Same signature, same `null`-for-
+     * missing contract, so the detail screen is unaffected.
+     */
+    override suspend fun planet(id: Int): Item? {
+        delay(fakeLatencyMillis / 2)        // shorter fake latency for the single-item detail load
+        return samplePlanets.firstOrNull { it.id == id }   // null when not found — caller handles it
+    }
+}
+
+// ===========================================================================
+// CONCRETE IMPLEMENTATION #2 &amp; #3 — WHERE ROOM / RETROFIT WOULD PLUG IN
+//
+// These are intentionally left as commented SIGN-POSTS, not live code (this
+// teaching project ships no Room/Retrofit dependencies). The point is the
+// SHAPE: each one implements the SAME PlanetRepository interface, so wiring one
+// in is a one-line change in MainActivity (the ViewModel's default constructor
+// arg) — the ViewModel and every screen stay byte-for-byte identical.
+//
+//   // --- Room (local database) -------------------------------------------
+//   class RoomPlanetRepository(private val dao: PlanetDao) : PlanetRepository {
+//       override fun planets(): Flow&lt;List&lt;Item&gt;&gt; = dao.observePlanets()
+//       override suspend fun planet(id: Int): Item? = dao.findById(id)
+//   }
+//
+//   // --- Retrofit (remote network API) -----------------------------------
+//   class RetrofitPlanetRepository(private val api: PlanetApi) : PlanetRepository {
+//       override fun planets(): Flow&lt;List&lt;Item&gt;&gt; = flow { emit(api.getPlanets()) }
+//       override suspend fun planet(id: Int): Item? = api.getPlanet(id)
+//   }
+//
+// Swapping it in (MainActivity):
+//   PlanetsViewModel(repo = RoomPlanetRepository(dao))      // instead of InMemoryPlanetRepository()
+// ===========================================================================</pre>
+
+  <h3>5 · NavDataLayer — <code>src/main/java/com/example/navdatalayer/PlanetsViewModel.kt</code></h3>
+<pre class="src">// =============================================================================
+// PlanetsViewModel.kt
+//
+// THE UI-STATE LAYER. This file sits BETWEEN the data layer (Repository.kt) and
+// the screens (MainActivity.kt). It does two jobs:
+//
+//   1. Defines PlanetsUiState — an explicit enumeration of EVERY state the list
+//      screen can be in: Loading, Empty, Error, Success. Modeling these as a
+//      sealed type forces the UI to handle each case (no forgotten spinner, no
+//      blank screen on failure).
+//
+//   2. Defines PlanetsViewModel — it collects the repository's Flow inside
+//      viewModelScope, maps each emission into a PlanetsUiState, catches errors,
+//      and exposes the result as a StateFlow the screen observes.
+//
+// KEY LESSON: the ViewModel talks to a PlanetRepository INTERFACE, never to a
+// concrete data source. It has no idea whether the data is in memory, in Room,
+// or behind Retrofit — and it does not care. That ignorance is the goal.
+// =============================================================================
+
+// Package declaration — matches the folder path under src/main/java/.
+package com.example.navdatalayer
+
+// --- AndroidX lifecycle / ViewModel imports ----------------------------------
+import androidx.lifecycle.ViewModel                       // base class: survives configuration changes (rotation)
+import androidx.lifecycle.viewModelScope                  // a CoroutineScope auto-cancelled when the ViewModel dies
+
+// --- Coroutines / Flow imports -----------------------------------------------
+import kotlinx.coroutines.flow.MutableStateFlow           // a writable StateFlow (always holds one current value)
+import kotlinx.coroutines.flow.StateFlow                  // a read-only, always-has-a-value hot stream for the UI
+import kotlinx.coroutines.flow.asStateFlow                // exposes a MutableStateFlow as a read-only StateFlow
+import kotlinx.coroutines.flow.catch                      // intercepts exceptions thrown UPSTREAM in a Flow
+import kotlinx.coroutines.flow.onEach                     // runs a side effect for each emitted value
+import kotlinx.coroutines.flow.launchIn                   // starts collecting a Flow in a given CoroutineScope
+
+// ===========================================================================
+// THE UI STATE — one sealed type covering EVERY possible list-screen state.
+//
+// A `sealed interface` means the set of subtypes is CLOSED and known at compile
+// time. A `when` over it can be exhaustive, so the compiler guarantees the
+// screen handles Loading, Empty, Error, AND Success — you cannot forget one.
+// ===========================================================================
+
+/**
+ * Every state the planet-list screen can be in. The screen renders purely as a
+ * function of which subtype is current — it holds no other state of its own.
+ */
+sealed interface PlanetsUiState {
+
+    /** Data is still being fetched. Screen shows a spinner. */
+    data object Loading : PlanetsUiState
+
+    /** Fetch succeeded but returned zero planets. Screen shows a friendly note. */
+    data object Empty : PlanetsUiState
+
+    /**
+     * Fetch failed. Screen shows the message and a Retry button.
+     * @property message human-readable explanation of what went wrong.
+     */
+    data class Error(val message: String) : PlanetsUiState
+
+    /**
+     * Fetch succeeded with at least one planet. Screen shows the list.
+     * @property planets the planets to render.
+     */
+    data class Success(val planets: List&lt;Item&gt;) : PlanetsUiState
+}
+
+// ===========================================================================
+// THE VIEW MODEL
+// ===========================================================================
+
+/**
+ * Holds and exposes the list screen's [PlanetsUiState], sourced from a
+ * [PlanetRepository].
+ *
+ * The repository is injected as a CONSTRUCTOR PARAMETER with a default of
+ * [InMemoryPlanetRepository]. That single default is the ONLY place the app
+ * names a concrete data source — point it at a Room/Retrofit implementation and
+ * nothing else in this class (or in any screen) changes.
+ *
+ * @param repo the data-layer boundary this ViewModel reads from.
+ */
+class PlanetsViewModel(
+    private val repo: PlanetRepository = InMemoryPlanetRepository(),
+) : ViewModel() {
+
+    // The single source of truth for the list screen. We START in Loading so the
+    // very first frame the user sees is a spinner, before any data has arrived.
+    private val _uiState = MutableStateFlow&lt;PlanetsUiState&gt;(PlanetsUiState.Loading)
+
+    /**
+     * The read-only state the screen observes via collectAsStateWithLifecycle().
+     * Exposing `asStateFlow()` (not the mutable backing field) keeps writes
+     * private to the ViewModel — the UI can only READ.
+     */
+    val uiState: StateFlow&lt;PlanetsUiState&gt; = _uiState.asStateFlow()
+
+    // `init` runs once when the ViewModel is created and starts the data flow.
+    init {
+        observePlanets()
+    }
+
+    /**
+     * Subscribe to the repository's planet stream and translate each emission
+     * (or failure) into a [PlanetsUiState] for the UI.
+     *
+     * Reading the chain top-to-bottom:
+     *   • repo.planets()  — the repository's Flow&lt;List&lt;Item&gt;&gt; (memory/Room/network).
+     *   • .onEach { ... } — for each emitted list, publish Empty or Success.
+     *   • .catch { ... }  — if ANYTHING upstream throws, publish Error instead of
+     *                       crashing. try/catch can't wrap a Flow, so we use the
+     *                       Flow operator `catch` (its structured equivalent).
+     *   • .launchIn(viewModelScope) — collect on the ViewModel's scope, which is
+     *                       cancelled automatically when the ViewModel is cleared,
+     *                       so no leaked coroutines.
+     */
+    private fun observePlanets() {
+        repo.planets()
+            .onEach { planets -&gt;
+                // Map the raw list into the right success-side state.
+                _uiState.value =
+                    if (planets.isEmpty()) PlanetsUiState.Empty            // got data, but none of it
+                    else PlanetsUiState.Success(planets)                  // got at least one planet
+            }
+            .catch { throwable -&gt;
+                // Any upstream failure (disk error, network error, etc.) lands here.
+                _uiState.value =
+                    PlanetsUiState.Error(throwable.message ?: "Failed to load planets")
+            }
+            .launchIn(viewModelScope)
+    }
+
+    /**
+     * Re-run the load. Wired to the Error state's "Retry" button.
+     * Resets to Loading first so the user gets immediate feedback, then
+     * re-subscribes to the repository stream.
+     */
+    fun retry() {
+        _uiState.value = PlanetsUiState.Loading                            // show the spinner again
+        observePlanets()                                                   // and re-collect from the repo
+    }
+}</pre>
+
+  <h3>6 · NavDataLayer — <code>src/main/java/com/example/navdatalayer/MainActivity.kt</code></h3>
+<pre class="src">// =============================================================================
+// MainActivity.kt
+//
+// THE UI LAYER for the "Nav Data Layer" sample. Built with:
+//   • Jetpack Compose        — the declarative UI toolkit (no XML layouts).
+//   • Navigation 3 (Nav3)    — the modern, Compose-first navigation library.
+//   • Kotlinx Serialization  — used to mark navigation keys @Serializable.
+//   • Lifecycle ViewModel    — holds UI state across rotation; survives the screen.
+//
+// THE LESSON THIS APP TEACHES (the whole reason it exists):
+//   Screens do NOT own or hardcode data. They observe a *repository* through a
+//   *ViewModel* and react to explicit UI states — Loading, Empty, Error, Success.
+//   The hardcoded planets live in Repository.kt, behind the PlanetRepository
+//   interface; the screens below never touch that list directly. Swap the
+//   repository implementation (memory → Room → Retrofit) and these screens do
+//   not change at all. See Repository.kt and PlanetsViewModel.kt.
+//
+//   Navigation flow (list → detail):
+//     PlanetListScreen   --tap a planet--&gt;   PlanetDetailScreen
+//     (observes ViewModel)                   (loads its own planet via suspend)
+//
+// Reading order below: package + imports, then NAV KEYS, then the Activity, then
+// the navigation host, then each screen (stateful wrapper + stateless body),
+// then @Preview functions covering every UI state.
+// =============================================================================
+
+// Package declaration — matches the directory under src/main/java/.
+package com.example.navdatalayer
+
+// --- Android framework imports ------------------------------------------------
+import android.os.Bundle                                    // savedInstanceState type passed to onCreate
+import android.util.Log                                     // Logcat logging (Log.d, Log.e, ...)
+import androidx.activity.ComponentActivity                  // base Activity class with Compose support
+import androidx.activity.compose.setContent                 // bridges an Activity to a Compose UI tree
+import androidx.activity.enableEdgeToEdge                    // lets the app draw behind the system bars
+
+// --- Compose layout / foundation imports -------------------------------------
+import androidx.compose.foundation.clickable                // makes a row tappable
+import androidx.compose.foundation.layout.Arrangement        // controls spacing/alignment inside Row/Column
+import androidx.compose.foundation.layout.Box               // overlap/centering container
+import androidx.compose.foundation.layout.Column            // stacks children vertically
+import androidx.compose.foundation.layout.Spacer            // empty box used to add fixed gaps
+import androidx.compose.foundation.layout.fillMaxSize       // modifier: take all available width AND height
+import androidx.compose.foundation.layout.fillMaxWidth      // modifier: take all available width
+import androidx.compose.foundation.layout.height            // modifier: force a specific height
+import androidx.compose.foundation.layout.padding           // modifier: add space around content
+import androidx.compose.foundation.lazy.LazyColumn          // scrolling list (only renders visible rows)
+import androidx.compose.foundation.lazy.items               // iterate a List inside a LazyColumn
+
+// --- Material 3 component imports ---------------------------------------------
+import androidx.compose.material3.Button                    // filled, tappable button
+import androidx.compose.material3.CircularProgressIndicator  // the spinner shown during Loading
+import androidx.compose.material3.HorizontalDivider         // thin horizontal separator line
+import androidx.compose.material3.MaterialTheme             // access to the current theme's colors/typography
+import androidx.compose.material3.Scaffold                  // standard screen frame (handles insets, bars, etc.)
+import androidx.compose.material3.Surface                   // a themed background container (used for the banner)
+import androidx.compose.material3.Text                      // draws text
+
+// --- Compose runtime / tooling imports ---------------------------------------
+import androidx.compose.runtime.Composable                  // marks a function as emitting UI
+import androidx.compose.runtime.LaunchedEffect              // runs a suspend block tied to the composition
+import androidx.compose.runtime.getValue                    // `by` delegate support for State reads
+import androidx.compose.runtime.mutableStateOf              // creates observable State (used in the detail loader)
+import androidx.compose.runtime.remember                    // remembers a value across recomposition
+import androidx.compose.runtime.setValue                    // `by` delegate support for State writes
+import androidx.compose.ui.Alignment                        // alignment constants (e.g. center) for Box/Column
+import androidx.compose.ui.Modifier                         // the "how to lay out / decorate" object
+import androidx.compose.ui.tooling.preview.Preview          // enables @Preview rendering in Android Studio
+import androidx.compose.ui.unit.dp                          // density-independent pixel unit (e.g. 16.dp)
+
+// --- Lifecycle + Compose interop imports -------------------------------------
+import androidx.lifecycle.compose.collectAsStateWithLifecycle // observe a StateFlow as State, pausing when stopped
+import androidx.lifecycle.viewmodel.compose.viewModel        // obtain a lifecycle-scoped ViewModel in a @Composable
+
+// --- Navigation 3 imports -----------------------------------------------------
+// Nav3 is the modern, Compose-first navigation approach: one Activity holds a
+// back stack of "keys", and Compose swaps the screen when the top key changes.
+import androidx.navigation3.runtime.NavKey                  // marker interface every navigation key implements
+import androidx.navigation3.runtime.entryProvider           // DSL that maps each key type to a screen
+import androidx.navigation3.runtime.rememberNavBackStack    // creates + remembers the back stack across recomposition
+import androidx.navigation3.ui.NavDisplay                   // the composable that renders the current top key
+
+// --- App + serialization imports ---------------------------------------------
+import com.example.navdatalayer.ui.theme.NavDataLayerTheme  // our app's Material theme wrapper (see Theme.kt)
+import kotlinx.serialization.Serializable                   // makes Nav3 keys serializable (required by Nav3)
+
+// Logcat tag — filter Logcat by "DataLayer" to follow this app's breadcrumbs.
+private const val TAG = "DataLayer"
+
+// ===========================================================================
+// NAVIGATION KEYS
+// Each screen is identified by a "key" that also carries its arguments. Nav3
+// requires keys to implement NavKey and be @Serializable (for state saving).
+//   • ListKey   has no arguments — there is one planet-list screen.
+//   • DetailKey carries a planetId — which single planet to show.
+// ===========================================================================
+
+// `data object` = a singleton; there is only ever one list screen.
+@Serializable
+data object ListKey : NavKey                                // first screen (no arguments)
+
+// `data class` because each detail screen differs by which planet it shows.
+@Serializable
+data class DetailKey(val planetId: Int) : NavKey           // second screen; which planet was tapped
+
+/**
+ * MainActivity — the app's single Activity and the entry point Android launches.
+ * In a Nav3 app you have exactly one Activity hosting the Compose UI + back stack.
+ */
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)                 // always call through to the framework first
+        enableEdgeToEdge()                                 // draw under the system bars for a modern look
+        setContent {                                       // everything inside is the Compose UI
+            NavDataLayerTheme {                            // apply colors, typography, dark/light handling
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding -&gt;
+                    // Hand the inset padding to the nav host so screens stay in the safe area.
+                    AppNavigation(modifier = Modifier.padding(innerPadding))
+                }
+            }
+        }
+    }
+}
+
+/**
+ * AppNavigation — owns the navigation back stack and maps each key to its screen.
+ *
+ * NOTE: navigation carries only a tiny planetId in [DetailKey] — never the whole
+ * object. The detail screen re-fetches its planet from the repository (via a
+ * `suspend` call), reinforcing that the data layer, not the nav key, is the
+ * source of truth.
+ */
+@Composable
+fun AppNavigation(modifier: Modifier = Modifier) {
+    // Back stack seeded with the list screen; preserved across recomposition.
+    val backStack = rememberNavBackStack(ListKey)
+
+    Log.d("LT", "Entered AppNavigation")                    // breadcrumb (filter Logcat by "DataLayer")
+
+    NavDisplay(
+        backStack = backStack,
+        modifier = modifier,
+        onBack = { backStack.removeLastOrNull() },          // system back = pop the top key
+        // entryProvider is a DSL (a small "language" for one job): it builds the
+        // map of "which key type -&gt; which screen". You call entry&lt;...&gt; once per
+        // screen inside the { } block, and Nav3 runs the block whose key type
+        // matches the key currently on top of the back stack.
+        //
+        // How to read one  entry&lt;KeyType&gt; { key -&gt; SomeScreen(...) }  line:
+        //   • entry          — a Nav3 builder function (from
+        //                      androidx.navigation3.runtime) that registers ONE
+        //                      screen for ONE key type.
+        //   • &lt;KeyType&gt;      — a GENERIC TYPE ARGUMENT, in angle brackets (a TYPE
+        //                      slot, not a value in parentheses): the key type this
+        //                      block handles. Nav3 matches it against the top key.
+        //   • { key -&gt; ... } — the @Composable CONTENT shown while that key is on
+        //                      top. The lambda is handed the key instance, so a
+        //                      data-class key can read its arguments (e.g. key.itemId).
+        //                      A data-OBJECT key carries no data, so its block can
+        //                      omit the `key -&gt;` parameter.
+        //
+        // WHEN does an entry block RUN? entry&lt;...&gt; { } only REGISTERS a screen here
+        // (like adding a `case` to a switch) — the { } body does NOT run yet. NavDisplay
+        // runs the body whose key type matches the key currently on TOP of the back
+        // stack: when you push that key (navigate forward), when you pop back to it, and
+        // on recomposition while it is showing. A key in the stack but not on top is kept
+        // (state preserved) but not drawn; popping it off removes its screen from
+        // composition. So pushing a key turns its screen on and popping turns it off —
+        // and `key` is the exact instance on top, so the same block runs with different
+        // data per instance (e.g. ItemsKey(1) vs ItemsKey(5)).
+        entryProvider = entryProvider {
+            // LEVEL 1 — the planet LIST, driven entirely by the ViewModel's UI state.
+            entry&lt;ListKey&gt; {
+                PlanetListScreen(
+                    // Tapping a planet pushes a DetailKey carrying only its id.
+                    // THE JUMP — how a tap reaches the next screen: this line does NOT name a
+                    // screen, it just ADDS A KEY to the back stack. NavDisplay then matches that
+                    // key by its TYPE to the matching entry&lt;...&gt; { } block above and runs it; the
+                    // id inside the key only chooses WHICH data that screen shows, not WHICH screen
+                    // — so every key of this type lands on the same entry block.
+                    onOpen = { planetId -&gt; backStack.add(DetailKey(planetId)) }
+                )
+            }
+            // LEVEL 2 — the DETAIL screen, which loads its own planet by id.
+            entry&lt;DetailKey&gt; { key -&gt;
+                PlanetDetailScreen(
+                    planetId = key.planetId,
+                    onBack = { backStack.removeLastOrNull() }   // pop back to the list
+                )
+            }
+        }
+    )
+}
+
+// ===========================================================================
+// TEACHING BANNER — a small reusable header explaining the data-boundary lesson.
+// ===========================================================================
+
+/**
+ * A themed banner pinned to the top of the list screen, spelling out the lesson
+ * so it is impossible to miss while learning.
+ */
+@Composable
+private fun DataLayerBanner(modifier: Modifier = Modifier) {
+    Log.d("LT", "Entered DataLayerBanner")
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.secondaryContainer,   // tinted background to stand out
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Data-layer demo",
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "This screen owns NO data. It observes a PlanetRepository " +
+                    "through PlanetsViewModel and just renders the current state " +
+                    "(Loading / Empty / Error / Success).",
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+// ===========================================================================
+// LEVEL 1 — THE PLANET LIST SCREEN
+//
+// Split into TWO composables, a common and important pattern:
+//   • PlanetListScreen      — STATEFUL wrapper: grabs the ViewModel, observes its
+//                             StateFlow, and forwards the plain state downward.
+//   • PlanetListScreenBody  — STATELESS body: takes a PlanetsUiState + callbacks
+//                             and just renders. No ViewModel, no navigation. This
+//                             is what the @Previews drive directly.
+// ===========================================================================
+
+/**
+ * Stateful entry point for the list screen.
+ *
+ * It obtains a [PlanetsViewModel] (lifecycle-scoped, survives rotation), observes
+ * its [PlanetsViewModel.uiState] with [collectAsStateWithLifecycle] (which pauses
+ * collection while the screen is stopped), and hands the resulting plain state to
+ * the stateless body. It deliberately holds NO data itself.
+ *
+ * @param onOpen invoked with a planet's id when a row is tapped.
+ */
+@Composable
+fun PlanetListScreen(
+    onOpen: (Int) -&gt; Unit,
+    modifier: Modifier = Modifier,
+    // The ViewModel is obtained via viewModel(); its default repo is in-memory.
+    viewModel: PlanetsViewModel = viewModel(),
+) {
+    Log.d("LT", "Entered PlanetListScreen")
+    // Observe the StateFlow as Compose State. `by` unwraps it to a PlanetsUiState.
+    // collectAsStateWithLifecycle() (not plain collectAsState) stops collecting
+    // when the screen is in the background — the lifecycle-aware way to observe.
+    // THREE ideas in one line —  val X by someStateFlow.collectAsStateWithLifecycle():
+    //   1. someStateFlow                  — a StateFlow the ViewModel exposes (its live value).
+    //   2. .collectAsStateWithLifecycle() — SUBSCRIBES to it and wraps the latest value in a
+    //        Compose State, so this composable RECOMPOSES whenever the flow emits a new value.
+    //        "WithLifecycle" = collect only while the screen is visible (lifecycle &gt;= STARTED)
+    //        and PAUSE off-screen; the Android-safe version of a plain collectAsState().
+    //   3. `by`                           — a property delegate that unwraps the State's .value,
+    //        so X reads as the plain value directly (no .value). Reading X also registers this
+    //        composable as a reader, which is what makes Compose recompose it on the next emit.
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Forward the pure state + callbacks to the stateless body.
+    PlanetListScreenBody(
+        uiState = uiState,
+        onOpen = onOpen,
+        onRetry = viewModel::retry,        // the Error state's Retry button calls back into the ViewModel
+        modifier = modifier,
+    )
+}
+
+/**
+ * Stateless body of the list screen: renders purely from [uiState].
+ *
+ * Because it takes the state as a parameter (no ViewModel, no Flow), it is
+ * trivially previewable and testable — every @Preview at the bottom of this file
+ * just passes a different [PlanetsUiState] here.
+ *
+ * @param uiState the current state to render (Loading / Empty / Error / Success).
+ * @param onOpen  invoked with a planet's id when a row is tapped.
+ * @param onRetry invoked when the user taps "Retry" in the Error state.
+ */
+@Composable
+fun PlanetListScreenBody(
+    uiState: PlanetsUiState,
+    onOpen: (Int) -&gt; Unit,
+    onRetry: () -&gt; Unit,
+    modifier: Modifier = Modifier,
+) {
+    Log.d("LT", "Entered PlanetListScreenBody")
+    Column(modifier = modifier.fillMaxSize()) {
+        // The lesson banner is always visible, above whatever state is showing.
+        DataLayerBanner()
+        HorizontalDivider()
+
+        // *** THE STATE-DRIVEN RENDERING ***
+        // A single exhaustive `when` over the sealed PlanetsUiState. The compiler
+        // forces us to handle EVERY case — that is the whole benefit of modeling
+        // UI state as a sealed type.
+        when (uiState) {
+            // ── LOADING ── show a centered spinner while data is being fetched.
+            is PlanetsUiState.Loading -&gt; CenteredMessage {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(12.dp))
+                Text("Loading planets…", style = MaterialTheme.typography.bodyMedium)
+            }
+
+            // ── EMPTY ── fetch succeeded but returned nothing; show a friendly note.
+            is PlanetsUiState.Empty -&gt; CenteredMessage {
+                Text("No planets to show.", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    "The repository returned an empty list.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+
+            // ── ERROR ── fetch failed; show the message and a Retry button.
+            is PlanetsUiState.Error -&gt; CenteredMessage {
+                Text("Something went wrong", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(4.dp))
+                // Smart-cast: inside this branch `uiState` is PlanetsUiState.Error.
+                Text(uiState.message, style = MaterialTheme.typography.bodyMedium)
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = onRetry) { Text("Retry") }
+            }
+
+            // ── SUCCESS ── render the planet list (smart-cast gives us .planets).
+            is PlanetsUiState.Success -&gt; LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(uiState.planets) { planet -&gt;          // one row per planet
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            // OS vs COMPOSE vs YOUR CODE — what a tap really is:
+                            //   • Android (the OS) only reports a raw touch at a pixel (x, y); it knows
+                            //     nothing about rows, items, names, or ids.
+                            //   • Compose hit-tests that pixel to find WHICH composable sits there (this
+                            //     one) and invokes its click lambda.
+                            //   • YOUR code gives the tap its MEANING: the click lambda passes the exact
+                            //     value you wired here (e.g. this row's id). "What was selected" is meaning
+                            //     your code attaches to a raw touch — the OS never knows about it.
+                            .clickable { onOpen(planet.id) }  // whole row tappable -&gt; open detail
+                            .padding(16.dp)
+                    ) {
+                        Text(planet.title, style = MaterialTheme.typography.titleMedium)
+                        Text(planet.blurb, style = MaterialTheme.typography.bodyMedium)
+                    }
+                    HorizontalDivider()
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Small helper that centers its [content] in the remaining space — reused by the
+ * Loading, Empty, and Error states so they all look consistent.
+ */
+@Composable
+private fun CenteredMessage(content: @Composable () -&gt; Unit) {
+    Log.d("LT", "Entered CenteredMessage")
+    Box(
+        modifier = Modifier.fillMaxSize().padding(24.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            content()
+        }
+    }
+}
+
+// ===========================================================================
+// LEVEL 2 — THE PLANET DETAIL SCREEN
+//
+// The nav key carries only a planetId. The detail screen RE-FETCHES the planet
+// from the repository with the `suspend planet(id)` call, showing its OWN small
+// loading state while that runs — again proving the data layer, not the nav key,
+// is the source of truth.
+// ===========================================================================
+
+/**
+ * Detail screen for one planet, loaded by [planetId].
+ *
+ * It performs a one-shot `suspend` load inside a [LaunchedEffect] keyed on the
+ * id, tracking three local states via a nullable holder:
+ *   • holder == null &amp; still loading → spinner
+ *   • holder resolved to an Item     → show details
+ *   • holder resolved to null (miss) → "not found" message
+ *
+ * For brevity this screen builds its own in-place loader rather than a dedicated
+ * ViewModel; the list screen demonstrates the full ViewModel + StateFlow path.
+ *
+ * @param planetId the id passed in the nav key.
+ * @param onBack   invoked when the user taps "Back to list".
+ */
+@Composable
+fun PlanetDetailScreen(
+    planetId: Int,
+    onBack: () -&gt; Unit,
+    modifier: Modifier = Modifier,
+    // Same data boundary as the ViewModel: depend on the interface, default to in-memory.
+    repo: PlanetRepository = remember { InMemoryPlanetRepository() },
+) {
+    Log.d("LT", "Entered PlanetDetailScreen")
+    // Local load state. `loading` starts true; `planet` is filled once the
+    // suspend call returns (or stays null if the id wasn't found).
+    var loading by remember { mutableStateOf(true) }
+    var planet by remember { mutableStateOf&lt;Item?&gt;(null) }
+
+    // LaunchedEffect runs the suspend load when the screen appears (and re-runs if
+    // planetId changes). This is the detail screen's own little "Loading" state.
+    LaunchedEffect(planetId) {
+        loading = true
+        planet = repo.planet(planetId)     // suspend call into the data layer
+        loading = false
+    }
+
+    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
+        when {
+            // Detail's own loading state — small and self-contained.
+            loading -&gt; CenteredMessage {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(12.dp))
+                Text("Loading planet…", style = MaterialTheme.typography.bodyMedium)
+            }
+
+            // The id resolved to a real planet — show its details.
+            planet != null -&gt; {
+                val p = planet!!                            // safe: guarded by the branch condition
+                Text(p.title, style = MaterialTheme.typography.headlineSmall)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(p.blurb, style = MaterialTheme.typography.bodyLarge)
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    "Fun fact: ${p.fact}",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(onClick = onBack) { Text("Back to list") }
+            }
+
+            // The id matched no planet — a graceful "not found" state.
+            else -&gt; {
+                Text("Planet not found", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = onBack) { Text("Back to list") }
+            }
+        }
+    }
+}
+
+// ===========================================================================
+// @Preview functions — render the LIST screen in EVERY UI state.
+//
+// IMPORTANT: previews pass a PlanetsUiState directly to the STATELESS
+// PlanetListScreenBody. They do NOT construct PlanetsViewModel, because:
+//   • a ViewModel kicks off coroutines / repository work, which the static
+//     preview renderer can't (and shouldn't) run, and
+//   • driving the stateless body lets us freeze the screen in any state we want
+//     — including ones (Empty, Error) the in-memory repo never actually produces.
+// All callbacks are no-ops ({}) since previews don't navigate or retry.
+// ===========================================================================
+
+// LOADING — the spinner state.
+//@Preview(name = "List · Loading", showBackground = true, widthDp = 320, heightDp = 480)
+//@Composable
+//fun ListLoadingPreview() {
+//    NavDataLayerTheme {
+//        PlanetListScreenBody(uiState = PlanetsUiState.Loading, onOpen = {}, onRetry = {})
+//    }
+//}
+//
+//// EMPTY — fetch succeeded but returned nothing.
+//@Preview(name = "List · Empty", showBackground = true, widthDp = 320, heightDp = 480)
+//@Composable
+//fun ListEmptyPreview() {
+//    NavDataLayerTheme {
+//        PlanetListScreenBody(uiState = PlanetsUiState.Empty, onOpen = {}, onRetry = {})
+//    }
+//}
+//
+//// ERROR — fetch failed; note the Retry button.
+//@Preview(name = "List · Error", showBackground = true, widthDp = 320, heightDp = 480)
+//@Composable
+//fun ListErrorPreview() {
+//    NavDataLayerTheme {
+//        PlanetListScreenBody(
+//            uiState = PlanetsUiState.Error("Could not reach the planet service."),
+//            onOpen = {},
+//            onRetry = {},
+//        )
+//    }
+//}
+//
+//// SUCCESS — the populated list (uses the sample planets directly as preview data).
+//@Preview(name = "List · Success", showBackground = true, widthDp = 320, heightDp = 480)
+//@Composable
+//fun ListSuccessPreview() {
+//    NavDataLayerTheme {
+//        PlanetListScreenBody(
+//            uiState = PlanetsUiState.Success(samplePlanets),
+//            onOpen = {},
+//            onRetry = {},
+//        )
+//    }
+//}</pre>
+
+  <footer>
+    Homework 3 of the Android navigation series · based on the
+    <code>NavFourScreen</code>, <code>NavViewModelState</code>, and <code>NavDataLayer</code> sample
+    projects · Jetpack Compose + Navigation&nbsp;3 (Kotlin). Open this file in any browser; use your
+    browser's <em>Print → Save as PDF</em> to hand it out.
+  </footer>
+
+</div>
+</body>
+</html>
