@@ -23,6 +23,14 @@ comments, so you can diff any two projects to see exactly what a feature adds.
 > **Navigation 3 Playground** where you edit a `rememberNavBackStack(…)` key list
 > (or tap the phone / press Back) and watch the back stack and screen update.
 >
+> 🗄️ For **data storage** in depth, the **[`StorageMaster/`](./StorageMaster)** lab
+> (**[`storage-tutorial.html`](./StorageMaster/storage-tutorial.html)**) is a single-file,
+> offline, interactive master class on local persistence — DataStore, Room (entities, DAOs,
+> reactive `Flow` queries, migrations, relations), files & scoped storage, encryption and
+> backup. It's the deep-dive behind [`RoomAndPreferences`](./RoomAndPreferences): insert rows
+> and watch a `Flow` re-emit, flip `@Entity` annotations and watch the `CREATE TABLE` change,
+> break a migration and watch it crash.
+>
 > ✅ Prefer to **practice**? **[`labs/`](./labs)** is a set of guided, browser-based
 > **hands-on exercises** with instant checking — a task, starter code, and success
 > checks that turn green as you edit (with hints + solutions). Open
@@ -63,6 +71,11 @@ comments, so you can diff any two projects to see exactly what a feature adds.
 | [`NavTransitions`](./NavTransitions) | Custom animated screen transitions (forward / pop / predictive-back). |
 | [`NavDataLayer`](./NavDataLayer) | Screens observe a **repository through a ViewModel** with loading / empty / error / success states. |
 | [`NavOverlay`](./NavOverlay) | A **dialog overlay** scene that sits on top of the back stack while the screen beneath stays visible (push = +1, dismiss = −1). |
+
+### 5 · Capstone — navigation + Compose, combined
+| Project | What it shows |
+|---|---|
+| [`ExampleProject`](./ExampleProject) | **"Wanderlist"** — a four-screen travel bucket-list app that ties the whole course together: **bottom-tab navigation** (one back stack per tab), a **list → detail drill-down** (the 4th screen, reached by tapping a place), an **Add form** (text fields, chips, slider, switch, validation), and a **Stats** screen with a dark-mode toggle. Built on **hoisted, editable Compose state** (add / remove / toggle) and the broadest **Material 3** component sampler in the set. A good "now build your own" reference once the single-concept demos make sense. |
 
 ---
 
