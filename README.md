@@ -95,6 +95,7 @@ Same Kotlin / Compose / Material 3 / Gradle-KTS stack; each has its own README.
 | [`LocationServices`](./LocationServices) | Integrating a **device API**: runtime location permission + **FusedLocationProviderClient**, surfaced as idle / loading / success / error, with an offline fake. |
 | [`MvvmState`](./MvvmState) | MVVM: `ViewModel`, `StateFlow`, immutable `UiState`, UI events, unidirectional data flow (fake data). |
 | [`RoomAndPreferences`](./RoomAndPreferences) | Local persistence: **Room** (via KSP) for structured data + **DataStore Preferences** for settings. |
+| [`StorageShowcase`](./StorageShowcase) | Local-storage **capstone**: one tabbed app covering Room (entity, DAO, reactive `Flow`, `@TypeConverter`, `@ForeignKey`/`@Relation`, a `Migration`), Preferences DataStore, **Typed (JSON) DataStore**, and internal file storage. The runnable companion to [`Playground/storage-playground.html`](./Playground/storage-playground.html). |
 | [`AppReleaseBasics`](./AppReleaseBasics) | Release basics: manifest, runtime permissions, version/build types, signing concepts, App Bundle (README). |
 
 ---
