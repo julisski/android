@@ -235,7 +235,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     // NavDisplay renders whatever key is on top of the back stack, animating the
     // transition when the top changes.
     NavDisplay(
-        backStack = backStack,
+        backStack = backStack,5u
         modifier = modifier,
         // Called for system back gestures / the hardware back button. Popping the
         // top key returns to the previous screen; removeLastOrNull is a no-op (and
