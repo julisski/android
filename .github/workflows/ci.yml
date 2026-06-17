@@ -77,6 +77,7 @@ jobs:
             "AppReleaseBasics|AppReleaseBasics|AppReleaseBasics"
             "LocationServices|LocationServices|LocationServices"
             "WebSocketLive|WebSocketLive|WebSocketLive"
+            "ExampleProject|ExampleProject|ExampleProject"
           )
 
           all=false

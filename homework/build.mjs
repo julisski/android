@@ -44,6 +44,11 @@ const GROUPS = [
     blurb: 'A second track of standalone concept demos: UI fundamentals, the full component catalog, modifiers & layout, lists, networking, real-time WebSockets, location, MVVM, storage, release.',
     projects: ['ComposeModernUI', 'ComposeCatalog', 'ComposeModifiers', 'ComposeLists', 'NetworkParsing', 'WebSocketLive', 'LocationServices', 'MvvmState', 'RoomAndPreferences', 'AppReleaseBasics'],
   },
+  {
+    id: 'capstone', label: '6 · Capstone', short: 'Capstone', track: 'nav',
+    blurb: 'One small app that ties it all together: bottom-tab navigation, a list → detail drill-down, a form, and hoisted Compose state — the navigation and Compose tracks combined.',
+    projects: ['ExampleProject'],
+  },
 ]
 
 // Flat linear order used by Prev/Next + arrow keys.
@@ -52,6 +57,7 @@ const ORDER = GROUPS.flatMap(g => g.projects)
 const DOMAIN_CHIP = {
   planets: { icon: '🪐', label: 'planets domain' },
   notes:   { icon: '🗒️', label: 'notes domain' },
+  travel:  { icon: '🧭', label: 'travel domain' },
   none:    { icon: '▫️', label: 'no data domain' },
 }
 const TRACK_OF = {}
@@ -359,7 +365,7 @@ function overviewPanel() {
     <div class="tracks">
       <div class="trackcol nav">
         <div class="trackhead">🪐 Navigation track <span>“planets” domain · Category → Item</span></div>
-        ${stepCards(['SingleActivity','Intent','NavDetailList','NavListDetail','NavThreeScreen','NavFourScreen','NavDeepLinks','NavBottomTabs','NavNestedGraphs','NavViewModelState','NavTransitions','NavDataLayer','NavOverlay'])}
+        ${stepCards(['SingleActivity','Intent','NavDetailList','NavListDetail','NavThreeScreen','NavFourScreen','NavDeepLinks','NavBottomTabs','NavNestedGraphs','NavViewModelState','NavTransitions','NavDataLayer','NavOverlay','ExampleProject'])}
       </div>
       <div class="trackcol notes">
         <div class="trackhead">🗒️ Android-concepts track <span>standalone concept demos</span></div>
@@ -376,6 +382,7 @@ function overviewPanel() {
       <li><span class="tn">5</span><span><b>NavDeepLinks</b> — entering the app from outside and rebuilding a sensible back stack.</span></li>
       <li><span class="tn">6</span><span><b>NavTransitions</b> — polish: animating the moves between screens.</span></li>
       <li><span class="tn">7</span><span><b>NavOverlay</b> — overlays: a dialog scene that sits on top of the back stack while the screen beneath stays visible.</span></li>
+      <li><span class="tn">8</span><span><b>ExampleProject</b> — the capstone: combine bottom tabs, a list → detail drill-down, a form, and hoisted Compose state in one small app once the pieces above make sense.</span></li>
     </ol>
 
     <h3>The shared tech stack</h3>
