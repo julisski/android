@@ -31,6 +31,7 @@
     constraintMode: ["InlineRefs", "ConstraintSet", "Guideline", "Barrier", "Chain"],
     chainStyle: ["Spread", "SpreadInside", "Packed"],
     visibilityTracking: ["VisibilityChanged", "FirstVisibleOnce", "LayoutRectChanged", "LazyListImpression"],
+    perfMeasurement: ["Macrobenchmark", "BaselineProfile", "JankStats", "CompilerReports"],
     interopMode: ["ComposeView", "AndroidView", "AndroidFragment", "AbstractComposeView"],
     nav3Mode: ["Basic", "Saved", "Decorators", "Scenes"],
   };
@@ -42,7 +43,7 @@
     cornerRadius: [0, 48, 2, 12], borderWidth: [0, 8, 1, 0], aspectRatio: [0.5, 2.5, 0.1, 1],
     fillFraction: [0.1, 1, 0.05, 1], fontSize: [10, 40, 2, 18], maxLines: [1, 5, 1, 2],
     itemCount: [2, 12, 1, 6], childCount: [1, 8, 1, 3], columns: [1, 5, 1, 3], progressValue: [0, 100, 5, 65],
-    cardElevation: [0, 12, 1, 2], nestDepth: [1, 4, 1, 2],
+    cardElevation: [0, 12, 1, 2], nestDepth: [1, 4, 1, 2], startupMs: [100, 900, 25, 325], frameMs: [8, 40, 1, 22],
   };
   const TOGGLES = ["fillMaxWidth", "fillMaxHeight", "clip", "scroll", "orderSwap",
     "enabled", "withIcon", "checked", "singleLine", "showLabel", "topBar", "bottomBar", "fab", "showSubtitle", "showTrailing",
@@ -52,6 +53,7 @@
     "expandedSearch", "multiSelect", "modalPicker", "rangePicker", "inputMode", "removableChip",
     "determinateProgress", "refreshing", "customIndicator", "supportingText", "withDividers", "carouselUncontained",
     "showGuidelines", "composeAlternative", "trackFirstOnly", "useDebounce", "overlayViewport",
+    "baselineProfile", "physicalDevice", "includeStartupProfile", "jankState", "compilerReports",
     "lifecycleStrategy", "viewReuse", "nestedScrollInterop", "serializableKeys", "entryDecorators", "sceneMetadata"];
 
   const JUSTIFY = { Top: "flex-start", Bottom: "flex-end", Start: "flex-start", End: "flex-end", Center: "center", SpaceBetween: "space-between", SpaceAround: "space-around", SpaceEvenly: "space-evenly" };
@@ -175,6 +177,13 @@
     lifecycle: ["Lifecycle of composables", "https://developer.android.com/develop/ui/compose/lifecycle"],
     stability: ["Stability in Compose", "https://developer.android.com/develop/ui/compose/performance/stability"],
     stabilityFix: ["Fix stability issues", "https://developer.android.com/develop/ui/compose/performance/stability/fix"],
+    strongSkipping: ["Strong skipping mode", "https://developer.android.com/develop/ui/compose/performance/stability/strongskipping"],
+    stabilityDiagnose: ["Diagnose stability issues", "https://developer.android.com/develop/ui/compose/performance/stability/diagnose"],
+    composeBaselineProfiles: ["Use a baseline profile in Compose", "https://developer.android.com/develop/ui/compose/performance/baseline-profiles"],
+    macrobenchmark: ["Write a Macrobenchmark", "https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview"],
+    baselineProfileCreate: ["Create Baseline Profiles", "https://developer.android.com/topic/performance/baselineprofiles/create-baselineprofile"],
+    baselineProfileMeasure: ["Benchmark Baseline Profiles", "https://developer.android.com/topic/performance/baselineprofiles/measure-baselineprofile"],
+    jankStats: ["JankStats Library", "https://developer.android.com/topic/performance/jankstats"],
     semantics: ["Semantics", "https://developer.android.com/develop/ui/compose/accessibility/semantics"],
     accessibility: ["Accessibility in Jetpack Compose", "https://developer.android.com/develop/ui/compose/accessibility"],
     accessibilityTesting: ["Accessibility testing", "https://developer.android.com/develop/ui/compose/accessibility/testing"],
@@ -257,7 +266,8 @@
     "profile-row": ["layouts", "material3", "stateHoisting"],
     "state-saving": ["stateSaving", "state", "stateHoisting"],
     "effects-lifecycle": ["sideEffects", "lifecycle", "phases"],
-    "stability-performance": ["stability", "stabilityFix", "performance", "phases"],
+    "stability-performance": ["stability", "stabilityFix", "strongSkipping", "performance", "phases"],
+    "performance-measurement": ["macrobenchmark", "baselineProfileCreate", "baselineProfileMeasure", "composeBaselineProfiles", "jankStats", "stabilityDiagnose", "compositionTracing", "performance"],
     "previews-tooling": ["previews", "composeTooling", "animationPreview", "toolingDebug", "compositionTracing", "composeLint"],
     "accessibility-testing": ["accessibility", "semantics", "accessibilityTesting"],
     "compose-ui-testing": ["composeTesting", "testingApis", "testingSemantics", "testingSync", "testingPatterns", "testingDebug", "testingV2", "testingCheatsheet"],
@@ -291,7 +301,7 @@
     ["Layout engine", ["sizing", "aspect-ratio", "padding", "spacing", "offset", "column", "row", "box", "custom-layouts", "constraint-layout", "visibility-tracking"], "Predict size, position, and space from constraints."],
     ["Distribution", ["arrangement", "alignment", "weight", "background-shape", "drawing-graphics", "images-resources", "scroll", "lazy-lists", "lazy-collections-scale"], "Control empty space, overflow, clipping, drawing, and lists."],
     ["Production UI", ["theming-design-system", "text", "buttons", "card", "controls", "selection-inputs", "status-content", "textfields", "transient-surfaces", "navigation-surfaces", "pointer-input-gestures", "focus-keyboard-input", "nesting", "scaffold", "edge-to-edge-insets", "interop-migration", "navigation-compose", "navigation3-state", "adaptive-layouts", "profile-row"], "Compose themed Material 3 components into app-ready screens."],
-    ["Advanced practice", ["state-saving", "effects-lifecycle", "stability-performance", "previews-tooling", "accessibility-testing", "compose-ui-testing", "animation-motion"], "Ship screens that survive lifecycle changes, test well, perform, and move clearly."],
+    ["Advanced practice", ["state-saving", "effects-lifecycle", "stability-performance", "performance-measurement", "previews-tooling", "accessibility-testing", "compose-ui-testing", "animation-motion"], "Ship screens that survive lifecycle changes, test well, perform, and move clearly."],
   ];
   const GLOSSARY = [
     ["Composition", "The tree-building phase where composable functions emit the UI description.", "composables"],
@@ -442,6 +452,13 @@
     ["LaunchedEffect", "Runs a coroutine after composition and restarts it when its keys change.", "effects-lifecycle"],
     ["DisposableEffect", "Registers side effects that need cleanup when keys change or composition leaves.", "effects-lifecycle"],
     ["Skippability", "Compose's ability to avoid re-running a composable whose stable inputs did not change.", "stability-performance"],
+    ["Macrobenchmark", "A Jetpack test library for measuring app startup, scrolling, animations, trace sections, and frame timing on a device.", "performance-measurement"],
+    ["Baseline Profile", "A generated ART profile that precompiles critical startup and runtime paths for faster first-run performance.", "performance-measurement"],
+    ["CompilationMode", "The Macrobenchmark setting that controls how much app code is compiled before measurement, including None, Partial, Full, and Ignore.", "performance-measurement"],
+    ["StartupTimingMetric", "A Macrobenchmark metric for startup time, including time to initial display and time to full display workflows.", "performance-measurement"],
+    ["FrameTimingMetric", "A Macrobenchmark metric for frame timing during runtime interactions such as scrolling and animations.", "performance-measurement"],
+    ["JankStats", "A runtime metrics library that reports janky frames with app UI state context for each active Window.", "performance-measurement"],
+    ["Compose compiler reports", "Release-build reports that show inferred stability, restartability, and skippability for composables and classes.", "performance-measurement"],
     ["@Preview", "An Android Studio annotation that renders a composable in the design surface without launching the full app.", "previews-tooling"],
     ["Multipreview", "A preview annotation strategy that renders one composable across common sizes, font scales, themes, or custom scenarios.", "previews-tooling"],
     ["PreviewParameterProvider", "A provider that feeds sample data variants into one preview function so Android Studio renders multiple states.", "previews-tooling"],
@@ -657,6 +674,13 @@
       use: "Check stability, defer state reads when useful, keep lazy item keys stable, and avoid unnecessary work during composition.",
       avoid: "Do not assume recomposition itself is the bug before measuring what is invalidating and what is expensive.",
       section: "stability-performance",
+    },
+    {
+      area: "Performance",
+      question: "A Compose app needs proof that startup, scrolling, animation, or a critical user journey is actually fast.",
+      use: "Measure release-like builds on a physical device with Macrobenchmark, compare Baseline Profile compilation modes, add JankStats state for runtime context, and use compiler reports only after evidence points to stability.",
+      avoid: "Do not benchmark debug builds, rely on emulator timings, ship profiles that only cover app launch, or chase skippability without a measured performance problem.",
+      section: "performance-measurement",
     },
     {
       area: "Tooling",
@@ -1210,6 +1234,96 @@
       ? "\n  val viewportBounds = remember { LayoutBoundsHolder() }\n\n  Box(Modifier.layoutBounds(viewportBounds)) {\n    TrackedCard(\n      modifier = Modifier.onVisibilityChanged(\n        viewportBounds = viewportBounds,\n        minFractionVisible = " + minFraction + ",\n        minDurationMs = " + minDuration + "\n      ) { visible ->\n        onVisibilityChanged(visible)\n      }\n    )\n  }"
       : "\n  TrackedCard(\n    modifier = modifier.onVisibilityChanged(\n      minFractionVisible = " + minFraction + ",\n      minDurationMs = " + minDuration + "\n    ) { visible ->\n      onVisibilityChanged(visible)\n    }\n  )";
     return "@Composable\nfun VisibilityAwareSurface(\n  onVisibilityChanged: (Boolean) -> Unit,\n  modifier: Modifier = Modifier\n) {" + viewport + "\n}\n\n@Composable\nprivate fun TrackedCard(modifier: Modifier = Modifier) {\n  Card(modifier.fillMaxWidth()) {\n    Text(\"Tracked visibility\", Modifier.padding(16.dp))\n  }\n}";
+  }
+
+  function pvPerformanceMeasurement(pg, v, stage) {
+    const mode = v.perfMeasurement || "Macrobenchmark";
+    const startup = Math.round(num(v.startupMs, 325));
+    const frame = Math.round(num(v.frameMs, 22));
+    const startupGoal = 300;
+    const frameGoal = 16;
+    const startupPct = Math.max(8, Math.min(100, Math.round((startup / 900) * 100)));
+    const framePct = Math.max(8, Math.min(100, Math.round((frame / 40) * 100)));
+    const noProfile = Math.min(900, Math.round(startup * 1.28));
+    const profile = v.baselineProfile === "true" ? startup : Math.min(900, Math.round(startup * 1.12));
+    stage.classList.add("perf-stage");
+    stage.style.display = "grid";
+    stage.style.placeItems = "center";
+    stage.style.padding = "16px";
+    const shell = h("div", "perf-shell");
+    shell.appendChild(h("div", "perf-top", "<b>" + esc(mode) + "</b><span>" + (v.physicalDevice === "true" ? "device run" : "emulator suspect") + "</span>"));
+    const body = h("div", "perf-body");
+    const gauge = h("div", "perf-gauges");
+    [
+      ["Startup", startup + " ms", startupPct, startup <= startupGoal ? "good" : "warn"],
+      ["Frame", frame + " ms", framePct, frame <= frameGoal ? "good" : "warn"],
+    ].forEach(function (item) {
+      const card = h("div", "perf-gauge " + item[3]);
+      card.appendChild(h("span", null, esc(item[0])));
+      card.appendChild(h("b", null, esc(item[1])));
+      const bar = h("i");
+      bar.style.width = item[2] + "%";
+      card.appendChild(bar);
+      gauge.appendChild(card);
+    });
+    body.appendChild(gauge);
+    const lanes = h("div", "perf-lanes");
+    [
+      ["None", noProfile],
+      [v.baselineProfile === "true" ? "Baseline Profile" : "Partial warmup", profile],
+    ].forEach(function (item) {
+      const lane = h("div", "perf-lane");
+      lane.appendChild(h("span", null, esc(item[0])));
+      const track = h("div", "perf-lane-track");
+      const fill = h("i");
+      fill.style.width = Math.max(10, Math.min(100, Math.round((item[1] / 900) * 100))) + "%";
+      track.appendChild(fill);
+      lane.appendChild(track);
+      lane.appendChild(h("b", null, item[1] + " ms"));
+      lanes.appendChild(lane);
+    });
+    body.appendChild(lanes);
+    const badges = h("div", "perf-badges");
+    [
+      v.baselineProfile === "true" ? "Baseline Profile" : "No profile",
+      v.includeStartupProfile === "true" ? "startup profile" : "runtime CUJ",
+      v.jankState === "true" ? "JankStats state" : "frames only",
+      v.compilerReports === "true" ? "compiler reports" : "trace first",
+    ].forEach(function (label) { badges.appendChild(h("span", null, esc(label))); });
+    body.appendChild(badges);
+    const note = mode === "Macrobenchmark"
+      ? "StartupTimingMetric, FrameTimingMetric, CompilationMode"
+      : mode === "BaselineProfile"
+        ? "startup plus scroll, navigate, animation journeys"
+        : mode === "JankStats"
+          ? "copy frame data and attach UI state from effects"
+          : "release reports for stability, restartability, skippability";
+    body.appendChild(h("div", "perf-note", esc(note)));
+    shell.appendChild(body);
+    stage.appendChild(shell);
+  }
+
+  function genPerformanceMeasurement(pg, v) {
+    const mode = v.perfMeasurement || "Macrobenchmark";
+    const useProfile = v.baselineProfile !== "false";
+    const includeStartup = v.includeStartupProfile !== "false";
+    const physical = v.physicalDevice !== "false";
+    const withJankState = v.jankState !== "false";
+    const compilerReports = v.compilerReports === "true";
+    const deviceNote = physical ? "" : "\n// Warning: emulator timings are useful for smoke checks, not benchmark evidence.\n";
+    const compilation = useProfile
+      ? "CompilationMode.Partial(\n      baselineProfileMode = BaselineProfileMode.Require\n    )"
+      : "CompilationMode.None()";
+    if (mode === "BaselineProfile") {
+      return "import androidx.benchmark.macro.junit4.BaselineProfileRule\nimport androidx.test.ext.junit.runners.AndroidJUnit4\nimport androidx.test.uiautomator.By\nimport androidx.test.uiautomator.Direction\nimport androidx.test.uiautomator.Until\nimport org.junit.Rule\nimport org.junit.Test\nimport org.junit.runner.RunWith\n\nprivate const val TargetPackage = \"com.example.app\"\n\n@RunWith(AndroidJUnit4::class)\nclass ComposeBaselineProfileGenerator {\n  @get:Rule\n  val baselineProfileRule = BaselineProfileRule()\n\n  @Test\n  fun generateBaselineProfile() = baselineProfileRule.collect(\n    packageName = TargetPackage,\n    includeInStartupProfile = " + includeStartup + "\n  ) {\n    pressHome()\n    startActivityAndWait()\n    device.wait(Until.hasObject(By.res(TargetPackage, \"feed\")), 5_000)\n\n    // Cover real critical user journeys, not only app launch.\n    device.findObject(By.res(TargetPackage, \"feed\")).fling(Direction.DOWN)\n    device.findObject(By.text(\"Details\")).click()\n    device.waitForIdle()\n  }\n}";
+    }
+    if (mode === "JankStats") {
+      return "import android.view.Window\nimport androidx.compose.foundation.lazy.LazyListState\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.LaunchedEffect\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.snapshotFlow\nimport androidx.compose.ui.platform.LocalView\nimport androidx.metrics.performance.JankStats\nimport androidx.metrics.performance.PerformanceMetricsState\n\nfun Window.installJankStats(\n  onFrame: (JankStats.FrameData) -> Unit\n): JankStats = JankStats.createAndTrack(this) { frameData ->\n  // Keep this callback tiny; copy what you need and aggregate off the frame path.\n  if (frameData.isJank) onFrame(frameData)\n}\n\n@Composable\nfun rememberMetricsStateHolder(): PerformanceMetricsState.Holder {\n  val view = LocalView.current\n  return remember(view) { PerformanceMetricsState.getHolderForHierarchy(view) }\n}\n\n@Composable\nfun ReportFeedJankState(listState: LazyListState) {\n  val holder = rememberMetricsStateHolder()\n  LaunchedEffect(holder, listState) {\n    snapshotFlow { listState.isScrollInProgress }\n      .collect { scrolling ->\n        " + (withJankState ? "if (scrolling) holder.state?.putState(\"Feed\", \"Scrolling\")\n        else holder.state?.removeState(\"Feed\")" : "// Attach only state that helps explain janky frames.\n        holder.state?.removeState(\"Feed\")") + "\n      }\n  }\n}";
+    }
+    if (mode === "CompilerReports") {
+      return "// build.gradle.kts\n// Turn this on only after a measured performance problem points to stability.\nplugins {\n  id(\"org.jetbrains.kotlin.plugin.compose\")\n}\n\ncomposeCompiler {\n  reportsDestination = layout.buildDirectory.dir(\"compose_compiler/reports\")\n  metricsDestination = layout.buildDirectory.dir(\"compose_compiler/metrics\")\n}\n\n// Run a release-like build, then inspect classes.txt and composables.txt:\n// ./gradlew :app:assembleRelease\n// Look for unstable parameters that explain the measured recomposition or skipping issue.\n" + (compilerReports ? "\n// Pair the report with Layout Inspector, traces, and Macrobenchmark output." : "\n// Leave reports disabled in normal builds unless you are diagnosing an issue.");
+    }
+    return deviceNote + "import androidx.benchmark.macro.BaselineProfileMode\nimport androidx.benchmark.macro.CompilationMode\nimport androidx.benchmark.macro.FrameTimingMetric\nimport androidx.benchmark.macro.StartupMode\nimport androidx.benchmark.macro.StartupTimingMetric\nimport androidx.benchmark.macro.junit4.MacrobenchmarkRule\nimport androidx.test.ext.junit.runners.AndroidJUnit4\nimport androidx.test.uiautomator.By\nimport androidx.test.uiautomator.Direction\nimport androidx.test.uiautomator.Until\nimport org.junit.Rule\nimport org.junit.Test\nimport org.junit.runner.RunWith\n\nprivate const val TargetPackage = \"com.example.app\"\n\n@RunWith(AndroidJUnit4::class)\nclass ComposeJourneyBenchmark {\n  @get:Rule\n  val benchmarkRule = MacrobenchmarkRule()\n\n  @Test\n  fun coldStartup() = benchmarkRule.measureRepeated(\n    packageName = TargetPackage,\n    metrics = listOf(StartupTimingMetric()),\n    compilationMode = " + compilation + ",\n    startupMode = StartupMode.COLD,\n    iterations = 10,\n    setupBlock = { pressHome() }\n  ) {\n    startActivityAndWait()\n    device.wait(Until.hasObject(By.res(TargetPackage, \"feed\")), 5_000)\n  }\n\n  @Test\n  fun feedScrollFrames() = benchmarkRule.measureRepeated(\n    packageName = TargetPackage,\n    metrics = listOf(FrameTimingMetric()),\n    compilationMode = " + compilation + ",\n    iterations = 10,\n    setupBlock = {\n      pressHome()\n      startActivityAndWait()\n      device.wait(Until.hasObject(By.res(TargetPackage, \"feed\")), 5_000)\n    }\n  ) {\n    device.findObject(By.res(TargetPackage, \"feed\")).fling(Direction.DOWN)\n    device.waitForIdle()\n  }\n}";
   }
 
   function pvNesting(pg, v, stage) {
@@ -1904,8 +2018,8 @@
     return s + "}";
   }
 
-  const COMPONENT_PV = { Button: pvButton, Card: pvCard, Controls: pvControls, TextField: pvTextField, ConstraintLayout: pvConstraintLayout, VisibilityTracking: pvVisibilityTracking, Nesting: pvNesting, Scaffold: pvScaffold, LazyCollections: pvLazyCollections, ImageResource: pvImageResource, SelectionInput: pvSelectionInput, StatusContent: pvStatusContent, TransientSurface: pvTransientSurface, NavigationSurface: pvNavigationSurface, Interop: pvInterop, Nav3: pvNav3, ProfileRow: pvProfileRow };
-  const COMPONENT_GEN = { Button: genButton, Card: genCard, Controls: genControls, TextField: genTextField, ConstraintLayout: genConstraintLayout, VisibilityTracking: genVisibilityTracking, Nesting: genNesting, Scaffold: genScaffold, LazyCollections: genLazyCollections, ImageResource: genImageResource, SelectionInput: genSelectionInput, StatusContent: genStatusContent, TransientSurface: genTransientSurface, NavigationSurface: genNavigationSurface, Interop: genInterop, Nav3: genNav3, ProfileRow: genProfileRow };
+  const COMPONENT_PV = { Button: pvButton, Card: pvCard, Controls: pvControls, TextField: pvTextField, ConstraintLayout: pvConstraintLayout, VisibilityTracking: pvVisibilityTracking, PerformanceMeasurement: pvPerformanceMeasurement, Nesting: pvNesting, Scaffold: pvScaffold, LazyCollections: pvLazyCollections, ImageResource: pvImageResource, SelectionInput: pvSelectionInput, StatusContent: pvStatusContent, TransientSurface: pvTransientSurface, NavigationSurface: pvNavigationSurface, Interop: pvInterop, Nav3: pvNav3, ProfileRow: pvProfileRow };
+  const COMPONENT_GEN = { Button: genButton, Card: genCard, Controls: genControls, TextField: genTextField, ConstraintLayout: genConstraintLayout, VisibilityTracking: genVisibilityTracking, PerformanceMeasurement: genPerformanceMeasurement, Nesting: genNesting, Scaffold: genScaffold, LazyCollections: genLazyCollections, ImageResource: genImageResource, SelectionInput: genSelectionInput, StatusContent: genStatusContent, TransientSurface: genTransientSurface, NavigationSurface: genNavigationSurface, Interop: genInterop, Nav3: genNav3, ProfileRow: genProfileRow };
 
   // ======================= PLAYGROUND UI =======================
   function buildControl(pg, c, v, onChange) {
@@ -3388,6 +3502,116 @@
           const simple = /ConstraintLayout\s*\{/.test(code) && !/(ConstraintSet|createGuideline|create(?:Top|Bottom|Start|End)Barrier|create(?:Horizontal|Vertical)Chain|ChainStyle|BoxWithConstraints)/.test(code);
           const count = (code.match(/constrainAs\s*\(/g) || []).length;
           return simple && count > 0 && count <= 2 ? "Found a small inline ConstraintLayout that may be simpler as Row, Column, or Box." : "";
+        },
+      },
+      {
+        id: "visibility-onfirstvisible-deprecated",
+        severity: "Runtime",
+        section: "visibility-tracking",
+        title: "Avoid deprecated onFirstVisible for first-seen logic.",
+        why: "`onFirstVisible()` is deprecated because its name is misleading in lazy lists and can fire again after an item scrolls away and back.",
+        fix: "Use `onVisibilityChanged()` with explicit thresholds and track your own `seen` flag keyed by stable item identity.",
+        detect: function (code) { return /\.onFirstVisible\s*(?:\(|\{)/.test(code) ? "Found deprecated `Modifier.onFirstVisible()`." : ""; },
+      },
+      {
+        id: "visibility-impression-threshold",
+        severity: "Quality",
+        section: "visibility-tracking",
+        title: "Visibility analytics need explicit threshold and duration.",
+        why: "A visible callback without a fraction and duration can count one-pixel flashes or fast scroll-throughs as meaningful impressions.",
+        fix: "Set `minFractionVisible` and `minDurationMs` according to the product's impression or autoplay contract.",
+        detect: function (code) {
+          const hasVisibility = /\.onVisibilityChanged\s*(?:\(|\{)/.test(code);
+          const looksLikeTracking = /(impression|analytics|track|seen|autoplay|video|playback)/i.test(code);
+          return hasVisibility && looksLikeTracking && (!/minFractionVisible\s*=/.test(code) || !/minDurationMs\s*=/.test(code))
+            ? "Found visibility tracking without both `minFractionVisible` and `minDurationMs`."
+            : "";
+        },
+      },
+      {
+        id: "visibility-layoutrect-throttle",
+        severity: "Performance",
+        section: "visibility-tracking",
+        title: "Throttle or debounce geometry callbacks.",
+        why: "`onLayoutRectChanged` can fire at scroll-frame frequency; heavy callbacks can hurt scroll performance.",
+        fix: "Set `throttleMillis`, `debounceMillis`, or both, and send compact events instead of doing expensive work inline.",
+        detect: function (code) {
+          return /\.onLayoutRectChanged\s*(?:\(|\{)/.test(code) && !/(throttleMillis\s*=|debounceMillis\s*=)/.test(code)
+            ? "Found `onLayoutRectChanged` without throttle/debounce parameters."
+            : "";
+        },
+      },
+      {
+        id: "visibility-lazy-identity",
+        severity: "State",
+        section: "visibility-tracking",
+        title: "Visibility state in lazy lists needs stable item identity.",
+        why: "Once-only seen flags and impression callbacks must belong to the item, not to an incidental composition slot.",
+        fix: "Use lazy `items(..., key = { item.id })` and key remembered seen state with the same stable id.",
+        detect: function (code) {
+          const lazyVisibility = /(LazyColumn|LazyVerticalGrid|LazyVerticalStaggeredGrid)\s*\{[\s\S]{0,2200}\.onVisibilityChanged\s*(?:\(|\{)/.test(code);
+          return lazyVisibility && !/items\s*\([\s\S]{0,500}key\s*=/.test(code)
+            ? "Found visibility tracking inside a lazy container without an obvious stable item key."
+            : "";
+        },
+      },
+      {
+        id: "macrobenchmark-release-target",
+        severity: "Performance",
+        section: "performance-measurement",
+        title: "Macrobenchmark needs a release-like target.",
+        why: "Debuggable apps, debug Compose settings, and emulator timing do not represent production startup, frame timing, or compilation behavior.",
+        fix: "Run Macrobenchmark against a non-debuggable/profileable release-like build on a physical device.",
+        detect: function (code) {
+          const hasBenchmark = /(MacrobenchmarkRule|measureRepeated\s*\()/.test(code);
+          const debugTarget = /(debuggable\s*(?:=|\s)\s*true|isDebuggable\s*=\s*true|debugImplementation\s*\()/.test(code);
+          const emulatorOnly = /(emulator|avd|managedDevice)/i.test(code) && !/(physical|device farm|firebase test lab)/i.test(code);
+          if (hasBenchmark && debugTarget) return "Found Macrobenchmark code near a debuggable/debug target configuration.";
+          if (hasBenchmark && emulatorOnly) return "Found Macrobenchmark code that appears to rely on emulator-only timing.";
+          return "";
+        },
+      },
+      {
+        id: "macrobenchmark-metrics-iterations",
+        severity: "Performance",
+        section: "performance-measurement",
+        title: "Macrobenchmarks should name metrics, compilation, and iterations explicitly.",
+        why: "A benchmark without clear metrics, compilation mode, and iteration count is hard to compare before and after a performance change.",
+        fix: "Pass metrics such as `StartupTimingMetric`, `FrameTimingMetric`, or `TraceSectionMetric`, set `CompilationMode`, and choose an explicit `iterations` count.",
+        detect: function (code) {
+          if (!/measureRepeated\s*\(/.test(code)) return "";
+          const missing = [];
+          if (!/(StartupTimingMetric|FrameTimingMetric|TraceSectionMetric)\s*\(/.test(code)) missing.push("metric");
+          if (!/CompilationMode\./.test(code)) missing.push("CompilationMode");
+          if (!/iterations\s*=/.test(code)) missing.push("iterations");
+          return missing.length ? "Found `measureRepeated` without explicit " + missing.join(", ") + "." : "";
+        },
+      },
+      {
+        id: "baseline-profile-cuj-coverage",
+        severity: "Performance",
+        section: "performance-measurement",
+        title: "Baseline Profiles should cover critical user journeys.",
+        why: "A profile that only launches the app can miss Compose work in scrolling, navigation, animation, and important screen interactions.",
+        fix: "Collect startup plus representative CUJs such as opening a destination, scrolling a lazy list, navigating tabs, typing, or running an animation.",
+        detect: function (code) {
+          const hasProfile = /(BaselineProfileRule|collect\s*\(\s*packageName\s*=)/.test(code);
+          const hasRuntimeAction = /(fling|scroll|swipe|drag|click|navigate|pressKey|setText|performClick|performScroll|onNode|onElement|findObject\s*\([^)]*\)\s*\.)/.test(code);
+          return hasProfile && !hasRuntimeAction ? "Found Baseline Profile collection without obvious non-launch user-journey actions." : "";
+        },
+      },
+      {
+        id: "jankstats-state-effect",
+        severity: "Runtime",
+        section: "performance-measurement",
+        title: "Update JankStats UI state from an effect.",
+        why: "Writing PerformanceMetricsState directly from the composable body can repeat on every recomposition and attach stale frame context.",
+        fix: "Remember the holder from `LocalView.current`, then update `putState` and `removeState` from `LaunchedEffect`, `DisposableEffect`, `SideEffect`, or a `snapshotFlow` collector.",
+        detect: function (code) {
+          const writesState = /(PerformanceMetricsState|getHolderForHierarchy|\.putState\s*\(|\.removeState\s*\()/.test(code);
+          const composableContext = /@Composable[\s\S]{0,1400}(PerformanceMetricsState|getHolderForHierarchy|\.putState\s*\(|\.removeState\s*\()/.test(code);
+          const hasEffect = /(LaunchedEffect|DisposableEffect|SideEffect|snapshotFlow)\s*(?:\(|\{)/.test(code);
+          return writesState && composableContext && !hasEffect ? "Found JankStats PerformanceMetricsState usage in composable code without an obvious effect boundary." : "";
         },
       },
       {
