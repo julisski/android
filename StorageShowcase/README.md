@@ -2,8 +2,9 @@
 
 A single Jetpack Compose teaching app that demonstrates **every common on-device storage
 technique** in one place — the runnable capstone behind the interactive
-[`Playground/storage-playground.html`](../Playground/storage-playground.html) lab and a
-broader sibling to [`RoomAndPreferences`](../RoomAndPreferences).
+[Storage Master Lab](../StorageMaster/storage-tutorial.html) (and the quick
+[Room Storage Playground](../Playground/storage-playground.html)), and a broader sibling to
+[`RoomAndPreferences`](../RoomAndPreferences).
 
 Four tabs, one storage mechanism each — everything you change survives an app restart:
 

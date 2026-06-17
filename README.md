@@ -23,11 +23,15 @@ comments, so you can diff any two projects to see exactly what a feature adds.
 > **[`nav-playground.html`](./Playground/nav-playground.html)** (Navigation 3 — edit a
 > `rememberNavBackStack(…)` key list, or tap the phone / press Back, and watch the back stack
 > update), and
-> **[`storage-playground.html`](./Playground/storage-playground.html)** (Data storage — a
-> single-file master class on local persistence: DataStore, Room (entities, DAOs, reactive
-> `Flow` queries, migrations, relations), files & scoped storage, encryption and backup;
-> insert rows and watch a `Flow` re-emit, flip `@Entity` annotations and watch the
-> `CREATE TABLE` change, break a migration and watch it crash). The storage lab is the
+> **[`storage-playground.html`](./Playground/storage-playground.html)** (Data storage — edit
+> Room DAO calls, or tap a note, and watch the `notes` table, the generated SQL, and a
+> reactive `Flow` re-emit into the UI live).
+>
+> 📚 For the **full deep dive**, the **[`StorageMaster/`](./StorageMaster)** lab
+> (**[`storage-tutorial.html`](./StorageMaster/storage-tutorial.html)**) is a 21-section
+> master class on local persistence — DataStore, Room (entities, DAOs, reactive `Flow`,
+> migrations, relations), files & scoped storage, encryption and backup — with ten hand-built
+> widgets. The runnable companion app is [`StorageShowcase`](./StorageShowcase); both are the
 > deep-dive behind [`RoomAndPreferences`](./RoomAndPreferences).
 >
 > ✅ Prefer to **practice**? **[`labs/`](./labs)** is a set of guided, browser-based
@@ -95,7 +99,7 @@ Same Kotlin / Compose / Material 3 / Gradle-KTS stack; each has its own README.
 | [`LocationServices`](./LocationServices) | Integrating a **device API**: runtime location permission + **FusedLocationProviderClient**, surfaced as idle / loading / success / error, with an offline fake. |
 | [`MvvmState`](./MvvmState) | MVVM: `ViewModel`, `StateFlow`, immutable `UiState`, UI events, unidirectional data flow (fake data). |
 | [`RoomAndPreferences`](./RoomAndPreferences) | Local persistence: **Room** (via KSP) for structured data + **DataStore Preferences** for settings. |
-| [`StorageShowcase`](./StorageShowcase) | Local-storage **capstone**: one tabbed app covering Room (entity, DAO, reactive `Flow`, `@TypeConverter`, `@ForeignKey`/`@Relation`, a `Migration`), Preferences DataStore, **Typed (JSON) DataStore**, and internal file storage. The runnable companion to [`Playground/storage-playground.html`](./Playground/storage-playground.html). |
+| [`StorageShowcase`](./StorageShowcase) | Local-storage **capstone**: one tabbed app covering Room (entity, DAO, reactive `Flow`, `@TypeConverter`, `@ForeignKey`/`@Relation`, a `Migration`), Preferences DataStore, **Typed (JSON) DataStore**, and internal file storage. The runnable companion to the [Storage Master Lab](./StorageMaster/storage-tutorial.html). |
 | [`AppReleaseBasics`](./AppReleaseBasics) | Release basics: manifest, runtime permissions, version/build types, signing concepts, App Bundle (README). |
 
 ---
