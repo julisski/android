@@ -131,6 +131,8 @@ pre .px{color:var(--c-punct);}
 .dbtable th{color:#7c8aa0;font-weight:700;background:#fbfdff;}
 .dbtable td.done-1{color:var(--accent-deep);}
 .dbempty{padding:14px;text-align:center;color:#9aa8b8;font-size:12px;font-family:inherit;}
+.savedto{margin-top:8px;font-size:11px;color:#7c8aa0;line-height:1.55;}
+.savedto code{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--accent-deep);font-size:10.5px;background:var(--teal-soft);border:1px solid var(--teal-line);padding:1px 5px;border-radius:5px;}
 
 /* the phone (the UI that COLLECTS the Flow) */
 .phone{width:300px;flex:none;border:10px solid #0b1220;border-radius:34px;background:#fff;overflow:hidden;
@@ -233,6 +235,7 @@ body.theme-dark .phone .napp-bar,body.theme-dark .phone .screen{ background:#141
           <div>
             <p class="dtitle">notes table (on disk)</p>
             <div class="dbtable" id="dbtable"></div>
+            <div class="savedto">💾 <b>Saved to:</b> in a real Room app this table lives in the app's private SQLite file at <code>/data/data/&lt;pkg&gt;/databases/notes.db</code>. (Settings would persist separately under <code>files/datastore/…</code>.) This playground holds it in memory only.</div>
           </div>
         </div>
         <div>
