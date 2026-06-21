@@ -57,7 +57,7 @@ interface TaskDao {
     // a column name (it's `createdAt`, not `created_at`), the build fails with a clear
     // Room error pointing at this line — that is Room protecting you, not a bug.
     // =========================================================================
-    @Query("SELECT * FROM tasks")                           // TODO 1: add ORDER BY done ASC, priority DESC, createdAt DESC
+    @Query("SELECT * FROM tasks ORDER BY done ASC, priority DESC, createdAt DESC")
     fun observeTasks(): Flow<List<Task>>
 
     /**
