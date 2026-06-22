@@ -137,6 +137,10 @@ class FavoritesViewModel : ViewModel() {
     // cannot cast it back and write to it. State flows DOWN to the UI through this.
     val favorites: StateFlow<Set<Int>> = _favorites.asStateFlow()
 
+    // B4: In FavoritesViewModel — a SECOND piece of shared state, same recipe:
+    private val _visited = MutableStateFlow<Set<Int>>(emptySet())
+    val visited: StateFlow<Set<Int>> = _visited.asStateFlow()
+
     /**
      * toggleFavorite — the single EVENT the UI sends UP to flip a planet's
      * favorite status. This is the only place the favorites set is mutated.
@@ -153,5 +157,15 @@ class FavoritesViewModel : ViewModel() {
         _favorites.update { current ->
             if (id in current) current - id else current + id  // remove if present, else add
         }
+    }
+
+    /** B1: Clears every favorite — the second EVENT the UI can send up. */
+    fun clearFavorites() {
+        _favorites.update { emptySet() }   // same atomic update pattern as toggleFavorite
+    }
+
+    /** B4: Marks a planet as seen. Unlike toggleFavorite, this only ever ADDS. */
+    fun markVisited(id: Int) {
+        _visited.update { it + id }
     }
 }

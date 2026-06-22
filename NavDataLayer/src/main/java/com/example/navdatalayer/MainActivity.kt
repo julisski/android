@@ -387,6 +387,13 @@ private fun CenteredMessage(content: @Composable () -> Unit) {
 // is the source of truth.
 // ===========================================================================
 
+// C4: give the detail screen the sealed-state treatment
+sealed interface DetailUiState {
+    data object Loading : DetailUiState                   // suspend load still running
+    data object NotFound : DetailUiState                  // load finished; id matched nothing
+    data class Success(val planet: Item) : DetailUiState // load finished; planet in hand
+}
+
 /**
  * Detail screen for one planet, loaded by [planetId].
  *
@@ -411,31 +418,34 @@ fun PlanetDetailScreen(
     repo: PlanetRepository = remember { InMemoryPlanetRepository() },
 ) {
     Log.d("LT", "Entered PlanetDetailScreen")
-    // Local load state. `loading` starts true; `planet` is filled once the
-    // suspend call returns (or stays null if the id wasn't found).
-    var loading by remember { mutableStateOf(true) }
-    var planet by remember { mutableStateOf<Item?>(null) }
+    // C4: ONE state var replaces the loading/planet pair:
+    var state by remember { mutableStateOf<DetailUiState>(DetailUiState.Loading) }
 
     // LaunchedEffect runs the suspend load when the screen appears (and re-runs if
     // planetId changes). This is the detail screen's own little "Loading" state.
     LaunchedEffect(planetId) {
-        loading = true
-        planet = repo.planet(planetId)     // suspend call into the data layer
-        loading = false
+        state = DetailUiState.Loading
+        state = repo.planet(planetId)                  // suspend call into the data layer...
+            ?.let { DetailUiState.Success(it) }        // ...non-null -> Success carrying the planet
+            ?: DetailUiState.NotFound                  // ...null -> NotFound
     }
 
     Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
-        when {
+        // C4: `when (val s = state)` captures the delegated var into a plain val so the
+        // compiler can smart-cast `s` inside each branch.
+        // The planet!! from the old code is gone because the Success state carries a non-null
+        // planet, and the compiler guarantees we only reach that branch if state is Success.
+        when (val s = state) {
             // Detail's own loading state — small and self-contained.
-            loading -> CenteredMessage {
+            is DetailUiState.Loading -> CenteredMessage {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(12.dp))
                 Text("Loading planet…", style = MaterialTheme.typography.bodyMedium)
             }
 
             // The id resolved to a real planet — show its details.
-            planet != null -> {
-                val p = planet!!                            // safe: guarded by the branch condition
+            is DetailUiState.Success -> {
+                val p = s.planet
                 Text(p.title, style = MaterialTheme.typography.headlineSmall)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(p.blurb, style = MaterialTheme.typography.bodyLarge)
@@ -449,7 +459,7 @@ fun PlanetDetailScreen(
             }
 
             // The id matched no planet — a graceful "not found" state.
-            else -> {
+            is DetailUiState.NotFound -> {
                 Text("Planet not found", style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = onBack) { Text("Back to list") }
@@ -471,45 +481,45 @@ fun PlanetDetailScreen(
 // ===========================================================================
 
 // LOADING — the spinner state.
-//@Preview(name = "List · Loading", showBackground = true, widthDp = 320, heightDp = 480)
-//@Composable
-//fun ListLoadingPreview() {
-//    NavDataLayerTheme {
-//        PlanetListScreenBody(uiState = PlanetsUiState.Loading, onOpen = {}, onRetry = {})
-//    }
-//}
-//
-//// EMPTY — fetch succeeded but returned nothing.
-//@Preview(name = "List · Empty", showBackground = true, widthDp = 320, heightDp = 480)
-//@Composable
-//fun ListEmptyPreview() {
-//    NavDataLayerTheme {
-//        PlanetListScreenBody(uiState = PlanetsUiState.Empty, onOpen = {}, onRetry = {})
-//    }
-//}
-//
-//// ERROR — fetch failed; note the Retry button.
-//@Preview(name = "List · Error", showBackground = true, widthDp = 320, heightDp = 480)
-//@Composable
-//fun ListErrorPreview() {
-//    NavDataLayerTheme {
-//        PlanetListScreenBody(
-//            uiState = PlanetsUiState.Error("Could not reach the planet service."),
-//            onOpen = {},
-//            onRetry = {},
-//        )
-//    }
-//}
-//
-//// SUCCESS — the populated list (uses the sample planets directly as preview data).
-//@Preview(name = "List · Success", showBackground = true, widthDp = 320, heightDp = 480)
-//@Composable
-//fun ListSuccessPreview() {
-//    NavDataLayerTheme {
-//        PlanetListScreenBody(
-//            uiState = PlanetsUiState.Success(samplePlanets),
-//            onOpen = {},
-//            onRetry = {},
-//        )
-//    }
-//}
+@Preview(name = "List · Loading", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun ListLoadingPreview() {
+    NavDataLayerTheme {
+        PlanetListScreenBody(uiState = PlanetsUiState.Loading, onOpen = {}, onRetry = {})
+    }
+}
+
+// EMPTY — fetch succeeded but returned nothing.
+@Preview(name = "List · Empty", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun ListEmptyPreview() {
+    NavDataLayerTheme {
+        PlanetListScreenBody(uiState = PlanetsUiState.Empty, onOpen = {}, onRetry = {})
+    }
+}
+
+// ERROR — fetch failed; note the Retry button.
+@Preview(name = "List · Error", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun ListErrorPreview() {
+    NavDataLayerTheme {
+        PlanetListScreenBody(
+            uiState = PlanetsUiState.Error("Could not reach the planet service."),
+            onOpen = {},
+            onRetry = {},
+        )
+    }
+}
+
+// SUCCESS — the populated list (uses the sample planets directly as preview data).
+@Preview(name = "List · Success", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun ListSuccessPreview() {
+    NavDataLayerTheme {
+        PlanetListScreenBody(
+            uiState = PlanetsUiState.Success(samplePlanets),
+            onOpen = {},
+            onRetry = {},
+        )
+    }
+}
