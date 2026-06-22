@@ -1690,12 +1690,26 @@ input[type="range"] {
         <h2>The simplest version: where can an app keep things?</h2>
         <p class="lead">An app often needs to remember things - a setting you picked, a note you typed, a photo you took. There is not one big box for all of it. Instead, Android gives an app a few different "places" to keep data, and each place is good for a different kind of thing - a bit like how, at home, you keep your keys, your photo albums, and your scratch paper in different spots. Here are the main places, in plain words.</p>
 
+        <div class="callout good">
+          <strong>If you only remember one sentence:</strong> use <b>DataStore</b> for small settings,
+          <b>Room</b> for lists of records you query, <b>filesDir</b> for private files that must last,
+          <b>cacheDir</b> for files you can rebuild, and <b>MediaStore</b> or the system picker when the
+          user should see, keep, or choose the file.
+        </div>
+
         <div class="callout">
           <strong>First, what does "volatile" mean?</strong> Volatile data disappears the moment the power goes off - that is the phone's memory (RAM), where things live only while the app is running, like a variable or a screen's temporary state. Non-volatile data is written to the phone's storage chip (or a server) and is still there after a restart. Every place below is non-volatile - it all survives the phone turning off and on. (The cache is the one twist: it is non-volatile, but the system may delete it to free up space.)
         </div>
 
         <div class="callout good">
           <strong>Want to see this in real code?</strong> The runnable <strong>Storage Showcase</strong> app puts every mechanism on this page into one Compose app (one tab each), and <a href="how-storageshowcase-works.html">How Storage Showcase works</a> is a file-by-file walkthrough of how it's wired together.
+        </div>
+
+        <div class="callout">
+          <strong>Recommended path through these storage docs:</strong> read this Start Here section,
+          try the <a href="#chooser">decision engine</a>, open the
+          <a href="../Playground/storage-playground.html">Room playground</a> only when you are ready
+          to focus on database rows, then use the Master Lab as the detailed reference.
         </div>
 
         <div class="plain-grid">

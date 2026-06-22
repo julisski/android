@@ -530,6 +530,14 @@ p { overflow-wrap: anywhere; }
           flows from a tap on the screen down to the disk and reactively back up again.
         </p>
 
+        <div class="callout good">
+          <span class="callout-label">Read this before the code</span>
+          The app is not saying "always use all four." It is comparing four separate choices:
+          <strong>Room</strong> for structured records, <strong>Preferences DataStore</strong> for simple
+          settings, <strong>Typed DataStore</strong> for one schema-backed object, and
+          <strong>filesDir/cacheDir</strong> for private bytes. Pick one based on the shape of the data.
+        </div>
+
         <div class="statgrid">
           <div class="stat"><div class="s-num2">4</div><div class="s-lab">storage mechanisms, one per tab</div></div>
           <div class="stat"><div class="s-num2">~1,100</div><div class="s-lab">lines of commented Kotlin</div></div>
@@ -573,6 +581,13 @@ p { overflow-wrap: anywhere; }
           Each tab writes to a <em>different</em> place on disk, but they all reach the screen the same
           way: a <strong>persistence <code>Flow</code> → a UI <code>StateFlow</code> → <code>collectAsStateWithLifecycle()</code>
           → recomposition</strong>. Pick the storage that matches your data shape; the reactive plumbing above it never changes.
+        </div>
+
+        <div class="callout">
+          <span class="callout-label">Where to go next</span>
+          If you are still deciding which API to use, open <a href="android-storage-lab.html#chooser">the
+          decision engine</a>. If you already chose Room and want to feel how live queries work, open
+          the <a href="../Playground/storage-playground.html">Room Storage Playground</a>.
         </div>
       </div>
     </section>

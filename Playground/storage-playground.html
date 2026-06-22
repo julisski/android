@@ -53,6 +53,10 @@ header.hero .links{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
 header.hero a.back{color:#dcfffb;text-decoration:none;font-size:13px;font-weight:700;
   border:1px solid rgba(255,255,255,.25);padding:6px 12px;border-radius:8px;white-space:nowrap;}
 header.hero a.back:hover{background:rgba(255,255,255,.1);}
+.scope-note{background:#fff;border-bottom:1px solid var(--line);padding:11px 22px;color:var(--muted);font-size:13px;}
+.scope-note strong{color:var(--ink);}
+.scope-note a{color:var(--accent-deep);font-weight:750;text-decoration:none;}
+.scope-note a:hover{text-decoration:underline;}
 
 /* --- Toolbar ---------------------------------------------------------------- */
 .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;background:#fff;
@@ -231,7 +235,9 @@ body.theme-dark .phone .napp-bar,body.theme-dark .phone .screen{ background:#141
       <h1>Room Storage Playground</h1>
     </div>
     <div class="links">
+      <a class="back" href="../StorageShowcase/android-storage-lab.html">Storage chooser</a>
       <a class="back" href="../StorageMaster/storage-tutorial.html">📚 Storage Master Lab</a>
+      <a class="back" href="../StorageShowcase/how-storageshowcase-works.html">Storage Showcase</a>
       <a class="back" href="./playground.html">🎨 Compose</a>
       <a class="back" href="./nav-playground.html">🧭 Navigation</a>
       <a class="back" href="../homework/projects.html">← Projects</a>
@@ -239,6 +245,10 @@ body.theme-dark .phone .napp-bar,body.theme-dark .phone .screen{ background:#141
   </div>
   <p class="sub">Local storage is just <b>operations on a persisted table</b>. A Room <code style="color:#cffaf5">@Query</code> that returns <code style="color:#cffaf5">Flow&lt;List&lt;Note&gt;&gt;</code> re-runs and <b>re-emits</b> on every write, so the UI re-renders automatically. <b>Edit</b> the DAO calls on the left — or <b>tap</b> a note on the phone — and watch the table, the SQL, and the list update live. (A teaching model, not a real database.)</p>
 </header>
+
+<div class="scope-note">
+  <strong>Scope:</strong> this page teaches the <b>Room</b> part of Android storage only. If you are deciding between Room, DataStore, files, cache, MediaStore, or SAF, start with the <a href="../StorageShowcase/android-storage-lab.html#chooser">storage chooser</a> first.
+</div>
 
 <!-- TOOLBAR -->
 <div class="toolbar">
