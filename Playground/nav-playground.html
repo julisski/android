@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Navigation 3 Playground — see the back stack live</title>
+<!-- ===========================================================================
+  Navigation 3 Playground — a SELF-CONTAINED, single-file interactive teaching tool.
+  Companion to the Compose Playground (playground.html); same look, different lesson.
+
+  THE ONE BIG IDEA it teaches:
+    In Jetpack Navigation 3 the back stack is JUST A LIST OF KEYS. The TOP (last)
+    key is the screen on screen. PUSH a key = navigate forward; POP a key = go back.
+    Keys carry their screen's arguments (e.g. DetailKey(itemId = 4)).
+
+  HOW IT WORKS (two-way):
+    • EDIT the back stack as Kotlin — a `rememberNavBackStack( … )` list of keys —
+      and the phone preview + visualizer update live. (edit → effect)
+    • Or NAVIGATE: tap a row to push a key, press Back / Start over to pop, switch
+      scenarios. Every action rewrites the Kotlin and logs the equivalent
+      backStack.add(...) / removeLastOrNull() call. (interact → code)
+
+  It is NOT a real Android runtime. It models the planets domain and the Nav 3
+  back-stack semantics used by the NavListDetail / NavThreeScreen / NavDeepLinks /
+  NavBottomTabs / NavNestedGraphs teaching projects, and maps them to HTML/CSS.
+
+  FILE MAP:  <style> (CSS, grouped)  ·  <body> (hero, toolbar, editor|preview, catalog)
+             <script> sections 0..9 (data, keys, parse/codegen, screens, visualizer,
+             driver, scenarios, catalog, wiring).
+=========================================================================== -->
+<style>
+/* --- Design tokens (shared with playground.html so the two pages match) ----- */
+:root{
+  --ink:#16212e; --muted:#5b6b7b; --line:#e4e9f0; --bg:#f4f6f9; --card:#ffffff;
+  --accent:#3ddc84; --accent-deep:#0f9d58; --accent-ink:#063a22;
+  --blue:#2563eb; --blue-soft:#eef4ff; --blue-line:#d3e0ff;
+  --warn:#b45309; --warn-soft:#fff7ed; --warn-line:#fde2c0;
+  --code-bg:#0f172a; --code-ink:#e6edf6;
+  --c-comment:#7d8aa0; --c-key:#c792ea; --c-str:#9ae6a6; --c-fn:#82aaff;
+  --c-type:#7fd4ff; --c-num:#f5b86b; --c-anno:#ffcb6b; --c-punct:#8aa0b8;
+  --shadow:0 1px 2px rgba(15,23,42,.05),0 8px 24px -16px rgba(15,23,42,.25);
+}
+*{box-sizing:border-box;}
+html{height:100%;}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);
+  font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;}
+
+/* --- Hero ------------------------------------------------------------------- */
+header.hero{background:linear-gradient(135deg,#0b1220 0%,#15243a 55%,#2563eb 175%);
+  color:#fff;padding:18px 22px 16px;border-bottom:4px solid var(--blue);flex:none;}
+header.hero .bartop{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+.eyebrow{letter-spacing:.15em;text-transform:uppercase;font-size:11px;color:#7fb0ff;font-weight:800;margin:0;}
+header.hero h1{margin:2px 0 0;font-size:21px;line-height:1.15;font-weight:850;letter-spacing:-.01em;}
+header.hero p.sub{margin:6px 0 0;color:#c6d2e2;font-size:13px;max-width:84ch;}
+header.hero .links{margin-left:auto;display:flex;gap:8px;}
+header.hero a.back{color:#dbe7ff;text-decoration:none;font-size:13px;font-weight:700;
+  border:1px solid rgba(255,255,255,.25);padding:6px 12px;border-radius:8px;white-space:nowrap;}
+header.hero a.back:hover{background:rgba(255,255,255,.1);}
+
+/* --- Toolbar ---------------------------------------------------------------- */
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;background:#fff;
+  border-bottom:1px solid var(--line);flex:none;}
+.toolbar .group{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.toolbar .lbl{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#9aa8b8;margin-right:2px;}
+.chip{font-size:12.5px;font-weight:650;padding:5px 11px;border-radius:999px;background:#eef2f7;color:var(--muted);
+  border:1px solid var(--line);cursor:pointer;transition:.12s;white-space:nowrap;}
+.chip:hover{color:var(--ink);border-color:#c9d4e2;}
+.chip.active{background:var(--blue-soft);color:#1e40af;border-color:var(--blue);}
+.btn{font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:8px;background:#fff;color:var(--ink);
+  border:1px solid var(--line);cursor:pointer;transition:.12s;}
+.btn:hover{border-color:var(--blue);color:var(--blue);}
+.btn:disabled{opacity:.4;cursor:default;}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn.primary:hover{filter:brightness(1.05);color:#fff;}
+.spacer{flex:1;}
+
+/* --- Editor | preview row --------------------------------------------------- */
+.main{height:64vh;min-height:420px;display:flex;flex:none;border-bottom:1px solid var(--line);}
+.pane{display:flex;flex-direction:column;min-width:0;min-height:0;}
+.pane.editor{flex:1;border-right:1px solid var(--line);}
+.pane.preview{flex:1.25;background:#eef1f5;}
+.panehead{display:flex;align-items:center;gap:10px;padding:8px 14px;background:#f7f9fc;border-bottom:1px solid var(--line);
+  font-size:12px;font-weight:750;color:var(--muted);flex:none;}
+.panehead .dot{width:9px;height:9px;border-radius:50%;background:var(--blue);flex:none;}
+.panehead .right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+
+/* --- Code editor (transparent textarea over highlighted <pre>) -------------- */
+.editorwrap{position:relative;flex:1;min-height:0;overflow:hidden;background:var(--code-bg);}
+.editorwrap pre, .editorwrap textarea{
+  margin:0;position:absolute;inset:0;width:100%;height:100%;padding:14px 16px;border:0;
+  font:13px/1.6 "SF Mono",ui-monospace,Menlo,Consolas,monospace;tab-size:2;white-space:pre;overflow:auto;}
+.editorwrap pre{color:var(--code-ink);pointer-events:none;z-index:1;}
+.editorwrap textarea{color:transparent;background:transparent;caret-color:#cfe0ff;resize:none;outline:none;z-index:2;white-space:pre;}
+.editorwrap textarea::selection{background:rgba(37,99,235,.35);}
+pre .c{color:var(--c-comment);font-style:italic;}
+pre .k{color:var(--c-key);}
+pre .s{color:var(--c-str);}
+pre .t{color:var(--c-type);}
+pre .a{color:var(--c-anno);}
+pre .n{color:var(--c-num);}
+pre .px{color:var(--c-punct);}
+
+/* --- Status + op log (left pane) -------------------------------------------- */
+.status{flex:none;padding:7px 14px;font-size:12.5px;border-top:1px solid var(--line);
+  background:#fbfdff;color:var(--blue);font-weight:650;white-space:pre-wrap;}
+.status.err{background:var(--warn-soft);color:#9a3412;}
+.oplog{flex:none;height:118px;overflow:auto;border-top:1px solid var(--line);background:#0f172a;color:#cfe0ff;
+  font:11.5px/1.7 "SF Mono",ui-monospace,Menlo,Consolas,monospace;padding:8px 14px;}
+.oplog .ophead{color:#6f86b0;text-transform:uppercase;letter-spacing:.06em;font-size:10px;font-weight:700;margin-bottom:3px;}
+.oplog .opline{white-space:pre-wrap;}
+.oplog .opline .cm{color:#6f86b0;}
+
+/* --- Preview stage: back-stack visualizer + phone --------------------------- */
+.previewscroll{flex:1;min-height:0;overflow:auto;padding:20px 18px;}
+.previewstage{display:flex;gap:18px;align-items:flex-start;justify-content:center;flex-wrap:wrap;}
+
+/* the back-stack visualizer column */
+.stackpanel{width:212px;flex:none;}
+.stackpanel .stitle{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7c8aa0;margin:0 0 6px;}
+.stacklist{display:flex;flex-direction:column;gap:6px;}
+.stackcap{font-size:10.5px;color:#9aa8b8;text-align:center;padding:2px 0;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+.skey{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;transition:.12s;box-shadow:var(--shadow);}
+.skey:hover{border-color:var(--blue);}
+.skey .kname{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;font-weight:700;color:var(--ink);word-break:break-word;}
+.skey .kscreen{font-size:10.5px;color:var(--muted);margin-top:1px;}
+.skey.top{border-color:var(--blue);background:var(--blue-soft);box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+.skey.top .ktop{display:inline-block;font-size:9.5px;font-weight:800;color:#1e40af;background:#fff;border:1px solid var(--blue-line);
+  border-radius:999px;padding:1px 7px;margin-bottom:3px;letter-spacing:.04em;text-transform:uppercase;}
+.skey.empty{cursor:default;border-style:dashed;color:var(--muted);text-align:center;box-shadow:none;}
+.stackhint{font-size:11px;color:#9aa8b8;margin-top:8px;line-height:1.5;}
+
+/* the phone */
+.phone{width:300px;flex:none;border:10px solid #0b1220;border-radius:34px;background:#fff;overflow:hidden;
+  box-shadow:0 20px 50px -20px rgba(2,8,20,.5);display:flex;flex-direction:column;}
+.phone .notch{height:22px;background:#0b1220;border-radius:0 0 12px 12px;width:120px;margin:0 auto;flex:none;}
+.phone .screen{min-height:498px;display:flex;flex-direction:column;flex:1;}
+.phone .scrollarea{flex:1;overflow:auto;}
+
+/* on-phone widgets */
+.napp-bar{padding:14px 16px 12px;font-size:17px;font-weight:800;color:var(--ink);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;}
+.nback{border:1px solid var(--line);background:#fff;border-radius:8px;font-size:13px;font-weight:700;color:var(--blue);
+  padding:4px 10px;cursor:pointer;}
+.nback:hover{background:var(--blue-soft);}
+.nrow{padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;transition:.1s;}
+.nrow:hover{background:var(--blue-soft);}
+.nrow .nt{font-size:15px;font-weight:700;color:var(--ink);}
+.nrow .nb{font-size:12.5px;color:var(--muted);margin-top:1px;}
+.nrow .chev{float:right;color:#b6c2d2;font-weight:800;}
+.ndetail{padding:18px 16px;}
+.ndetail h3{margin:0 0 8px;font-size:20px;}
+.ndetail p{margin:0 0 18px;color:var(--muted);font-size:14px;}
+.nbtn{border:0;background:var(--blue);color:#fff;border-radius:999px;font-size:14px;font-weight:700;padding:10px 18px;cursor:pointer;}
+.nbtn:hover{filter:brightness(1.05);}
+.nbtn.alt{background:var(--blue-soft);color:#1e40af;margin-right:8px;}
+/* overlay (dialog) scene: a dimmed scrim + a centered dialog card over the screen below */
+.noverlay-scrim{position:absolute;inset:0;z-index:20;background:rgba(8,15,28,.45);display:flex;align-items:center;justify-content:center;padding:22px;}
+.noverlay-dialog{background:#fff;border-radius:16px;padding:18px 18px 16px;max-width:240px;box-shadow:0 20px 50px -16px rgba(2,8,20,.55);}
+.noverlay-title{font-size:16px;font-weight:800;color:var(--ink);margin-bottom:8px;}
+.noverlay-body{font-size:13.5px;color:var(--muted);line-height:1.5;margin-bottom:16px;}
+body.theme-dark .noverlay-dialog{background:#1b2230;}
+body.theme-dark .noverlay-title{color:#e6edf6;}
+.nbtn.tonal{background:var(--blue-soft);color:#1e40af;}
+.ncenter{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px;}
+.ncenter .big{font-size:40px;}
+.nfield{margin:12px 16px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-size:14px;background:#fafbfc;}
+.tabbar{display:flex;border-top:1px solid var(--line);flex:none;background:#fff;}
+.tabbar .tab{flex:1;text-align:center;padding:9px 4px 8px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;border-top:2px solid transparent;}
+.tabbar .tab .ico{font-size:18px;display:block;line-height:1.2;}
+.tabbar .tab.active{color:var(--blue);border-top-color:var(--blue);background:var(--blue-soft);}
+.nempty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;text-align:center;padding:24px;}
+
+/* Dark preview: override the CSS variables the phone widgets read, so the whole
+   phone (bars, rows, text, fields) restyles — not just the background. */
+body.theme-dark .phone{ background:#0f141c; --ink:#e6edf6; --muted:#9aa8b8; --line:#2a3340; --blue-soft:#1b2740; }
+body.theme-dark .phone .napp-bar,
+body.theme-dark .phone .tabbar,
+body.theme-dark .phone .screen{ background:#141821; }
+body.theme-dark .phone .nback,
+body.theme-dark .phone .nfield{ background:#1b2230; }
+
+/* --- Catalog ---------------------------------------------------------------- */
+.catalog{flex:none;background:#fff;}
+.catalog .catinner{max-width:1320px;margin:0 auto;padding:18px 22px 48px;}
+.cattitle{font-size:18px;font-weight:850;letter-spacing:-.01em;margin:0 0 2px;}
+.catintro{margin:0 0 12px;color:var(--muted);font-size:13.5px;}
+.catalog h4{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#9aa8b8;
+  margin:20px 0 6px;padding-bottom:5px;border-bottom:1px solid var(--line);}
+.catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:12px;}
+.catcard{border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:#fbfdff;box-shadow:var(--shadow);display:flex;flex-direction:column;}
+.catcard .cathead{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.catcard code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:750;color:var(--blue);font-size:12.5px;}
+.catcard .try{margin-left:auto;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:11.5px;
+  font-weight:750;padding:3px 10px;border-radius:7px;cursor:pointer;white-space:nowrap;transition:.12s;}
+.catcard .try:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-soft);}
+.catcard .catwhat{margin:0 0 6px;font-size:12.5px;color:var(--ink);}
+.catcard .catparams{margin:0;font-size:11px;color:var(--muted);line-height:1.5;}
+.catcard .catparams code{font-size:10.5px;color:var(--muted);font-weight:600;}
+
+@media (max-width:900px){
+  .main{flex-direction:column;height:auto;}
+  .pane.editor{border-right:0;border-bottom:1px solid var(--line);}
+  .editorwrap{min-height:200px;}
+  .pane.preview{min-height:560px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="bartop">
+    <div>
+      <p class="eyebrow">Android · Kotlin · Jetpack Navigation 3</p>
+      <h1>Navigation 3 Playground</h1>
+    </div>
+    <div class="links">
+      <a class="back" href="../../labs/index.html">✅ Labs</a>
+      <a class="back" href="./playground.html">🎨 Compose Playground</a>
+      <a class="back" href="../projects.html">← Projects, Explained</a>
+    </div>
+  </div>
+  <p class="sub">The back stack is just a <b>list of keys</b> — the top one is the screen on screen. <b>Edit</b> the <code style="color:#ffd">rememberNavBackStack(…)</code> list on the left, or <b>navigate</b> the phone on the right (tap a row to push a key, press Back to pop). Watch the stack and the equivalent Kotlin update live. (A teaching model, not a real Android runtime.)</p>
+</header>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="group"><span class="lbl">Scenarios</span><span id="scenarios"></span></div>
+  <span class="spacer"></span>
+  <div class="group">
+    <button class="btn" id="backBtn" type="button" title="System Back = pop the top key">‹ Back</button>
+    <button class="btn" id="rootBtn" type="button" title="Pop every level down to the root key">⤓ Start over</button>
+    <button class="btn" id="themeBtn" type="button">◐ Dark preview</button>
+    <button class="btn" id="resetBtn" type="button">↺ Reset</button>
+  </div>
+</div>
+
+<!-- MAIN: editable back-stack code | live preview (visualizer + phone) -->
+<div class="main">
+  <section class="pane editor">
+    <div class="panehead"><span class="dot"></span> Back stack (editable Kotlin) <span class="right"><button class="btn" id="copyBtn" type="button" style="padding:3px 9px;">Copy</button></span></div>
+    <div class="editorwrap">
+      <pre id="hl" aria-hidden="true"><code></code></pre>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
+    </div>
+    <div class="status" id="status">Ready.</div>
+    <div class="oplog" id="oplog"><div class="ophead">Navigation operations (newest last)</div></div>
+  </section>
+
+  <section class="pane preview">
+    <div class="panehead"><span class="dot"></span> Live preview <span class="right" id="previewMeta"></span></div>
+    <div class="previewscroll">
+      <div class="previewstage">
+        <div class="stackpanel">
+          <p class="stitle" id="stacktitle">Back stack</p>
+          <div class="stackcap">▲ top — on screen</div>
+          <div class="stacklist" id="stacklist"></div>
+          <div class="stackcap">bottom — root</div>
+          <p class="stackhint">Tap a lower key to pop down to it. Pushing adds to the top; Back removes the top.</p>
+        </div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen" id="screen"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CATALOG -->
+<section class="catalog">
+  <div class="catinner">
+    <h3 class="cattitle">Navigation 3 concept catalog</h3>
+    <p class="catintro">The pieces of a Nav 3 app and the back-stack operations. Click <b>Try ▸</b> to load a scenario that demonstrates each one.</p>
+    <div id="catbody"></div>
+  </div>
+</section>
+
+<script>
+(function(){
+  'use strict';
+
+  // =========================================================================
+  // 0 · THEME PALETTES + syntax highlighter (shared look with playground.html).
+  // =========================================================================
+  // Dark vs light preview is done purely in CSS: toggling the body.theme-dark
+  // class overrides the variables the phone widgets read (see the stylesheet).
+  var themeName = 'light';
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  var KW = ['val','var','fun','return','if','else','when','for','while','data','object','class','import','package','true','false','null','by','it','this'];
+  var KW_RE = KW.join('|');
+  function hlKotlin(code){
+    var re = new RegExp(
+      '(\\/\\/[^\\n]*)' +                         // 1 line comment
+      '|("(?:[^"\\\\]|\\\\.)*")' +                 // 2 string
+      '|(@\\w+)' +                                 // 3 annotation
+      '|(\\b\\d[\\d_]*\\b)' +                       // 4 number
+      '|(\\b(?:' + KW_RE + ')\\b)' +               // 5 keyword
+      '|(\\b[A-Z][A-Za-z0-9_]*\\b)', 'g');         // 6 Type/Key
+    return code.replace(re, function(m,c1,c2,c3,c4,c5,c6){
+      if(c1) return '<span class="c">'+m+'</span>';
+      if(c2) return '<span class="s">'+m+'</span>';
+      if(c3) return '<span class="a">'+m+'</span>';
+      if(c4) return '<span class="n">'+m+'</span>';
+      if(c5) return '<span class="k">'+m+'</span>';
+      if(c6) return '<span class="t">'+m+'</span>';
+      return m;
+    });
+  }
+
+  // =========================================================================
+  // 1 · DATA — the shared "planets" domain (Category -> Item), matching the
+  //     navigation teaching projects' Data.kt exactly.
+  // =========================================================================
+  var CATEGORIES = [
+    { id:1, name:'Rocky Planets', description:'Small, dense worlds with solid surfaces.' },
+    { id:2, name:'Gas Giants', description:'Massive planets made mostly of gas.' },
+  ];
+  var ITEMS = [
+    { id:1, categoryId:1, title:'Mercury', blurb:'The smallest planet and the closest to the Sun.', fact:'A year on Mercury is just 88 Earth days, but a single day lasts 176.' },
+    { id:2, categoryId:1, title:'Venus', blurb:'The hottest planet, wrapped in thick clouds of acid.', fact:'Venus spins backwards, so the Sun rises in the west and sets in the east.' },
+    { id:3, categoryId:1, title:'Earth', blurb:'The only planet known to support life — so far.', fact:'Earth is the only planet not named after a Greek or Roman god.' },
+    { id:4, categoryId:1, title:'Mars', blurb:'The red planet, a frequent target for rovers.', fact:'Mars hosts Olympus Mons, the tallest volcano in the solar system.' },
+    { id:5, categoryId:2, title:'Jupiter', blurb:'The largest planet, a gas giant with a great red spot.', fact:"Jupiter's Great Red Spot is a storm wider than the entire Earth." },
+    { id:6, categoryId:2, title:'Saturn', blurb:'The ringed gas giant, second largest in the system.', fact:'Saturn is so light it would float in water — if you found a big enough tub.' },
+  ];
+  var categoryById = function(id){ return CATEGORIES.filter(function(c){return c.id===id;})[0]; };
+  var itemById = function(id){ return ITEMS.filter(function(i){return i.id===id;})[0]; };
+  var itemsInCategory = function(cid){ return ITEMS.filter(function(i){return i.categoryId===cid;}); };
+
+  // =========================================================================
+  // 2 · KEY REGISTRY — every NavKey type the playground understands.
+  //     A "key" is modelled as { type:'DetailKey', args:{itemId:4} }.
+  //     For each type we record: is it a data object (no args) or data class
+  //     (carries args)?, how to print it as Kotlin, and a short screen label.
+  // =========================================================================
+  var KEYS = {
+    CategoriesKey: { arg:null,          screen:function(){ return 'Categories screen'; } },
+    ItemsKey:      { arg:'categoryId',  screen:function(a){ if(a.categoryId==null) return 'Items · (no category)'; var c=categoryById(a.categoryId); return 'Items · '+(c?c.name:'category '+a.categoryId); } },
+    DetailKey:     { arg:'itemId',      screen:function(a){ if(a.itemId==null) return 'Detail · (no item)'; var i=itemById(a.itemId); return 'Detail · '+(i?i.title:'item '+a.itemId); } },
+    PlanetsKey:    { arg:null,          screen:function(){ return 'Planets list'; } },
+    FactDialogKey: { arg:'itemId',      screen:function(a){ if(a.itemId==null) return 'Dialog · (no item)'; var i=itemById(a.itemId); return 'Dialog · '+(i?i.title:'item '+a.itemId)+' fact (overlay)'; } },
+    HomeKey:       { arg:null,          screen:function(){ return 'Home'; } },
+    WelcomeKey:    { arg:null,          screen:function(){ return 'Onboarding · Welcome'; } },
+    PermissionsKey:{ arg:null,          screen:function(){ return 'Onboarding · Permissions'; } },
+    SearchKey:     { arg:null,          screen:function(){ return 'Search'; } },
+    AboutKey:      { arg:null,          screen:function(){ return 'About'; } },
+  };
+  // Make a key object; e.g. mk('DetailKey', 4) or mk('CategoriesKey').
+  function mk(type, val){
+    var def = KEYS[type]; var args = {};
+    if(def && def.arg && val!=null) args[def.arg] = val;
+    return { type:type, args:args };
+  }
+  // Print one key as Kotlin: CategoriesKey | ItemsKey(categoryId = 1).
+  function keyToKotlin(k){
+    var def = KEYS[k.type];
+    if(def && def.arg && k.args[def.arg]!=null) return k.type+'('+def.arg+' = '+k.args[def.arg]+')';
+    return k.type;
+  }
+  // Short human label for the visualizer subtitle.
+  function keyScreen(k){
+    var def = KEYS[k.type];
+    if(!def) return 'unknown key';
+    return def.screen(k.args);
+  }
+
+  // =========================================================================
+  // 3 · PARSE the editable code  <->  GENERATE the editable code.
+  //     The editor holds a `rememberNavBackStack( … )` call; the keys inside it
+  //     ARE the back stack. Parsing is tolerant: junk is skipped, not thrown.
+  // =========================================================================
+  // Pull the balanced (...) that follows the first 'rememberNavBackStack'.
+  function extractStackArgs(src){
+    var i = src.indexOf('rememberNavBackStack');
+    if(i < 0) return null;
+    var open = src.indexOf('(', i);
+    if(open < 0) return null;
+    var depth=0, j=open;
+    for(; j<src.length; j++){
+      if(src[j]==='(') depth++;
+      else if(src[j]===')'){ depth--; if(depth===0) break; }
+    }
+    return src.slice(open+1, j);                 // text between the outer ( )
+  }
+  // Split top-level commas (commas inside a key's own (...) stay grouped).
+  function splitTopLevel(s){
+    var parts=[], depth=0, cur='';
+    for(var i=0;i<s.length;i++){
+      var c=s[i];
+      if(c==='(') { depth++; cur+=c; }
+      else if(c===')'){ depth--; cur+=c; }
+      else if(c===',' && depth===0){ parts.push(cur); cur=''; }
+      else cur+=c;
+    }
+    if(cur.trim()) parts.push(cur);
+    return parts;
+  }
+  // Parse one piece like "ItemsKey(categoryId = 1)" or "CategoriesKey" -> key obj.
+  function parseKeyPiece(piece){
+    var p = piece.replace(/\/\/[^\n]*/g,'').trim();          // strip a trailing line comment
+    if(!p) return null;
+    var m = p.match(/^([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(([^)]*)\))?$/);
+    if(!m) return { type:p.split(/[\s(]/)[0]||'?', args:{}, unknown:true };
+    var type = m[1];
+    var argText = m[2];
+    var args = {};
+    if(argText){
+      var numMatch = argText.match(/-?\d+/);                 // first integer = the arg value
+      var def = KEYS[type];
+      if(def && def.arg && numMatch) args[def.arg] = parseInt(numMatch[0],10);
+    }
+    return { type:type, args:args, unknown: !KEYS[type] };
+  }
+  // Full parse: editor text -> array of key objects (the back stack).
+  function parseStack(src){
+    var clean = src.replace(/\/\/[^\n]*/g, '');             // strip // line comments FIRST so comment
+    var inside = extractStackArgs(clean);                   // punctuation can't unbalance the paren/comma scan
+    if(inside==null) return null;                            // no rememberNavBackStack call found
+    return splitTopLevel(inside).map(parseKeyPiece).filter(Boolean);
+  }
+  // Generate the editor text from a stack array (used after taps/presets).
+  function stackToKotlin(stack, headerComment){
+    var lines = [];
+    if(headerComment) lines.push(headerComment);
+    lines.push('val backStack = rememberNavBackStack(');
+    stack.forEach(function(k){ lines.push('    '+keyToKotlin(k)+','); });
+    lines.push(')');
+    return lines.join('\n')+'\n';
+  }
+
+  // =========================================================================
+  // 4 · STATE — the model the whole page renders from.
+  //   mode 'stack' : a single back stack (drill-down, deep link, nested graph).
+  //   mode 'tabs'  : one back stack PER tab (multiple back stacks); activeTab
+  //                  selects which one is shown + edited.
+  // =========================================================================
+  var state = {
+    mode: 'stack',
+    stack: [ mk('CategoriesKey') ],                          // active single stack
+    tabs: null,                                              // { planets:[], search:[], about:[] } in tabs mode
+    activeTab: 'planets',
+    ops: [],                                                 // imperative op log lines
+    scenarioComment: '',                                     // header comment shown in the editor
+  };
+  // The stack currently on screen / being edited.
+  function activeStack(){ return state.mode==='tabs' ? state.tabs[state.activeTab] : state.stack; }
+  function setActiveStack(arr){ if(state.mode==='tabs') state.tabs[state.activeTab]=arr; else state.stack=arr; }
+
+  // =========================================================================
+  // 5 · SCREEN RENDERERS — turn the TOP key into the phone's current screen.
+  // =========================================================================
+  var screenEl, stackListEl, opLogEl, statusEl, metaEl, codeEl, hlEl;
+
+  function el(tag, cls, txt){ var e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+
+  // A tappable list row (category/item/search result).
+  function row(title, blurb, onTap){
+    var r = el('div','nrow');
+    var chev = el('span','chev','›');
+    var t = el('div','nt', title); t.appendChild(chev);
+    r.appendChild(t);
+    if(blurb) r.appendChild(el('div','nb', blurb));
+    r.addEventListener('click', onTap);
+    return r;
+  }
+  // The top app bar, with an optional Back button (shown when something can pop).
+  function appBar(title){
+    var bar = el('div','napp-bar');
+    if(activeStack().length > 1){
+      var b = el('button','nback','‹ Back');
+      b.addEventListener('click', function(){ pop(); });
+      bar.appendChild(b);
+    }
+    bar.appendChild(el('span', null, title));
+    return bar;
+  }
+
+  // Render the planets CATEGORIES screen (the usual root).
+  function screenCategories(area){
+    area.appendChild(appBar('🪐 Planets'));
+    var list = el('div','scrollarea');
+    CATEGORIES.forEach(function(c){
+      list.appendChild(row(c.name, c.description, function(){ push(mk('ItemsKey', c.id), 'tap '+c.name); }));
+    });
+    area.appendChild(list);
+  }
+  // Render the ITEMS screen for ItemsKey(categoryId).
+  function screenItems(area, key){
+    var c = categoryById(key.args.categoryId);
+    area.appendChild(appBar(c ? c.name : 'Items'));
+    var list = el('div','scrollarea');
+    itemsInCategory(key.args.categoryId).forEach(function(it){
+      list.appendChild(row(it.title, it.blurb, function(){ push(mk('DetailKey', it.id), 'tap '+it.title); }));
+    });
+    area.appendChild(list);
+  }
+  // Render the DETAIL screen for DetailKey(itemId).
+  function screenDetail(area, key){
+    area.appendChild(appBar('Detail'));
+    var it = itemById(key.args.itemId);
+    var d = el('div','ndetail');
+    d.appendChild(el('h3', null, it ? it.title : 'Item '+key.args.itemId));
+    d.appendChild(el('p', null, it ? it.blurb : 'Unknown item.'));
+    // Open the fun-fact OVERLAY. This is an ORDINARY push (stack +1) — what makes
+    // it an overlay is the DialogSceneStrategy metadata on the entry, which keeps
+    // THIS detail screen visible behind the dialog. (See the Overlay scenario.)
+    if(it){
+      var f = el('button','nbtn alt','💬 Show fun fact');
+      f.addEventListener('click', function(){ push(mk('FactDialogKey', it.id), 'Show fun fact'); });
+      d.appendChild(f);
+    }
+    var b = el('button','nbtn','‹ Back to list');
+    b.addEventListener('click', function(){ pop(); });
+    d.appendChild(b);
+    area.appendChild(d);
+  }
+  // Render the flat PLANETS list (NavOverlay's root): every planet, tap → Detail.
+  function screenPlanets(area){
+    area.appendChild(appBar('🪐 Planets'));
+    var list = el('div','scrollarea');
+    ITEMS.forEach(function(it){
+      list.appendChild(row(it.title, it.blurb, function(){ push(mk('DetailKey', it.id), 'tap '+it.title); }));
+    });
+    area.appendChild(list);
+  }
+  // Render the fun-fact DIALOG as an OVERLAY: the screen BELOW it stays drawn,
+  // with a dimmed scrim + a dialog card on top. OK / scrim-tap both pop the key.
+  function screenFactDialog(area, key, stack){
+    area.style.position = 'relative';
+    var under = stack[stack.length-2];                 // the entry beneath the dialog (stays visible)
+    if(under) renderKeyScreen(area, under);
+    else screenSimple(area,'💬','Dialog','(no screen beneath the dialog)', null, null);
+    var it = itemById(key.args.itemId);
+    var scrim = el('div','noverlay-scrim');
+    var dlg = el('div','noverlay-dialog');
+    dlg.appendChild(el('div','noverlay-title', it ? (it.title + ' — fun fact') : 'Fun fact'));
+    dlg.appendChild(el('div','noverlay-body', it ? it.fact : 'Unknown planet.'));
+    var ok = el('button','nbtn','OK');
+    ok.addEventListener('click', function(){ pop(); });               // OK = pop the dialog key
+    dlg.appendChild(ok);
+    scrim.addEventListener('click', function(e){ if(e.target===scrim) pop(); }); // tap scrim = dismiss = pop
+    scrim.appendChild(dlg);
+    area.appendChild(scrim);
+  }
+  // A simple centered "screen" with a title, emoji, and a primary action.
+  function screenSimple(area, emoji, title, sub, btnLabel, onBtn){
+    area.appendChild(appBar(title));
+    var c = el('div','ncenter');
+    c.appendChild(el('div','big', emoji));
+    c.appendChild(el('div', null, sub));
+    if(btnLabel){ var b=el('button','nbtn',btnLabel); b.addEventListener('click', onBtn); c.appendChild(b); }
+    area.appendChild(c);
+  }
+  // SEARCH screen (used by the tabs scenario): a fake field + all planets.
+  function screenSearch(area){
+    area.appendChild(appBar('🔍 Search'));
+    var wrap = el('div','scrollarea');
+    wrap.appendChild(el('div','nfield','Search planets…'));
+    ITEMS.forEach(function(it){
+      wrap.appendChild(row(it.title, it.blurb, function(){ push(mk('DetailKey', it.id), 'tap '+it.title); }));
+    });
+    area.appendChild(wrap);
+  }
+
+  // Render ONE key's screen into `area` (used for the top key, and for the entry
+  // BENEATH a dialog overlay).
+  function renderKeyScreen(area, key){
+    switch(key.type){
+      case 'CategoriesKey': return screenCategories(area);
+      case 'ItemsKey':      return screenItems(area, key);
+      case 'DetailKey':     return screenDetail(area, key);
+      case 'PlanetsKey':    return screenPlanets(area);
+      case 'SearchKey':     return screenSearch(area);
+      case 'HomeKey':       return screenSimple(area,'🪐','Home','Welcome to the Planets app.','Browse categories ›', function(){ push(mk('CategoriesKey'),'tap Browse'); });
+      case 'WelcomeKey':    return screenSimple(area,'👋','Welcome','Step 1 of onboarding.','Next ›', function(){ push(mk('PermissionsKey'),'tap Next'); });
+      case 'PermissionsKey':return screenSimple(area,'🔒','Permissions','Step 2 of onboarding.','Finish onboarding ›', function(){ finishOnboarding(); });
+      case 'AboutKey':      return screenSimple(area,'ℹ️','About','A tiny planets demo for Navigation 3.', null, null);
+      default:              return screenSimple(area,'⚠️','Unknown key', key.type+' is not a known screen.', null, null);
+    }
+  }
+  // Render whatever the TOP key is into the phone's content area.
+  function renderTopScreen(area){
+    var stack = activeStack();
+    if(!stack || !stack.length){ area.appendChild(el('div','nempty','(empty back stack — nothing to show. In a real app this exits the screen.)')); return; }
+    var top = stack[stack.length-1];
+    // An overlay key (the dialog) draws OVER the entry beneath it (which stays visible).
+    if(top.type==='FactDialogKey') return screenFactDialog(area, top, stack);
+    return renderKeyScreen(area, top);
+  }
+
+  // =========================================================================
+  // 6 · RENDER the preview: phone screen, back-stack visualizer, tab bar, log.
+  // =========================================================================
+  function renderPhone(){
+    screenEl.innerHTML='';
+    var screen = el('div','screen'); // rebuild fresh
+    // content area + (in tabs mode) a bottom tab bar
+    var contentHost = el('div', null);
+    contentHost.style.flex='1'; contentHost.style.display='flex'; contentHost.style.flexDirection='column';
+    renderTopScreen(contentHost);
+    screenEl.appendChild(contentHost);
+    if(state.mode==='tabs') screenEl.appendChild(renderTabBar());
+  }
+
+  function renderTabBar(){
+    var bar = el('div','tabbar');
+    var tabs = [ ['planets','🪐','Planets'], ['search','🔍','Search'], ['about','ℹ️','About'] ];
+    tabs.forEach(function(t){
+      var b = el('div','tab'+(state.activeTab===t[0]?' active':''));
+      b.appendChild(el('span','ico',t[1]));
+      b.appendChild(el('span',null,t[2]));
+      b.addEventListener('click', function(){
+        if(state.activeTab===t[0]) return;
+        if(timer) clearTimeout(timer);   // cancel a pending edit-debounce so it can't write into the new tab
+        state.activeTab=t[0];
+        logOp('// switched to the '+t[2]+' tab — it has its OWN back stack');
+        syncEditorFromStack(); renderPreview();
+      });
+      bar.appendChild(b);
+    });
+    return bar;
+  }
+
+  // The back-stack visualizer (top entry highlighted = on screen).
+  function renderVisualizer(){
+    stackListEl.innerHTML='';
+    var stack = activeStack();
+    document.getElementById('stacktitle').textContent = state.mode==='tabs'
+      ? 'Back stack · '+state.activeTab+' tab' : 'Back stack';
+    if(!stack || !stack.length){
+      stackListEl.appendChild(el('div','skey empty','(empty)'));
+      return;
+    }
+    // Render TOP first (visually on top of the column).
+    for(var i=stack.length-1;i>=0;i--){
+      (function(idx){
+        var k = stack[idx];
+        var isTop = idx===stack.length-1;
+        var card = el('div','skey'+(isTop?' top':''));
+        if(isTop) card.appendChild(el('div','ktop','● on screen'));
+        card.appendChild(el('div','kname', keyToKotlin(k)));
+        card.appendChild(el('div','kscreen', keyScreen(k)));
+        if(!isTop){
+          card.title = 'Pop down to here';
+          card.addEventListener('click', function(){ popTo(idx); });
+        }
+        stackListEl.appendChild(card);
+      })(i);
+    }
+  }
+
+  function renderOpLog(){
+    opLogEl.innerHTML='';
+    opLogEl.appendChild(el('div','ophead','Navigation operations (newest last)'));
+    var shown = state.ops.slice(-40);
+    shown.forEach(function(line){
+      var d = el('div','opline');
+      d.innerHTML = hlKotlin(esc(line));
+      opLogEl.appendChild(d);
+    });
+    opLogEl.scrollTop = opLogEl.scrollHeight;
+  }
+
+  // Render everything that depends on the model (NOT the editor text).
+  function renderPreview(){
+    applyTheme();
+    renderPhone();
+    renderVisualizer();
+    renderOpLog();
+    var stack = activeStack();
+    statusEl.className='status';
+    statusEl.textContent = '✓ '+(stack?stack.length:0)+' key'+(stack&&stack.length===1?'':'s')+' on the back stack · top = '
+      + (stack&&stack.length ? keyToKotlin(stack[stack.length-1]) : '(empty)');
+    metaEl.textContent = (themeName==='dark'?'dark · ':'light · ') + (state.mode==='tabs'?'multiple back stacks':'single back stack');
+  }
+
+  function applyTheme(){
+    // Flip one class; the CSS variable overrides under body.theme-dark do the rest.
+    document.body.classList.toggle('theme-dark', themeName==='dark');
+  }
+
+  // =========================================================================
+  // 7 · MUTATIONS — the imperative Nav 3 back-stack operations.
+  //     Every mutation logs the equivalent Kotlin and rewrites the editor.
+  // =========================================================================
+  function logOp(line){ state.ops.push(line); }
+  function refreshHighlight(){ hlEl.innerHTML = hlKotlin(esc(codeEl.value)) + '\n'; }
+  function syncEditorFromStack(){ codeEl.value = stackToKotlin(activeStack(), state.scenarioComment); refreshHighlight(); }
+
+  // Core mutation helper: change the active stack, log, rewrite editor, re-render.
+  function mutate(fn, opLine){
+    var s = activeStack().slice();
+    fn(s);
+    setActiveStack(s);
+    if(opLine) logOp(opLine);
+    syncEditorFromStack();
+    renderPreview();
+  }
+  function push(key, why){
+    mutate(function(s){ s.push(key); }, 'backStack.add('+keyToKotlin(key)+')'+(why?'        // '+why:''));
+  }
+  function pop(){
+    if(activeStack().length<=1){ flash('Already at the root — nothing to pop. (removeLastOrNull() is a safe no-op.)'); return; }
+    mutate(function(s){ s.pop(); }, 'backStack.removeLastOrNull()');
+  }
+  function popTo(index){
+    var n = activeStack().length-1-index;                  // how many to pop to land on `index`
+    if(n<=0) return;
+    mutate(function(s){ s.length = index+1; }, 'repeat('+n+') { backStack.removeLastOrNull() }   // pop down to '+keyToKotlin(activeStack()[index]||{type:'?'}));
+  }
+  function startOver(){
+    if(activeStack().length<=1){ flash('Already at the root.'); return; }
+    var n = activeStack().length-1;
+    mutate(function(s){ s.length = 1; }, 'repeat('+n+') { backStack.removeLastOrNull() }   // "Start over" — pop to the root');
+  }
+  // Nested-graph: pop the WHOLE onboarding sub-flow as a unit, then go Home.
+  function finishOnboarding(){
+    // Log the equivalent imperative ops (matching the rest of the op log + the
+    // NavNestedGraphs project): pop the whole sub-flow as a unit, then open Home.
+    logOp('// finishOnboarding(): pop the onboarding sub-flow as a unit, then open Home');
+    logOp('backStack.removeAll { it is WelcomeKey || it is PermissionsKey }');
+    mutate(function(s){
+      // remove every onboarding key, then push Home (the main flow's start)
+      for(var i=s.length-1;i>=0;i--){ if(s[i].type==='WelcomeKey'||s[i].type==='PermissionsKey') s.splice(i,1); }
+      s.push(mk('HomeKey'));
+    }, 'backStack.add(HomeKey)');
+  }
+  function flash(msg){ statusEl.className='status err'; statusEl.textContent='ℹ '+msg; }
+
+  // =========================================================================
+  // 8 · SCENARIOS (presets) + the concept CATALOG.
+  // =========================================================================
+  var SCENARIOS = [
+    { name:'Drill-down ★', mode:'stack',
+      comment:'// Fundamentals: start at the root. Tap a category, then a planet —\n// each tap PUSHES a key (navigate forward); Back POPS it (navigate back).',
+      build:function(){ return [ mk('CategoriesKey') ]; } },
+
+    { name:'Carry an argument', mode:'stack',
+      comment:'// A key carries its screen\'s arguments. DetailKey(itemId = 4) IS "show Mars".\n// The entry<DetailKey> block reads key.itemId to know which planet to render.',
+      build:function(){ return [ mk('CategoriesKey'), mk('ItemsKey',1), mk('DetailKey',4) ]; } },
+
+    { name:'Deep link → Saturn', mode:'stack',
+      comment:'// Deep link: opened from navdemo://planet/6. We HAND-SEED a back stack so\n// Back still walks up naturally: Detail → Items → Categories.',
+      build:function(){ return [ mk('CategoriesKey'), mk('ItemsKey',2), mk('DetailKey',6) ]; } },
+
+    { name:'Bottom tabs', mode:'tabs',
+      comment:'// Multiple back stacks: each tab owns its OWN rememberNavBackStack.\n// Drill into one tab, switch tabs, come back — each stack is preserved.',
+      tabs:function(){ return { planets:[ mk('CategoriesKey') ], search:[ mk('SearchKey') ], about:[ mk('AboutKey') ] }; } },
+
+    { name:'Nested graph', mode:'stack',
+      comment:'// A self-contained onboarding sub-flow. Walk Welcome → Next → Permissions,\n// then "Finish onboarding" pops the WHOLE sub-flow as a unit and pushes Home.',
+      build:function(){ return [ mk('WelcomeKey') ]; } },
+
+    { name:'Overlay (dialog) ★', mode:'stack',
+      comment:'// Overlay scene (NavOverlay): a dialog is a NORMAL key on the back stack —\n// add() to open (stack +1), removeLastOrNull() to dismiss (stack −1) — but it\n// RENDERS OVER the screen below, which stays visible. Tap "Show fun fact".',
+      build:function(){ return [ mk('PlanetsKey'), mk('DetailKey',6) ]; } },
+  ];
+
+  var CATALOG = [
+    { group:'The pieces of a Nav 3 app', items:[
+      { name:'NavKey', what:'Every screen is identified by a key. A data object (CategoriesKey) has no arguments; a data class (DetailKey) carries them. Keys are @Serializable so the stack survives process death.', params:'@Serializable data object / data class … : NavKey', scenario:0 },
+      { name:'Back stack', what:'Just a List<NavKey>. The LAST (top) key is the screen on screen. The whole left editor IS the back stack — edit it and the screen changes.', params:'top = on screen; bottom = root', scenario:0 },
+      { name:'rememberNavBackStack(start)', what:'Creates and remembers the back stack, seeded with the start key. Survives recomposition and rotation. This is the call you are editing on the left.', params:'rememberNavBackStack(CategoriesKey)', scenario:0 },
+      { name:'NavDisplay', what:'The composable that renders the TOP key and animates changes. Its onBack pops the stack: onBack = { backStack.removeLastOrNull() }.', params:'NavDisplay(backStack, onBack, entryProvider)', scenario:0 },
+      { name:'entryProvider / entry<Key>', what:'A DSL mapping each key TYPE to a screen. NavDisplay runs the entry<…> block whose type matches the current top key; the block receives the key so it can read its args.', params:'entry<DetailKey> { key -> DetailScreen(itemById(key.itemId)) }', scenario:1 },
+    ]},
+    { group:'Back-stack operations', items:[
+      { name:'Push (navigate forward)', what:'Add a key to the top. Tapping a category here runs backStack.add(ItemsKey(categoryId)) — that is ALL "navigate forward" is.', params:'backStack.add(DetailKey(itemId = 4))', scenario:0 },
+      { name:'Pop (Back)', what:'Remove the top key to go back one screen. The system Back button and on-screen Back both do this. Safe at the root (no-op).', params:'backStack.removeLastOrNull()', scenario:1 },
+      { name:'Arguments in keys', what:'The key carries the data. DetailKey(itemId = 4) means "the Mars detail". Two DetailKeys with different ids hit the SAME entry block with different data.', params:'DetailKey(itemId = 4)', scenario:1 },
+      { name:'Pop to root ("Start over")', what:'Pop several levels at once down to the first key — the multi-level pop NavFourScreen demonstrates. Use the Start over button.', params:'repeat(n) { backStack.removeLastOrNull() }', scenario:2 },
+    ]},
+    { group:'Advanced back-stack shapes', items:[
+      { name:'Deep links', what:'Enter the app from a URI and hand-seed a sensible stack so Back still works. Here navdemo://planet/6 seeds [Categories, Items, Detail] for Saturn.', params:'rememberNavBackStack(CategoriesKey, ItemsKey(categoryId = 2), DetailKey(itemId = 6))', scenario:2 },
+      { name:'Multiple back stacks (tabs)', what:'Each bottom tab owns its own rememberNavBackStack. Switching tabs swaps which one NavDisplay renders; each tab keeps its place.', params:'one back stack per tab', scenario:3 },
+      { name:'Nested graphs (sub-flows)', what:'Group a sub-flow (onboarding) and pop it as a UNIT, then hand off to the main flow. "Finish onboarding" clears both onboarding keys and pushes Home.', params:'finishOnboarding(): drop sub-flow, add(HomeKey)', scenario:4 },
+      { name:'Overlay (dialog) scene', what:'A dialog is an ORDINARY key: add() opens it (stack +1), removeLastOrNull() dismisses it (stack −1). What differs is RENDERING — Nav3’s DialogSceneStrategy draws it OVER the screen below, which stays composed and visible. No special back handling: System Back, the scrim, and "OK" all just pop the top key.', params:'entry<FactDialogKey>(metadata = DialogSceneStrategy.dialog())', scenario:5 },
+    ]},
+  ];
+
+  // =========================================================================
+  // 9 · WIRE UP — build toolbar/catalog, hook events, load the first scenario.
+  // =========================================================================
+  codeEl=document.getElementById('code'); hlEl=document.querySelector('#hl code');
+  screenEl=document.getElementById('screen'); stackListEl=document.getElementById('stacklist');
+  opLogEl=document.getElementById('oplog'); statusEl=document.getElementById('status');
+  metaEl=document.getElementById('previewMeta');
+
+  // -- scenario chips --
+  var scenEl=document.getElementById('scenarios');
+  SCENARIOS.forEach(function(sc, idx){
+    var b=el('button','chip',sc.name); b.type='button';
+    b.addEventListener('click', function(){ loadScenario(idx); });
+    scenEl.appendChild(b);
+  });
+  function loadScenario(idx){
+    var sc = SCENARIOS[idx];
+    Array.prototype.forEach.call(scenEl.children, function(c,i){ c.classList.toggle('active', i===idx); });
+    state.mode = sc.mode;
+    state.scenarioComment = sc.comment || '';
+    state.ops = [];
+    if(sc.mode==='tabs'){ state.tabs = sc.tabs(); state.activeTab='planets'; state.stack=[mk('CategoriesKey')]; }
+    else { state.tabs=null; state.stack = sc.build(); }
+    logOp('// scenario: '+sc.name);
+    syncEditorFromStack();
+    renderPreview();
+    currentScenario = idx;
+  }
+  var currentScenario = 0;
+
+  // -- editing the code drives the preview (debounced); does NOT rewrite the textarea --
+  var timer=null;
+  function applyFromEditor(){
+    refreshHighlight();
+    var parsed = parseStack(codeEl.value);
+    if(parsed==null){ flash('Could not find rememberNavBackStack( … ) — type a key list inside it.'); return; }
+    setActiveStack(parsed);
+    renderPreview();
+  }
+  codeEl.addEventListener('input', function(){ if(timer) clearTimeout(timer); timer=setTimeout(applyFromEditor, 130); });
+  codeEl.addEventListener('scroll', function(){ var pre=document.getElementById('hl'); pre.scrollTop=codeEl.scrollTop; pre.scrollLeft=codeEl.scrollLeft; });
+  codeEl.addEventListener('keydown', function(e){
+    if(e.key==='Tab'){ e.preventDefault(); var s=codeEl.selectionStart, en=codeEl.selectionEnd; codeEl.value=codeEl.value.slice(0,s)+'    '+codeEl.value.slice(en); codeEl.selectionStart=codeEl.selectionEnd=s+4; }
+  });
+
+  // -- toolbar buttons --
+  document.getElementById('backBtn').addEventListener('click', function(){ pop(); });
+  document.getElementById('rootBtn').addEventListener('click', function(){ startOver(); });
+  document.getElementById('resetBtn').addEventListener('click', function(){ loadScenario(currentScenario); });
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    themeName = themeName==='light' ? 'dark' : 'light';
+    this.textContent = themeName==='light' ? '◐ Dark preview' : '◑ Light preview';
+    renderPreview();
+  });
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var b=this; navigator.clipboard && navigator.clipboard.writeText(codeEl.value).then(function(){ b.textContent='Copied'; setTimeout(function(){ b.textContent='Copy'; },1200); });
+  });
+
+  // -- catalog cards --
+  var catBody=document.getElementById('catbody');
+  CATALOG.forEach(function(group){
+    catBody.appendChild(el('h4',null,group.group));
+    var grid=el('div','catgrid');
+    group.items.forEach(function(it){
+      var card=el('div','catcard');
+      var head=el('div','cathead');
+      var code=el('code',null,it.name); head.appendChild(code);
+      if(it.scenario!=null){
+        var tryb=el('button','try','Try ▸'); tryb.type='button';
+        tryb.addEventListener('click', function(){ loadScenario(it.scenario); document.querySelector('.main').scrollIntoView({behavior:'smooth',block:'start'}); });
+        head.appendChild(tryb);
+      }
+      card.appendChild(head);
+      card.appendChild(el('p','catwhat',it.what));
+      if(it.params){ var pp=el('p','catparams'); pp.innerHTML='<b>Kotlin:</b> '+esc(it.params); card.appendChild(pp); }
+      grid.appendChild(card);
+    });
+    catBody.appendChild(grid);
+  });
+
+  // Go.
+  loadScenario(0);
+})();
+</script>
+</body>
+</html>

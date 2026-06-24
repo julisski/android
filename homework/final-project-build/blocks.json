@@ -1,0 +1,119 @@
+{
+  "title": "Kotlin + Jetpack Compose App",
+  "subtitle": "Final Project Proposal & Progress Tracker",
+  "meta": [
+    ["Student Name:", "[Enter name]"],
+    ["Course:", "[Enter course name/number]"],
+    ["Semester:", "[Enter semester]"]
+  ],
+  "blocks": [
+    { "t": "h1", "text": "1. Project Overview" },
+    { "t": "field", "label": "App Name:", "value": "[Enter your app name]" },
+    { "t": "field", "label": "Tagline:", "value": "[One sentence describing what your app does]" },
+    { "t": "h2", "text": "Problem Statement" },
+    { "t": "para", "ph": true, "text": "[Describe the problem your app solves. Who experiences this problem? Why does it matter?]" },
+    { "t": "h2", "text": "Target Audience" },
+    { "t": "para", "ph": true, "text": "[Who will use your app? Be specific about demographics, needs, and behaviors.]" },
+    { "t": "h2", "text": "Core Value Proposition" },
+    { "t": "para", "ph": true, "text": "[What makes your app valuable? Why would someone install and use it?]" },
+
+    { "t": "h1", "text": "2. High-Level Architecture" },
+    { "t": "h2", "text": "Tech Stack" },
+    { "t": "kvTable", "rows": [
+      ["Language & UI", "Kotlin + Jetpack Compose", false],
+      ["Navigation", "[e.g., Navigation 3 (NavDisplay + a back stack of NavKeys), or Navigation Compose]", true],
+      ["State Management", "[e.g., ViewModel + StateFlow, collected with collectAsStateWithLifecycle()]", true],
+      ["Data / Persistence", "[e.g., Room database, DataStore Preferences, in-memory repository]", true],
+      ["Networking & APIs", "[e.g., Retrofit + OkHttp or Ktor; list any third-party APIs]", true],
+      ["Architecture pattern", "[e.g., MVVM + repository, unidirectional data flow, sealed UI state]", true],
+      ["Key Libraries", "[e.g., Coil (images), kotlinx-serialization, WorkManager]", true],
+      ["Min / Target SDK", "[e.g., minSdk 24, targetSdk 35]", true]
+    ]},
+    { "t": "h2", "text": "Key Screens & Navigation Flow" },
+    { "t": "para", "ph": true, "text": "[List your main screens (destinations) and describe how users navigate between them. In Navigation 3, each screen is a NavKey pushed onto the back stack — note how the stack grows and shrinks. Consider including a simple diagram or flowchart.]" },
+    { "t": "h3b", "text": "Main Screens:" },
+    { "t": "numbered", "items": [
+      "[Screen Name] - [Brief description of purpose]",
+      "[Screen Name] - [Brief description of purpose]",
+      "[Screen Name] - [Brief description of purpose]",
+      "[Screen Name] - [Brief description of purpose]"
+    ]},
+    { "t": "h2", "text": "Data Model" },
+    { "t": "para", "ph": true, "text": "[Describe your main data entities (Kotlin data classes) and their relationships. If you use Room, note your @Entity tables and DAOs. Separate persisted data from UI state (the sealed type your screen renders). What information does your app store and manage?]" },
+
+    { "t": "h1", "text": "3. Core Features" },
+    { "t": "h2", "text": "MVP Features (Must Have)" },
+    { "t": "para", "ph": true, "text": "[List the essential features required for a minimum viable product]" },
+    { "t": "numbered", "items": ["", "", ""] },
+    { "t": "h2", "text": "Stretch Features (Nice to Have)" },
+    { "t": "para", "ph": true, "text": "[List additional features you would add if time permits]" },
+    { "t": "numbered", "items": ["", ""] },
+
+    { "t": "h1", "text": "4. Progress Milestones (Self-Paced)" },
+    { "t": "para", "text": "There's no set schedule and no class numbers here — you set the pace. The four milestones below are your full path from project setup to the final presentation. Tick each item as you actually finish it, and after a work session update the Status & notes line under the milestone you're on. Work them roughly in order (each builds on the last toward the presentation), but jumping ahead or looping back is fine. You won't move through these in lockstep with everyone else — being on an earlier milestone than a classmate is normal, not behind." },
+
+    { "t": "milestone", "color": "blue", "name": "Milestone 1 — Foundation", "focus": "Get the project, navigation, and basic Compose UI standing up so every screen exists as a placeholder you can reach.", "items": [
+      "Create a new Android Studio project (Empty Activity, Jetpack Compose, Kotlin) and initialize a Git repository",
+      "Set up the package structure (ui, data, model, navigation) and the Material 3 theme (Color.kt, Type.kt, Theme.kt) for light and dark",
+      "Configure navigation (Navigation 3: NavDisplay + a back stack of NavKeys)",
+      "Add a placeholder @Composable screen (with @Preview) for every main destination and wire navigation between them (push/pop NavKeys)",
+      "Build a few reusable composables (buttons, cards, text fields) and test the navigation flow on an emulator"
+    ]},
+
+    { "t": "milestone", "color": "green", "name": "Milestone 2 — Core Development", "focus": "Build the real features on top of state management and a data layer the UI reads from.", "items": [
+      "Add a ViewModel that exposes a StateFlow, collected with collectAsStateWithLifecycle()",
+      "Put Room or DataStore behind a repository",
+      "Model UI state as a sealed type (Loading / Empty / Error / Success) and render each case",
+      "Build core feature #1 end to end and connect the UI to the data layer",
+      "Build core feature #2",
+      "Call any external API (Retrofit or Ktor) on a background dispatcher",
+      "Validate user input and do create / read / update / delete through the repository or Room DAO"
+    ]},
+
+    { "t": "milestone", "color": "orange", "name": "Milestone 3 — Polish & Testing", "focus": "Finish the MVP, then make it solid, fast, accessible, and good-looking on real devices.", "items": [
+      "Finish the remaining MVP features",
+      "Refine the UI and verify it in both light and dark themes",
+      "Add animations and transitions (Compose animation APIs)",
+      "Handle errors everywhere, including a Retry action on the Error state",
+      "Test on multiple devices/emulators and screen sizes, then fix the bugs you find",
+      "Tune performance (minimize recomposition, stable LazyColumn keys, remember, lazy loading)",
+      "Add accessibility (contentDescription / semantics, adequate touch-target sizes)",
+      "Add an adaptive app icon and a splash screen (AndroidX core-splashscreen)",
+      "Add stretch features if time allows"
+    ]},
+
+    { "t": "milestone", "color": "purple", "name": "Milestone 4 — Launch & Presentation", "focus": "Lock the app down for release, then present it to the class. This milestone ends with your presentation (see Presentation Requirements below).", "items": [
+      "Do a final pass of polish and bug fixes",
+      "Build a signed release App Bundle (.aab) with Gradle / Android Studio",
+      "Prepare your presentation (slides, talking points, and the demo path you'll follow)",
+      "Rehearse the live demo end to end on an emulator or device",
+      "Deliver the presentation and run the live demo (see Presentation Requirements below)"
+    ]},
+
+    { "t": "h2", "text": "Presentation Requirements" },
+    { "t": "para", "text": "Your final presentation should include:" },
+    { "t": "bullets", "items": [
+      "Live demo of your working app on an emulator or device (5-7 minutes)",
+      "Overview of the problem and your solution",
+      "Technical architecture walkthrough (Compose UI, navigation, state, data layer)",
+      "Key challenges faced and how you solved them",
+      "What you learned and would do differently",
+      "Q&A with classmates and instructor (2-3 minutes)"
+    ]},
+
+    { "t": "h1", "text": "5. Bring to Class — Discussion & Feedback" },
+    { "t": "para", "text": "This is a reusable sheet, not a one-time form. Before each class, add a new dated row to the table below (about five minutes) and come ready to talk through the prompts. We use it to run the session: a few people share their current milestone and demo what works, the table surfaces blockers we can solve together, and the prompts turn “here's my status” into a real design conversation. There are no wrong answers and no penalty for being on an earlier milestone than someone else." },
+    { "t": "table", "headers": ["Date", "Current milestone & what I'll demo", "Status + biggest blocker", "Feedback I got (after class)"], "rows": [["Mar 4", "Core Dev — recipe list loading from the repository", "In Progress — list works, detail Back crashes", "Log the back stack; check the key types"], ["Mar 11", "Core Dev — favorites toggle", "In Progress — star shows but resets on rotation", "Move favorites into a ViewModel"]], "blanks": 5 },
+    { "t": "h3b", "text": "Come ready to talk about:" },
+    { "t": "bullets", "items": [
+      "Demo of the day — the one screen, flow, or feature you can show in under two minutes (even if it isn't finished).",
+      "Which milestone you're on and the next single thing you plan to build.",
+      "One decision to defend — pick a real architectural choice (Room vs DataStore, your navigation structure, how you modeled UI state, an API or library pick) and be ready to explain why. The room may push on it — that's the point.",
+      "Where you're stuck — a blocker or design decision, specific enough that someone could actually help.",
+      "An open question for the room — anything you'd like a second opinion on, even if it isn't fully blocking: a UX choice, a bug you can't reproduce, a pattern you're unsure about.",
+      "Is your MVP still the right size? Check it against your Section 3 Must-Have / Stretch lists — should anything move to stretch or get cut to stay on track for the presentation?",
+      "After class: write the feedback and decisions in the table's last column, so next session you can report what you changed."
+    ]},
+    { "t": "note", "text": "Bring questions, not just status — the best discussions start from a real decision you're unsure about." }
+  ]
+}

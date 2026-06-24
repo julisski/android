@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hands-on Labs — Solutions &amp; Explanations</title>
+<style>
+  :root{
+    --ink:#16181d; --muted:#5b6472; --line:#e4e7ee; --bg:#f5f6fa; --card:#ffffff;
+    --accent:#2f9e62; --accent-deep:#1b7a48; --blue:#2563eb; --blue-deep:#1e40af;
+    --code-bg:#0f172a; --code-ink:#e6edf6;
+    --c-comment:#7d8aa0; --c-key:#c792ea; --c-str:#9ae6a6; --c-type:#7fd4ff;
+    --c-anno:#ffcb6b; --c-num:#f5b86b; --c-punct:#8aa0b8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.55;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:940px;margin:0 auto;padding:30px 20px 90px;}
+  header.page{background:linear-gradient(135deg,#2f9e62,#1b7a48);color:#fff;border-radius:16px;
+    padding:26px 28px;margin-bottom:22px;box-shadow:0 8px 24px rgba(27,122,72,.20);}
+  header.page .eyebrow{margin:0 0 6px;font-size:.78rem;letter-spacing:.6px;text-transform:uppercase;opacity:.85;}
+  header.page h1{margin:0 0 8px;font-size:1.55rem;letter-spacing:.2px;}
+  header.page p{margin:0;opacity:.95;font-size:.96rem;max-width:70ch;}
+  header.page .links{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;}
+  header.page .links a{color:#fff;text-decoration:none;font-size:.84rem;font-weight:600;
+    background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:5px 12px;}
+  .note{background:#fffaf0;border:1px solid #f3e2c0;border-left:5px solid #e0a93b;border-radius:12px;
+    padding:12px 16px;margin:0 0 22px;font-size:.9rem;color:#6b5418;}
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:26px;}
+  .toc h2{margin:0 0 12px;font-size:.82rem;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
+  .tocgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
+  .tocitem{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);font-size:.9rem;
+    border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:#fbfcfe;}
+  .tocitem:hover{border-color:var(--accent);}
+  .tocitem span{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;
+    background:var(--accent);color:#fff;border-radius:6px;font-size:.74rem;font-weight:700;}
+  .tocitem.nav span{background:var(--blue);}
+  .tocitem.nav:hover{border-color:var(--blue);}
+
+  .lab{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px 24px;margin-bottom:22px;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+  .lab.nav{border-top:4px solid var(--blue);}
+  .lab:not(.nav){border-top:4px solid var(--accent);}
+  .lab-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+  .lab-num{background:var(--accent);color:#fff;font-weight:700;font-size:.74rem;
+    padding:3px 10px;border-radius:999px;letter-spacing:.4px;}
+  .lab.nav .lab-num{background:var(--blue);}
+  .lab-track,.lab-level{font-size:.74rem;font-weight:600;color:var(--muted);
+    border:1px solid var(--line);border-radius:999px;padding:3px 9px;}
+  .lab-src{margin-left:auto;font-size:.8rem;font-weight:600;text-decoration:none;color:var(--accent-deep);}
+  .lab.nav .lab-src{color:var(--blue-deep);}
+  .lab h2{margin:2px 0 10px;font-size:1.2rem;}
+  .lab h3{margin:18px 0 8px;font-size:.78rem;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
+  .goal{margin:0 0 4px;font-size:.96rem;}
+  ol.how,ul.verify,.deeper ul{margin:0;padding-left:22px;}
+  ol.how li,ul.verify li,.deeper li{margin:0 0 7px;font-size:.93rem;}
+  ul.verify{list-style:none;padding-left:2px;}
+  ul.verify li{position:relative;padding-left:24px;}
+  ul.verify li::before{content:"✓";position:absolute;left:0;top:0;color:var(--accent-deep);font-weight:800;}
+  .deeper{margin:6px 0 0;background:#f7faf8;border:1px solid var(--line);border-radius:10px;padding:6px 12px;}
+  .deeper summary{cursor:pointer;font-size:.86rem;font-weight:600;color:var(--accent-deep);}
+  .deeper ul{margin-top:8px;}
+  .vh{color:var(--accent-deep)!important;}
+
+  code{font-family:"SF Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    background:#eef2f7;color:#2b3550;padding:1px 5px;border-radius:5px;font-size:.88em;}
+  pre.sol{background:var(--code-bg);border-radius:12px;padding:16px 18px;overflow:auto;margin:0;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);}
+  pre.sol code{background:none;color:var(--code-ink);padding:0;border-radius:0;
+    font:13px/1.65 "SF Mono",ui-monospace,Menlo,Consolas,monospace;white-space:pre;}
+  pre.sol .c{color:var(--c-comment);font-style:italic;} pre.sol .k{color:var(--c-key);}
+  pre.sol .s{color:var(--c-str);} pre.sol .t{color:var(--c-type);}
+  pre.sol .a{color:var(--c-anno);} pre.sol .n{color:var(--c-num);}
+  li code,.goal code{background:#eef2f7;}
+
+  footer{color:var(--muted);font-size:.82rem;text-align:center;margin-top:30px;}
+  @media print{
+    body{background:#fff;} .wrap{max-width:none;} .lab,.toc{break-inside:avoid;box-shadow:none;}
+    header.page .links,.lab-src{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page">
+    <p class="eyebrow">Android · Kotlin · Jetpack Compose &amp; Navigation 3</p>
+    <h1>Hands-on Labs — Solutions &amp; Explanations</h1>
+    <p>The full answer key for every browser lab: the task, the working solution, why it works, and exactly what the auto-grader checks. 10 Compose labs and 3 Navigation labs.</p>
+    <div class="links">
+      <a href="./index.html">← All labs</a>
+      <a href="../Playground/playground.html">🎨 Compose Playground</a>
+      <a href="../Playground/nav-playground.html">🧭 Nav Playground</a>
+    </div>
+  </header>
+
+  <p class="note">📋 Instructor / self-check reference. Each lab can also reveal its own solution in-browser via the <b>Show solution</b> button — this page collects them all in one place. Generated from the labs by <code>build-solutions.mjs</code>, so the code always matches.</p>
+
+  <div class="toc">
+    <h2>Jump to a lab</h2>
+    <div class="tocgrid">
+<a class="tocitem" href="#lab-1"><span>1</span>Lay it out</a>
+<a class="tocitem" href="#lab-2"><span>2</span>Order matters</a>
+<a class="tocitem" href="#lab-3"><span>3</span>Style the text</a>
+<a class="tocitem" href="#lab-4"><span>4</span>Build a profile card</a>
+<a class="tocitem" href="#lab-5"><span>5</span>State that survives rotation</a>
+<a class="tocitem" href="#lab-6"><span>6</span>Row: mind the other axis</a>
+<a class="tocitem" href="#lab-7"><span>7</span>Spread them out</a>
+<a class="tocitem" href="#lab-8"><span>8</span>Push it to the edge</a>
+<a class="tocitem" href="#lab-9"><span>9</span>Split the row 1 : 2</a>
+<a class="tocitem" href="#lab-10"><span>10</span>Stack &amp; align</a>
+<a class="tocitem nav" href="#lab-11"><span>11</span>Drill down to a planet</a>
+<a class="tocitem nav" href="#lab-12"><span>12</span>Carry the right argument</a>
+<a class="tocitem nav" href="#lab-13"><span>13</span>Seed a deep-link back stack</a>
+    </div>
+  </div>
+
+<section class="lab" id="lab-1">
+  <div class="lab-head">
+    <span class="lab-num">Lab 1</span>
+    <span class="lab-track">Compose</span>
+    <span class="lab-level">Beginner</span>
+    <a class="lab-src" href="./compose-01-layout.html">open lab ↗</a>
+  </div>
+  <h2>Lay it out</h2>
+  <p class="goal"><b>The task.</b> Stack three lines of text vertically, evenly spaced and centered — using a Column, Arrangement, and Alignment.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="t">Column</span>(
+    modifier = <span class="t">Modifier</span>.fillMaxWidth(),
+    verticalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">8</span>.dp),
+    horizontalAlignment = <span class="t">Alignment</span>.<span class="t">CenterHorizontally</span>
+) {
+    <span class="t">Text</span>(<span class="s">"One"</span>)
+    <span class="t">Text</span>(<span class="s">"Two"</span>)
+    <span class="t">Text</span>(<span class="s">"Three"</span>)
+}</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>Make the root a <code>Column</code>.</li>
+<li>Put <b>three</b> <code>Text</code> composables inside it.</li>
+<li>Give it <code>verticalArrangement = Arrangement.spacedBy(8.dp)</code> so the lines have an even 8&nbsp;dp gap.</li>
+<li>Make it <code>Modifier.fillMaxWidth()</code> and center the children with <code>horizontalAlignment = Alignment.CenterHorizontally</code> — you need width to center within.</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>A <code>Column</code> takes its children in a trailing <code>{ }</code> block.</li>
+<li>Arrangement controls the MAIN axis (vertical for a Column); Alignment controls the CROSS axis (horizontal).</li>
+<li>Add <code>modifier = Modifier.fillMaxWidth()</code> so centering is visible across the whole width.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>The root composable is a <code>Column</code></li>
+<li>It has exactly <b>three</b> direct <code>Text</code> children</li>
+<li>8&nbsp;dp spacing via <code>Arrangement.spacedBy(8.dp)</code></li>
+<li><code>Modifier.fillMaxWidth()</code> gives room to center within</li>
+<li>Children centered with <code>CenterHorizontally</code></li></ul>
+</section>
+
+<section class="lab" id="lab-2">
+  <div class="lab-head">
+    <span class="lab-num">Lab 2</span>
+    <span class="lab-track">Compose</span>
+    <span class="lab-level">Beginner</span>
+    <a class="lab-src" href="./compose-02-modifiers.html">open lab ↗</a>
+  </div>
+  <h2>Order matters</h2>
+  <p class="goal"><b>The task.</b> A Modifier chain is ordered. Right now the blue fills the whole box and the text sits inside it. Make the blue HUG the text instead — by reordering two modifiers.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="t">Box</span>(modifier = <span class="t">Modifier</span>.padding(<span class="n">16</span>.dp).background(<span class="t">Color</span>(0xFF2563EB))) {
+    <span class="t">Text</span>(<span class="s">"Hug me"</span>, color = <span class="t">Color</span>.<span class="t">White</span>)
+}</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>Look at the box: the chain is <code>.background(…).padding(16.dp)</code>, so blue is painted first and the padding pushes the text inward — blue shows all around.</li>
+<li>Swap the order to <code>.padding(16.dp).background(…)</code>.</li>
+<li>Now the 16&nbsp;dp padding is a transparent margin OUTSIDE the blue, so the blue wraps tightly around the text.</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>Each modifier wraps everything AFTER it in the chain; the FIRST modifier is the outermost layer, the LAST sits closest to the content.</li>
+<li>You only need to reorder <code>.padding(...)</code> and <code>.background(...)</code> — nothing else changes.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>A <code>Box</code> contains a <code>Text</code></li>
+<li>The chain still has both <code>.padding</code> and <code>.background</code></li>
+<li><code>.padding(…)</code> comes <b>before</b> <code>.background(…)</code></li></ul>
+</section>
+
+<section class="lab" id="lab-3">
+  <div class="lab-head">
+    <span class="lab-num">Lab 3</span>
+    <span class="lab-track">Compose</span>
+    <span class="lab-level">Beginner</span>
+    <a class="lab-src" href="./compose-03-text.html">open lab ↗</a>
+  </div>
+  <h2>Style the text</h2>
+  <p class="goal"><b>The task.</b> Three plain lines need styling. Make a title use a type-scale role, make the second line bold and theme-colored, and make the caption italic.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="t">Column</span>(verticalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">6</span>.dp)) {
+    <span class="t">Text</span>(<span class="s">"Saturn"</span>, style = <span class="t">MaterialTheme</span>.typography.titleLarge)
+    <span class="t">Text</span>(<span class="s">"Ringed gas giant"</span>, fontWeight = <span class="t">FontWeight</span>.<span class="t">Bold</span>, color = <span class="t">MaterialTheme</span>.colorScheme.primary)
+    <span class="t">Text</span>(<span class="s">"Second largest planet"</span>, fontStyle = <span class="t">FontStyle</span>.<span class="t">Italic</span>)
+}</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>Give the first <code>Text</code> a <code>style = MaterialTheme.typography.titleLarge</code>.</li>
+<li>Make the second <code>Text</code> <code>fontWeight = FontWeight.Bold</code> AND <code>color = MaterialTheme.colorScheme.primary</code>.</li>
+<li>Make the third <code>Text</code> <code>fontStyle = FontStyle.Italic</code>.</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>Style and color are named arguments on <code>Text</code>, e.g. <code>Text("Hi", fontWeight = FontWeight.Bold)</code>.</li>
+<li>Pull sizes from the type scale (<code>titleLarge</code>, <code>bodyMedium</code>…) and colors from <code>MaterialTheme.colorScheme</code> instead of hardcoding.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>A <code>Text</code> uses <code>style = MaterialTheme.typography.titleLarge</code></li>
+<li>A <code>Text</code> is <code>FontWeight.Bold</code> with <code>color = …colorScheme.primary</code></li>
+<li>A <code>Text</code> is <code>FontStyle.Italic</code></li></ul>
+</section>
+
+<section class="lab" id="lab-4">
+  <div class="lab-head">
+    <span class="lab-num">Lab 4</span>
+    <span class="lab-track">Compose</span>
+    <span class="lab-level">Intermediate</span>
+    <a class="lab-src" href="./compose-04-profile.html">open lab ↗</a>
+  </div>
+  <h2>Build a profile card</h2>
+  <p class="goal"><b>The task.</b> Compose a real list-item layout: a Card with a circular avatar, a name/status column that eats the leftover width, and a trailing heart icon.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="t">Card</span>(modifier = <span class="t">Modifier</span>.fillMaxWidth()) {
+    <span class="t">Row</span>(
+        modifier = <span class="t">Modifier</span>.padding(<span class="n">16</span>.dp),
+        verticalAlignment = <span class="t">Alignment</span>.<span class="t">CenterVertically</span>,
+        horizontalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">12</span>.dp)
+    ) {
+        <span class="t">Box</span>(modifier = <span class="t">Modifier</span>.size(<span class="n">48</span>.dp).clip(<span class="t">CircleShape</span>).background(<span class="t">MaterialTheme</span>.colorScheme.primary))
+        <span class="t">Column</span>(modifier = <span class="t">Modifier</span>.weight(1f)) {
+            <span class="t">Text</span>(<span class="s">"Ada Lovelace"</span>, style = <span class="t">MaterialTheme</span>.typography.titleMedium)
+            <span class="t">Text</span>(<span class="s">"Online now"</span>, color = <span class="t">MaterialTheme</span>.colorScheme.primary)
+        }
+        <span class="t">Icon</span>(<span class="t">Icons</span>.<span class="t">Default</span>.<span class="t">Favorite</span>, contentDescription = <span class="k">null</span>, tint = <span class="t">Color</span>.<span class="t">Red</span>)
+    }
+}</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>Inside the <code>Row</code>, add a circular <b>avatar</b>: a <code>Box</code> with <code>Modifier.size(48.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary)</code>.</li>
+<li>Give the name <code>Column</code> <code>Modifier.weight(1f)</code> so it takes the remaining width and pushes the icon to the end.</li>
+<li>Add a trailing <code>Icon(Icons.Default.Favorite, contentDescription = null, tint = Color.Red)</code> after the column.</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>A round avatar is just a sized <code>Box</code> clipped to <code>CircleShape</code> with a background.</li>
+<li><code>weight(1f)</code> only works inside a Row/Column — it splits the leftover space.</li>
+<li>Order inside the Row is: avatar, then the weighted Column, then the Icon.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>A <code>Card</code> wraps a <code>Row</code></li>
+<li>A circular avatar — a <b>sized</b> <code>Box</code> with <code>clip(CircleShape)</code></li>
+<li>The name <code>Column</code> uses <code>Modifier.weight(1f)</code></li>
+<li>A trailing <code>Icon</code> is present</li></ul>
+</section>
+
+<section class="lab" id="lab-5">
+  <div class="lab-head">
+    <span class="lab-num">Lab 5</span>
+    <span class="lab-track">Compose</span>
+    <span class="lab-level">Intermediate</span>
+    <a class="lab-src" href="./compose-05-state.html">open lab ↗</a>
+  </div>
+  <h2>State that survives rotation</h2>
+  <p class="goal"><b>The task.</b> This tap counter is broken: a plain var isn’t Compose state, so taps don’t recompose and the count is lost on rotation. Give it state that updates the UI and survives a configuration change — with rememberSaveable.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="t">Column</span>(
+    modifier = <span class="t">Modifier</span>.fillMaxWidth(),
+    verticalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">12</span>.dp),
+    horizontalAlignment = <span class="t">Alignment</span>.<span class="t">CenterHorizontally</span>
+) {
+    <span class="k">var</span> count <span class="k">by</span> rememberSaveable { mutableStateOf(<span class="n">0</span>) }
+    <span class="t">Text</span>(<span class="s">"Taps: $count"</span>, style = <span class="t">MaterialTheme</span>.typography.headlineSmall)
+    <span class="t">Button</span>(onClick = { count++ }) { <span class="t">Text</span>(<span class="s">"Tap me"</span>) }
+}</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>Hold the count in <code>mutableStateOf(0)</code> — that makes it <b>observable</b>, so writing it triggers recomposition (the UI redraws).</li>
+<li>Wrap that in <code>rememberSaveable { … }</code> so the value survives <b>recomposition AND rotation / process death</b> (plain <code>remember</code> would be lost on rotation).</li>
+<li>Declare it with <code>by</code> so you read &amp; write <code>count</code> like a normal Int: <code>var count by rememberSaveable { mutableStateOf(0) }</code>.</li>
+<li>Keep the button’s <code>onClick = { count++ }</code> so tapping still increments it.</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>This is the exact pattern behind <code>selectedTab</code> in the <b>NavBottomTabs</b> project — the same line keeps the chosen tab across rotation.</li>
+<li>Three layers: <code>mutableStateOf</code> = observable; <code>remember</code> = survives recompose; <code>rememberSaveable</code> = ALSO survives rotation/process death.</li>
+<li>The <code>by</code> delegate (plus the <code>getValue</code>/<code>setValue</code> imports) lets you skip <code>.value</code> and use <code>count</code> directly.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>The count lives in <code>mutableStateOf(…)</code> — observable, so taps recompose</li>
+<li>It’s wrapped in <code>rememberSaveable { … }</code> — survives rotation &amp; process death</li>
+<li>Declared with <code>by</code> so you use <code>count</code> like a plain Int</li>
+<li>The button still increments it (<code>count++</code>)</li></ul>
+</section>
+
+<section class="lab" id="lab-6">
+  <div class="lab-head">
+    <span class="lab-num">Lab 6</span>
+    <span class="lab-track">Compose</span>
+    <span class="lab-level">Beginner</span>
+    <a class="lab-src" href="./compose-06-row.html">open lab ↗</a>
+  </div>
+  <h2>Row: mind the other axis</h2>
+  <p class="goal"><b>The task.</b> A Column stacks children top-to-bottom; a Row lays them left-to-right. The two knobs swap meaning: in a Row the MAIN axis is horizontal (so spacing is horizontalArrangement) and the CROSS axis is vertical (so centering is verticalAlignment). Make the star and the label share one line — vertically centered, with an 8.dp gap.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="t">Row</span>(
+    verticalAlignment = <span class="t">Alignment</span>.<span class="t">CenterVertically</span>,
+    horizontalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">8</span>.dp)
+) {
+    <span class="t">Icon</span>(<span class="t">Icons</span>.<span class="t">Default</span>.<span class="t">Star</span>, contentDescription = <span class="k">null</span>, tint = <span class="t">Color</span>(0xFFFFC107))
+    <span class="t">Text</span>(<span class="s">"4.8 — Highly rated"</span>, style = <span class="t">MaterialTheme</span>.typography.titleMedium)
+}</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>Right now the star Icon (22&nbsp;dp tall) and the label sit on different baselines, glued together. They are children of a <code>Row</code>, so they already run left-to-right.</li>
+<li>Center them on the <b>cross axis</b> (vertical) with <code>verticalAlignment = Alignment.CenterVertically</code> — this is the Row twin of a Column&rsquo;s <code>horizontalAlignment</code>.</li>
+<li>Add an 8&nbsp;dp gap on the <b>main axis</b> (horizontal) with <code>horizontalArrangement = Arrangement.spacedBy(8.dp)</code>.</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>Mnemonic: <b>arrangement = the axis the Row flows along</b> (horizontal); <b>alignment = the axis across it</b> (vertical). In a Column it&rsquo;s the mirror image.</li>
+<li>Both go in the <code>Row(</code>…<code>)</code> parameter list, not on a child: <code>Row(verticalAlignment = …, horizontalArrangement = …) { … }</code>.</li>
+<li><code>Arrangement.spacedBy(8.dp)</code> inserts the gap <i>between</i> children only — no leading or trailing space.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>A <code>Row</code> holds an <code>Icon</code> and a <code>Text</code></li>
+<li>Children are centered on the cross axis — <code>verticalAlignment = Alignment.CenterVertically</code></li>
+<li>An 8&nbsp;dp gap via <code>horizontalArrangement = Arrangement.spacedBy(8.dp)</code></li></ul>
+</section>
+
+<section class="lab" id="lab-7">
+  <div class="lab-head">
+    <span class="lab-num">Lab 7</span>
+    <span class="lab-track">Compose</span>
+    <span class="lab-level">Beginner</span>
+    <a class="lab-src" href="./compose-07-arrangement.html">open lab ↗</a>
+  </div>
+  <h2>Spread them out</h2>
+  <p class="goal"><b>The task.</b> Arrangement decides how leftover space on the MAIN axis is shared out. These three action buttons are bunched at the start because the Row is only as wide as its content. Make the Row full-width and spread the buttons edge-to-edge with Arrangement.SpaceBetween.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="t">Row</span>(
+    modifier = <span class="t">Modifier</span>.fillMaxWidth(),
+    horizontalArrangement = <span class="t">Arrangement</span>.<span class="t">SpaceBetween</span>
+) {
+    <span class="t">TextButton</span>(onClick = {}) { <span class="t">Text</span>(<span class="s">"Cancel"</span>) }
+    <span class="t">TextButton</span>(onClick = {}) { <span class="t">Text</span>(<span class="s">"Save draft"</span>) }
+    <span class="t">Button</span>(onClick = {}) { <span class="t">Text</span>(<span class="s">"Publish"</span>) }
+}</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>A Row hugs its children by default, so there is no leftover space to distribute. First add <code>Modifier.fillMaxWidth()</code> so the Row spans the screen.</li>
+<li>Now set <code>horizontalArrangement = Arrangement.SpaceBetween</code> — first child pinned to the start, last to the end, equal gaps between.</li>
+<li>Try swapping in <code>SpaceEvenly</code> or <code>SpaceAround</code> to feel the difference, then settle on <code>SpaceBetween</code> for an action bar.</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>Arrangement only has visible space to work with once the Row is wider than its children — that&rsquo;s why <code>fillMaxWidth()</code> comes first.</li>
+<li><code>SpaceBetween</code> = no space at the ends; <code>SpaceAround</code> = half-size gaps at the ends; <code>SpaceEvenly</code> = equal gaps everywhere, ends included.</li>
+<li>Both the modifier and the arrangement live in the <code>Row(</code>…<code>)</code> header.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>A <code>Row</code> holds <b>three</b> buttons</li>
+<li>The Row is full-width — <code>Modifier.fillMaxWidth()</code></li>
+<li>Buttons spread edge-to-edge — <code>horizontalArrangement = Arrangement.SpaceBetween</code></li></ul>
+</section>
+
+<section class="lab" id="lab-8">
+  <div class="lab-head">
+    <span class="lab-num">Lab 8</span>
+    <span class="lab-track">Compose</span>
+    <span class="lab-level">Intermediate</span>
+    <a class="lab-src" href="./compose-08-weight.html">open lab ↗</a>
+  </div>
+  <h2>Push it to the edge</h2>
+  <p class="goal"><b>The task.</b> This is the most common Row pattern in real apps: a label on the left, a control on the right, full width. The trick is Modifier.weight(1f) — give it to the label and it greedily eats all the leftover space, shoving the Switch to the far end. No fixed widths, no Spacer needed.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="t">Row</span>(
+    modifier = <span class="t">Modifier</span>.fillMaxWidth().padding(<span class="n">16</span>.dp),
+    verticalAlignment = <span class="t">Alignment</span>.<span class="t">CenterVertically</span>
+) {
+    <span class="t">Text</span>(
+        <span class="s">"Wi-Fi"</span>,
+        modifier = <span class="t">Modifier</span>.weight(1f),
+        style = <span class="t">MaterialTheme</span>.typography.titleMedium
+    )
+    <span class="t">Switch</span>(checked = <span class="k">true</span>)
+}</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>The Row is already <code>fillMaxWidth()</code>, but the label and Switch hug each other at the start because neither claims the empty space.</li>
+<li>Add <code>Modifier.weight(1f)</code> to the <b>label</b> <code>Text</code>. <code>weight</code> means &ldquo;take a share of the leftover space&rdquo; — with one weighted child, it takes <i>all</i> of it.</li>
+<li>The label now stretches across the gap, so the Switch is pushed to the trailing edge. (This only works inside a Row or Column.)</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>Put the modifier on the child, not the Row: <code>Text("Wi-Fi", modifier = Modifier.weight(1f), …)</code>.</li>
+<li>Why not <code>Arrangement.SpaceBetween</code>? It works for two items, but <code>weight</code> scales to any number of trailing items and lets you cap or pad the label independently — it&rsquo;s the more flexible tool.</li>
+<li>A weighted child reserves space <i>after</i> the unweighted ones are measured — that&rsquo;s why the fixed-size Switch keeps its size and the Text flexes.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>A full-width <code>Row</code> holds a <code>Text</code> and a <code>Switch</code></li>
+<li>The label <code>Text</code> carries <code>Modifier.weight(1f)</code></li>
+<li>The weighted label comes <b>before</b> the Switch (so it pushes it to the end)</li></ul>
+</section>
+
+<section class="lab" id="lab-9">
+  <div class="lab-head">
+    <span class="lab-num">Lab 9</span>
+    <span class="lab-track">Compose</span>
+    <span class="lab-level">Intermediate</span>
+    <a class="lab-src" href="./compose-09-weight-split.html">open lab ↗</a>
+  </div>
+  <h2>Split the row 1 : 2</h2>
+  <p class="goal"><b>The task.</b> Lab 8 used one weight to push. Use TWO weights to divide. When several children are weighted, they split the leftover space in proportion to their weights. Give the panels weights of 1 and 2 so the right panel ends up twice as wide as the left.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="t">Row</span>(
+    modifier = <span class="t">Modifier</span>.fillMaxWidth(),
+    horizontalArrangement = <span class="t">Arrangement</span>.spacedBy(<span class="n">12</span>.dp)
+) {
+    <span class="t">Box</span>(modifier = <span class="t">Modifier</span>.weight(1f).height(<span class="n">80</span>.dp).background(<span class="t">MaterialTheme</span>.colorScheme.primaryContainer)) {
+        <span class="t">Text</span>(<span class="s">"1 part"</span>, modifier = <span class="t">Modifier</span>.padding(<span class="n">12</span>.dp))
+    }
+    <span class="t">Box</span>(modifier = <span class="t">Modifier</span>.weight(2f).height(<span class="n">80</span>.dp).background(<span class="t">MaterialTheme</span>.colorScheme.secondaryContainer)) {
+        <span class="t">Text</span>(<span class="s">"2 parts"</span>, modifier = <span class="t">Modifier</span>.padding(<span class="n">12</span>.dp))
+    }
+}</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>Right now neither panel is weighted, so each is only as wide as its text — leaving a big empty gap on the right.</li>
+<li>Give the <b>left</b> Box <code>Modifier.weight(1f)</code> and the <b>right</b> Box <code>Modifier.weight(2f)</code>.</li>
+<li>Weights are a ratio: 1 + 2 = 3 shares, so the panels become 1/3 and 2/3 of the row&rsquo;s width — they grow and shrink together as the screen resizes.</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>Chain weight with the other modifiers, e.g. <code>Modifier.weight(1f).height(80.dp).background(…)</code>. Order of weight vs paint modifiers doesn&rsquo;t change the share.</li>
+<li>Equal weights (<code>1f</code> and <code>1f</code>) would split 50/50; <code>1f</code> and <code>2f</code> gives one-third / two-thirds.</li>
+<li>Because both panels are weighted, the <code>spacedBy(12.dp)</code> gap is subtracted first, then the remaining width is split 1 : 2.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>A full-width <code>Row</code> holds two <code>Box</code> panels</li>
+<li>The left panel has <code>Modifier.weight(1f)</code></li>
+<li>The right panel has <code>Modifier.weight(2f)</code> — twice the left</li></ul>
+</section>
+
+<section class="lab" id="lab-10">
+  <div class="lab-head">
+    <span class="lab-num">Lab 10</span>
+    <span class="lab-track">Compose</span>
+    <span class="lab-level">Intermediate</span>
+    <a class="lab-src" href="./compose-10-box-align.html">open lab ↗</a>
+  </div>
+  <h2>Stack &amp; align</h2>
+  <p class="goal"><b>The task.</b> Column and Row place children side by side; a Box LAYERS them on top of each other — later children draw on top. That is how you build avatars-with-badges, banners over images, FAB overlays. Here: pin a green “online” dot to the bottom-end corner of an avatar with Modifier.align.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="t">Box</span> {
+    <span class="t">Box</span>(modifier = <span class="t">Modifier</span>.size(<span class="n">64</span>.dp).clip(<span class="t">CircleShape</span>).background(<span class="t">MaterialTheme</span>.colorScheme.primary))
+    <span class="t">Box</span>(
+        modifier = <span class="t">Modifier</span>
+            .align(<span class="t">Alignment</span>.<span class="t">BottomEnd</span>)
+            .size(<span class="n">16</span>.dp)
+            .clip(<span class="t">CircleShape</span>)
+            .background(<span class="t">Color</span>(0xFF00C853))
+    )
+}</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>Inside the outer <code>Box</code>, the avatar and the status dot both sit in the top-start corner — stacked, because a Box overlaps its children.</li>
+<li>Move the dot with <code>Modifier.align(Alignment.BottomEnd)</code> on the dot&rsquo;s own Box. <code>align</code> is a Box-only modifier that positions <i>that one child</i> within the Box.</li>
+<li>Result: a 64&nbsp;dp avatar with a 16&nbsp;dp dot tucked into its bottom-right corner — the classic presence indicator.</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li><code>Alignment</code> inside a Box is two-dimensional: <code>TopStart</code>, <code>Center</code>, <code>BottomEnd</code>, etc. Put it as the first link: <code>Modifier.align(Alignment.BottomEnd).size(16.dp)…</code>.</li>
+<li>To align <i>every</i> child the same way you&rsquo;d set <code>Box(contentAlignment = …)</code> on the parent; to move just one child, use <code>Modifier.align(…)</code> on that child — that&rsquo;s what we want here.</li>
+<li>A round shape is a sized Box <code>.clip(CircleShape)</code> with a <code>.background(…)</code> — same recipe as the avatar in Lab 4.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>An outer <code>Box</code> stacks the avatar and the dot (3 Boxes total)</li>
+<li>Both inner Boxes are circular — sized + <code>clip(CircleShape)</code></li>
+<li>The dot is pinned bottom-end — a Box with <code>Modifier.align(Alignment.BottomEnd)</code></li></ul>
+</section>
+
+<section class="lab nav" id="lab-11">
+  <div class="lab-head">
+    <span class="lab-num">Lab 11</span>
+    <span class="lab-track">Navigation 3</span>
+    <span class="lab-level">Beginner</span>
+    <a class="lab-src" href="./nav-01-drilldown.html">open lab ↗</a>
+  </div>
+  <h2>Drill down to a planet</h2>
+  <p class="goal"><b>The task.</b> Navigate from the categories list all the way to Mars’s detail. Pushing a key navigates forward; the back stack should end up three deep.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="k">val</span> backStack = rememberNavBackStack(
+    <span class="t">CategoriesKey</span>,
+    <span class="t">ItemsKey</span>(categoryId = <span class="n">1</span>),
+    <span class="t">DetailKey</span>(itemId = <span class="n">4</span>),
+)</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>In the phone, tap <b>Rocky Planets</b> — that pushes <code>ItemsKey(categoryId = 1)</code>.</li>
+<li>Then tap <b>Mars</b> — that pushes <code>DetailKey(itemId = 4)</code>.</li>
+<li>Watch the back stack grow to <code>[CategoriesKey, ItemsKey(categoryId = 1), DetailKey(itemId = 4)]</code>. (You can also type the keys directly.)</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>Each tap calls <code>backStack.add(…)</code> — that IS "navigate forward".</li>
+<li>Mars is <code>itemId = 4</code> and lives in <code>categoryId = 1</code> (Rocky Planets).</li>
+<li>Stuck? Edit the list on the left to add the two keys by hand.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>The back stack is <b>3</b> keys deep</li>
+<li>The root is <code>CategoriesKey</code></li>
+<li>Then <code>ItemsKey(categoryId = 1)</code></li>
+<li>Top is <code>DetailKey(itemId = 4)</code> — Mars</li></ul>
+</section>
+
+<section class="lab nav" id="lab-12">
+  <div class="lab-head">
+    <span class="lab-num">Lab 12</span>
+    <span class="lab-track">Navigation 3</span>
+    <span class="lab-level">Beginner</span>
+    <a class="lab-src" href="./nav-02-argument.html">open lab ↗</a>
+  </div>
+  <h2>Carry the right argument</h2>
+  <p class="goal"><b>The task.</b> A key carries its screen’s arguments. This back stack opens a detail screen — but for the WRONG planet. Fix the argument so it shows Saturn.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="k">val</span> backStack = rememberNavBackStack(
+    <span class="t">CategoriesKey</span>,
+    <span class="t">ItemsKey</span>(categoryId = <span class="n">2</span>),
+    <span class="t">DetailKey</span>(itemId = <span class="n">6</span>),
+)</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>Notice the top key is <code>DetailKey(itemId = 1)</code>, which shows Mercury.</li>
+<li>Saturn is <code>itemId = 6</code>. Change the argument the top <code>DetailKey</code> carries.</li>
+<li>The detail screen and the back stack should now read Saturn — without adding or removing any keys.</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>The same <code>entry&lt;DetailKey&gt;</code> screen renders ANY planet — the <code>itemId</code> in the key chooses which one.</li>
+<li>Just edit the number: <code>DetailKey(itemId = 6)</code>.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>The stack is still 3 keys (no keys added or removed)</li>
+<li>The root is <code>CategoriesKey</code></li>
+<li>The middle is <code>ItemsKey(categoryId = 2)</code></li>
+<li>The top key is a <code>DetailKey</code></li>
+<li>It carries <code>itemId = 6</code> (Saturn)</li></ul>
+</section>
+
+<section class="lab nav" id="lab-13">
+  <div class="lab-head">
+    <span class="lab-num">Lab 13</span>
+    <span class="lab-track">Navigation 3</span>
+    <span class="lab-level">Intermediate</span>
+    <a class="lab-src" href="./nav-03-deeplink.html">open lab ↗</a>
+  </div>
+  <h2>Seed a deep-link back stack</h2>
+  <p class="goal"><b>The task.</b> A deep link drops the user straight onto a detail screen. Hand-seed the back stack so opening navdemo://planet/5 lands on Jupiter — and Back still walks up Detail → Items → Categories.</p>
+
+  <h3>Solution</h3>
+  <pre class="sol"><code><span class="k">val</span> backStack = rememberNavBackStack(
+    <span class="t">CategoriesKey</span>,
+    <span class="t">ItemsKey</span>(categoryId = <span class="n">2</span>),
+    <span class="t">DetailKey</span>(itemId = <span class="n">5</span>),
+)</code></pre>
+
+  <h3>How it works</h3>
+  <ol class="how"><li>The link <code>navdemo://planet/5</code> targets Jupiter (<code>itemId = 5</code>, in <code>categoryId = 2</code>).</li>
+<li>Seed the back stack with three keys so Back is meaningful: <code>CategoriesKey</code>, then <code>ItemsKey(categoryId = 2)</code>, then <code>DetailKey(itemId = 5)</code>.</li>
+<li>Add them to the <code>rememberNavBackStack(…)</code> list. Then press <b>‹ Back</b> in the phone to confirm it walks up the chain.</li></ol>
+  <details class="deeper"><summary>Going deeper</summary><ul><li>A deep link doesn’t just show one screen — you build the whole stack the user would have if they had navigated there, so Back behaves.</li>
+<li>Jupiter is a Gas Giant: <code>categoryId = 2</code>, <code>itemId = 5</code>.</li></ul></details>
+  <h3 class="vh">What the auto-checks verify</h3>
+  <ul class="verify"><li>The seeded stack is <b>3</b> keys deep</li>
+<li>The bottom (root) is <code>CategoriesKey</code></li>
+<li>The middle is <code>ItemsKey(categoryId = 2)</code></li>
+<li>The top is <code>DetailKey(itemId = 5)</code> — Jupiter</li></ul>
+</section>
+
+  <footer>Generated by <code>labs/build-solutions.mjs</code> · re-run after editing any lab to refresh.</footer>
+</div>
+</body>
+</html>
