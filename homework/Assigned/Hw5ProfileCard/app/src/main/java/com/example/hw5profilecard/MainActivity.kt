@@ -171,8 +171,9 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .size(16.dp)
+                        .align(Alignment.BottomEnd)
                         .clip(CircleShape)
-                        .background(Color.LightGray),
+                        .background(Online),
                 )
                 // ─────────────────────────────────────────────────
             }
@@ -209,32 +210,44 @@ private fun StatsRow(profile: Profile) {
     // A Row places its three stat cells horizontally; fillMaxWidth gives it the
     // whole card width to divide up among the three cells.
     Row(modifier = Modifier.fillMaxWidth()) {
+        StatCell(
+            number = "${profile.posts}",
+            label = "Posts",
+            modifier = Modifier.weight(1f)
+        )
+        StatCell(
+            number = "${profile.followers}",
+            label = "Followers",
+            modifier = Modifier.weight(1f)
+        )
+        StatCell(
+            number = "${profile.following}",
+            label = "Following",
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
 
-        // ─────────── TODO 2 (you): Stats row ───────────
-        // Make the THREE stats split this Row EVENLY, each one its own column:
-        // a big BOLD number on top and a small MUTED label below, both centered.
-        // HOW:
-        //   • For each stat, emit a small Column wrapped in a cell that uses
-        //     Modifier.weight(1f) — equal weights make the three cells share the
-        //     width evenly (1 : 1 : 1).
-        //   • Inside each cell: a Text for the NUMBER (fontWeight = Bold, large)
-        //     above a Text for the LABEL (small, color = onSurfaceVariant),
-        //     with horizontalAlignment = Alignment.CenterHorizontally.
-        //   • The three stats are:
-        //       profile.posts -> "Posts"
-        //       profile.followers -> "Followers"
-        //       profile.following -> "Following"
-        //   • TIP: write one small StatCell(number, label) composable and call it
-        //     three times so you don't repeat yourself.
-        // Until you build it, this single placeholder fills the row:
+/**
+ * A helper that renders a single stat (e.g., "128 Posts") as a centered column.
+ * Using Modifier.weight(1f) in the parent Row ensures each cell takes equal space.
+ */
+@Composable
+private fun StatCell(number: String, label: String, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(
-            text = "TODO 2 — stats row (Posts / Followers / Following)",
+            text = number,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+        )
+        Text(
+            text = label,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
         )
-        // ───────────────────────────────────────────────
     }
 }
 
@@ -244,31 +257,22 @@ private fun StatsRow(profile: Profile) {
 @Composable
 private fun ActionButtons() {
     // A full-width Row to hold the two buttons next to each other.
-    Row(modifier = Modifier.fillMaxWidth()) {
-
-        // ─────────── TODO 3 (you): Action buttons ───────────
-        // Put TWO equal-width buttons in this Row:
-        //   • a filled Button with Text("Follow")
-        //   • an OutlinedButton with Text("Message")
-        // HOW:
-        //   • Give the Row horizontalArrangement = Arrangement.spacedBy(12.dp)
-        //     so there's a gap BETWEEN the two buttons.
-        //   • Give EACH button Modifier.weight(1f) so they share the width
-        //     evenly (each takes half the row).
-        //   • onClick can stay empty for now: onClick = { }
-        // Until you build it, this placeholder marks the spot:
-        Text(
-            text = "TODO 3 — Follow / Message buttons",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        // ─────────────────────────────────────────────────────
-
-        // (Once you've written the real buttons above, you can DELETE the
-        // placeholder Text. These imports are already here for you to use:
-        // Button, OutlinedButton, Arrangement, and Modifier.weight.)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Button(
+            onClick = { },
+            modifier = Modifier.weight(1f)
+        ) {
+            Text("Follow")
+        }
+        OutlinedButton(
+            onClick = { },
+            modifier = Modifier.weight(1f)
+        ) {
+            Text("Message")
+        }
     }
 }
 

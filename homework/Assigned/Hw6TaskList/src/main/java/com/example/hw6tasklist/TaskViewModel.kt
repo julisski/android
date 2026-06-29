@@ -22,7 +22,6 @@ import androidx.lifecycle.ViewModelProvider                   // factory interfa
 import androidx.lifecycle.viewModelScope                      // CoroutineScope tied to the ViewModel's lifetime
 import com.example.hw6tasklist.data.Task                      // the Room entity (a task row)
 import com.example.hw6tasklist.data.TaskDatabase              // Room database singleton (provides the DAO)
-import kotlinx.coroutines.flow.MutableStateFlow               // used only by the TODO-2 PLACEHOLDER below
 import kotlinx.coroutines.flow.SharingStarted                 // controls WHEN the StateFlow is kept hot
 import kotlinx.coroutines.flow.StateFlow                      // observable, always-has-a-value stream for UI
 import kotlinx.coroutines.flow.stateIn                        // converts a cold Flow into a hot StateFlow
@@ -64,7 +63,12 @@ class TaskViewModel(app: Application) : AndroidViewModel(app) {
     //  no longer used — Android Studio greys it out. Remove it with Alt+Enter /
     //  Code ▸ Optimize Imports so the finished file has no leftover warnings.)
     // =========================================================================
-    val tasks: StateFlow<List<Task>> = MutableStateFlow<List<Task>>(emptyList())   // TODO 2: replace with observeTasks().stateIn(...)
+    val tasks: StateFlow<List<Task>> = taskDao.observeTasks()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList(),
+        )
 
     // --- ACTIONS (user intents -> suspend Room writes) -----------------------
 
@@ -83,7 +87,10 @@ class TaskViewModel(app: Application) : AndroidViewModel(app) {
     //     }
     // =========================================================================
     fun save(task: Task) {
-        // TODO 3: launch on viewModelScope and insert (id == 0L) or update (id != 0L)
+        viewModelScope.launch {
+            if (task.id == 0L) taskDao.insert(task)
+            else               taskDao.update(task)
+        }
     }
 
     // =========================================================================
@@ -97,11 +104,11 @@ class TaskViewModel(app: Application) : AndroidViewModel(app) {
     // Replace the empty bodies below.
     // =========================================================================
     fun delete(task: Task) {
-        // TODO 4a: viewModelScope.launch { taskDao.delete(task) }
+        viewModelScope.launch { taskDao.delete(task) }
     }
 
     fun toggleDone(task: Task) {
-        // TODO 4b: viewModelScope.launch { taskDao.update(task.copy(done = !task.done)) }
+        viewModelScope.launch { taskDao.update(task.copy(done = !task.done)) }
     }
 
     /**

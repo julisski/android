@@ -41,7 +41,6 @@ import androidx.activity.compose.setContent                  // installs a Compo
 import androidx.activity.enableEdgeToEdge                    // draw behind the system bars for a modern look
 
 // --- Compose foundation: layout + scrolling ----------------------------------
-import androidx.compose.foundation.layout.Arrangement        // spacing BETWEEN children on the main axis
 import androidx.compose.foundation.layout.Box                // overlap/center a single child (used for placeholders)
 import androidx.compose.foundation.layout.Column             // stack children vertically
 import androidx.compose.foundation.layout.Row                // place children horizontally (one settings row)
@@ -130,27 +129,28 @@ fun SettingRow(
     isOn: Boolean,
     onToggle: (Boolean) -> Unit,
 ) {
-    // ─────────────── TODO 2 (you): Row layout — icon · label · control ───────────────
-    // Replace the placeholder Text below with a real Row.
-    //   • Use a Row(...) with verticalAlignment = Alignment.CenterVertically so the
-    //     icon, label and control all line up on the same center line.
-    //   • Give the Row Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp).
-    //   • Inside, in order:
-    //       1) Text(item.icon, fontSize = 22.sp)            // the leading emoji
-    //       2) Spacer(Modifier.width(16.dp))                // gap after the icon
-    //       3) Text(item.label, modifier = Modifier.weight(1f))  // weight(1f) makes the
-    //          label EAT all the leftover width, pushing the control to the far END
-    //       4) the trailing control: if item.kind == Kind.TOGGLE show
-    //          Switch(checked = isOn, onCheckedChange = onToggle);
-    //          otherwise show Text("›", fontSize = 24.sp) for a NAV row.
-    // (See Labs 6 & 8 for Row cross-axis alignment + weight.)
-    //
-    // Placeholder (delete when you build the real row): shows the label so the
-    // screen is readable, but with no icon, no weight, and no control yet.
-    Text(
-        "TODO 2 — row: ${item.label}",
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
-    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // 1) The leading emoji icon
+        Text(item.icon, fontSize = 22.sp)
+
+        // 2) Gap after the icon
+        Spacer(Modifier.width(16.dp))
+
+        // 3) The label, using weight(1f) to push the control to the end
+        Text(item.label, modifier = Modifier.weight(1f))
+
+        // 4) The trailing control (Switch for TOGGLE, chevron for NAV)
+        if (item.kind == Kind.TOGGLE) {
+            Switch(checked = isOn, onCheckedChange = onToggle)
+        } else {
+            Text("›", fontSize = 24.sp)
+        }
+    }
 }
 
 // ===========================================================================
@@ -209,16 +209,22 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             // by checking the index (e.g. settings.forEachIndexed { i, item -> ... })
             // and emitting HorizontalDivider() when item.label == "About".
             //
-            // Placeholders below (replace with your real list). They keep the screen
-            // compiling and visible until you implement TODO 1/3/4:
-            Text(
-                "TODO 1 — render all ${settings.size} settings here",
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-            )
-            // One sample row so you can see SettingRow render before TODO 1 is done.
-            SettingRow(item = settings.first(), isOn = settings.first().initiallyOn, onToggle = {})
+            settings.forEach { item ->
+                // TODO 4: add a divider before the "About" footer
+                if (item.label == "About") {
+                    HorizontalDivider()
+                }
 
-            Spacer(modifier = Modifier.width(0.dp))           // harmless spacer; remove freely
+                // TODO 3: give each TOGGLE row remembered on/off state
+                var isOn by remember { mutableStateOf(item.initiallyOn) }
+
+                // TODO 1: render ALL items from `settings`
+                SettingRow(
+                    item = item,
+                    isOn = isOn,
+                    onToggle = { isOn = it }
+                )
+            }
         }
     }
 }
