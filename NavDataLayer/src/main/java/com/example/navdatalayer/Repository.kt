@@ -30,6 +30,7 @@ package com.example.navdatalayer
 import kotlinx.coroutines.delay                       // suspends a coroutine for a time, WITHOUT blocking a thread
 import kotlinx.coroutines.flow.Flow                   // a cold, asynchronous stream of values over time
 import kotlinx.coroutines.flow.flow                   // builder that emits values into a Flow (flow { emit(...) })
+import kotlinx.coroutines.flow.emitAll                // C3: forwards every value of another Flow
 
 // ===========================================================================
 // DATA MODELS
@@ -81,6 +82,9 @@ internal val sampleCategories = listOf(
 // The planets. Each one's `categoryId` ties it back to a Category (1 = Rocky,
 // 2 = Gas Giant). In a real app these rows would come from a database table or
 // a JSON response — see the RoomPlanetRepository / RetrofitPlanetRepository notes.
+// C1: Add Uranus and Neptune. Nothing else in the UI needs to change because
+// the screens observe the PlanetsUiState from the ViewModel, which in turn
+// collects from this Repository. The data layer is the source of truth.
 internal val samplePlanets = listOf(
     Item(1, 1, "Mercury", "The smallest planet and the closest to the Sun.",
         "A year on Mercury is just 88 Earth days, but a single day lasts 176."),
@@ -94,6 +98,10 @@ internal val samplePlanets = listOf(
         "Jupiter's Great Red Spot is a storm wider than the entire Earth."),
     Item(6, 2, "Saturn", "The ringed gas giant, second largest in the system.",
         "Saturn is so light it would float in water — if you found a big enough tub."),
+    Item(7, 2, "Uranus", "The tilted ice giant with faint rings.",
+        "Uranus is the only planet that rotates on its side."),
+    Item(8, 2, "Neptune", "The windiest planet, a cold blue world.",
+        "Neptune's winds can reach speeds of over 1,200 miles per hour."),
 )
 
 // Resolve a Category by id. Used only by screens that already received an Item
@@ -140,6 +148,9 @@ interface PlanetRepository {
 // CONCRETE IMPLEMENTATION #1 — IN-MEMORY (the only one wired up today)
 // ===========================================================================
 
+// C2: A compile-checked switch for the demo modes (no stringly-typed "ok"/"error").
+enum class Simulate { OK, EMPTY, ERROR }
+
 /**
  * An in-memory [PlanetRepository] backed by the hardcoded [samplePlanets] list.
  *
@@ -149,7 +160,9 @@ interface PlanetRepository {
  * ViewModel and every screen — is written against [PlanetRepository] and is
  * completely unaware that the data happens to be a fixed Kotlin list.
  */
-class InMemoryPlanetRepository : PlanetRepository {
+class InMemoryPlanetRepository(
+    private val simulate: Simulate = Simulate.OK,   // C2: default: behave normally
+) : PlanetRepository {
 
     // Tunable fake latency so Loading/Detail-loading states are observable.
     private val fakeLatencyMillis = 1_200L
@@ -176,11 +189,14 @@ class InMemoryPlanetRepository : PlanetRepository {
      */
     override fun planets(): Flow<List<Item>> = flow {
         delay(fakeLatencyMillis)            // pretend we're hitting a disk/network — makes Loading visible
-        emit(samplePlanets)                 // push the list to whoever is collecting (the ViewModel)
-        // To DEMONSTRATE the Empty UI state instead, swap the line above for:
-        //     emit(emptyList())
-        // To DEMONSTRATE the Error UI state, throw here:
-        //     throw IllegalStateException("Simulated data-source failure")
+        // C2: Branch on the simulate mode.
+        // In ERROR mode, Retry can never succeed because the repository is hardcoded
+        // to always throw when simulate == ERROR.
+        when (simulate) {
+            Simulate.OK    -> emit(samplePlanets)
+            Simulate.EMPTY -> emit(emptyList())      // -> the UI's Empty state
+            Simulate.ERROR -> throw IllegalStateException("Simulated data-source failure") // -> Error + Retry
+        }
     }
 
     /**
@@ -194,6 +210,31 @@ class InMemoryPlanetRepository : PlanetRepository {
         delay(fakeLatencyMillis / 2)        // shorter fake latency for the single-item detail load
         return samplePlanets.firstOrNull { it.id == id }   // null when not found — caller handles it
     }
+}
+
+// C3: A flaky repository that Retry actually rescues.
+// Retry works because repo.planets() is a cold flow. When retry() calls
+// observePlanets() -> launchIn, it starts a NEW collection of the flow.
+// This re-runs the flow { } block, incrementing `attempts` and reaching
+// the emitAll(wrapped.planets()) branch on the second try.
+class FlakyPlanetRepository(
+    // Explicitly OK — don't inherit whatever demo mode C2 left as the default.
+    private val wrapped: PlanetRepository = InMemoryPlanetRepository(Simulate.OK),
+) : PlanetRepository {
+    private var attempts = 0                       // how many times planets() has been collected
+
+    override fun planets(): Flow<List<Item>> = flow {
+        attempts++                                  // the flow body runs on EVERY collection (cold flow)
+        if (attempts == 1) {
+            delay(800)                              // a little fake latency before failing
+            throw IllegalStateException("Network hiccup — try again")  // first try always fails
+        }
+        emitAll(wrapped.planets())                  // afterwards: defer to the real repository
+    }
+
+    // Required by the interface. Note: the app never actually calls THIS delegate —
+    // PlanetDetailScreen builds its OWN InMemoryPlanetRepository (you'll see it in C4).
+    override suspend fun planet(id: Int): Item? = wrapped.planet(id)
 }
 
 // ===========================================================================

@@ -36,6 +36,7 @@ import androidx.compose.foundation.clickable                   // makes a row/el
 import androidx.compose.foundation.layout.Arrangement          // spacing strategy for Row/Column children
 import androidx.compose.foundation.layout.Box                  // overlap/align children (e.g. pin a FAB)
 import androidx.compose.foundation.layout.Column               // stacks children vertically
+import androidx.compose.foundation.layout.PaddingValues              // for contentPadding in LazyColumn
 import androidx.compose.foundation.layout.Row                  // lays out children horizontally
 import androidx.compose.foundation.layout.Spacer               // empty box used to add fixed gaps
 import androidx.compose.foundation.layout.fillMaxSize          // modifier: take all available width AND height
@@ -186,10 +187,10 @@ fun AppNavigation(
                 TaskListScreen(
                     tasks = tasks,
                     onAddTask = {
-                        // TODO 8a: backStack.add(TaskEditKey(taskId = null))
+                        backStack.add(TaskEditKey(taskId = null))
                     },
                     onOpenTask = { task ->
-                        // TODO 8b: backStack.add(TaskEditKey(taskId = task.id))
+                        backStack.add(TaskEditKey(taskId = task.id))
                     },
                     onToggleDone = viewModel::toggleDone,       // flip done -> Room UPDATE (TODO 4b)
                     onDelete = viewModel::delete,               // delete -> Room DELETE (TODO 4a)
@@ -206,10 +207,10 @@ fun AppNavigation(
                     existing = existing,
                     onSave = { task ->
                         viewModel.save(task)                    // persist via Room (TODO 3)
-                        // TODO 8c: backStack.removeLastOrNull()  // then pop back to the list
+                        backStack.removeLastOrNull()  // then pop back to the list
                     },
                     onCancel = {
-                        // TODO 8c: backStack.removeLastOrNull()
+                        backStack.removeLastOrNull()
                     },
                 )
             }
@@ -240,43 +241,45 @@ fun TaskListScreen(
     onDelete: (Task) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // =====================================================================
-    // ★ TODO 5 — build the task list + an "add" button ★
-    // (builds on RoomAndPreferences' notes list; the OPTIONAL FAB builds on hw5's Box/align)
-    //
-    // Replace this placeholder so the screen shows:
-    //   • a way to ADD a task whose onClick calls onAddTask(). SIMPLEST: a plain
-    //     Button("New task") at the TOP of a Column — exactly like RoomAndPreferences
-    //     puts its "Add note" button above the list. No new layout ideas needed.
-    //   • the LIST — a LazyColumn that emits one TaskRow(...) per task in `tasks`:
-    //     `items(tasks, key = { it.id }) { task -> TaskRow(...); HorizontalDivider() }`,
-    //     wiring each row's callbacks to onOpenTask / onToggleDone / onDelete.
-    //   • an EMPTY STATE — when `tasks` is empty, show a friendly "No tasks yet" message
-    //     instead of a blank screen.
-    //
-    // OPTIONAL STRETCH — a Material FloatingActionButton pinned bottom-right (the hw5
-    // Box/align trick). Make the list and the FAB SIBLINGS inside ONE Box:
-    //     Box(Modifier.fillMaxSize()) {
-    //         LazyColumn(Modifier.fillMaxSize(),
-    //             contentPadding = PaddingValues(bottom = 88.dp)) { /* items + dividers */ }
-    //         FloatingActionButton(onClick = onAddTask,
-    //             modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)) { Text("＋") }
-    //     }
-    // The bottom contentPadding stops the FAB covering the last row. (PaddingValues lives
-    // in androidx.compose.foundation.layout — add that import if you take this path.)
-    //
-    // The placeholder below just proves the screen is wired up; delete it.
-    // =====================================================================
-    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
-        Text("Tasks", style = MaterialTheme.typography.headlineSmall)
-        Spacer(Modifier.height(12.dp))
-        Text(
-            "TODO 5 — build the task list here.\n\n" +
-                "Add a FloatingActionButton (or Button) that calls onAddTask(), then a " +
-                "LazyColumn of TaskRow(...) over `tasks`, plus an empty-state message.\n\n" +
-                "There ${if (tasks.size == 1) "is" else "are"} currently ${tasks.size} task(s) in the database.",
-            style = MaterialTheme.typography.bodyMedium,
-        )
+    Box(modifier = modifier.fillMaxSize()) {
+        if (tasks.isEmpty()) {
+            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                Text("Tasks", style = MaterialTheme.typography.headlineSmall)
+                Spacer(Modifier.height(12.dp))
+                Text("No tasks yet", style = MaterialTheme.typography.bodyMedium)
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 88.dp)
+            ) {
+                item {
+                    Text(
+                        "Tasks",
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                items(tasks, key = { it.id }) { task ->
+                    TaskRow(
+                        task = task,
+                        onToggleDone = { onToggleDone(task) },
+                        onOpen = { onOpenTask(task) },
+                        onDelete = { onDelete(task) }
+                    )
+                    HorizontalDivider()
+                }
+            }
+        }
+
+        FloatingActionButton(
+            onClick = onAddTask,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            Text("＋")
+        }
     }
 }
 
@@ -295,29 +298,50 @@ fun TaskRow(
     onOpen: () -> Unit,
     onDelete: () -> Unit,
 ) {
-    // =====================================================================
-    // ★ TODO 6 — make this row real ★
-    // (builds on hw5's settings row: Row cross-axis + Modifier.weight + state)
-    //
-    // Build a Row (verticalAlignment = Alignment.CenterVertically,
-    //   horizontalArrangement = Arrangement.spacedBy(8.dp)) containing:
-    //   • a Checkbox(checked = task.done, onCheckedChange = { onToggleDone() })
-    //   • a Column with Modifier.weight(1f) holding the title (titleMedium) and, if
-    //     task.notes is not blank, the notes (bodyMedium). Give the Column a
-    //     Modifier.clickable { onOpen() } so tapping the text opens the editor.
-    //   • a small priority label — map the Int to text with
-    //         when (task.priority) { 2 -> "High"; 1 -> "Normal"; else -> "Low" }
-    //   • a delete control — an OutlinedButton(onClick = onDelete) { Text("Delete") }
-    //
-    // The placeholder below shows just the title (and is tappable); replace it.
-    // =====================================================================
-    Text(
-        text = task.title,
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onOpen() }
-            .padding(16.dp),
-    )
+            .padding(16.dp)
+    ) {
+        Checkbox(
+            checked = task.done,
+            onCheckedChange = { onToggleDone() }
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .clickable { onOpen() }
+        ) {
+            Text(
+                text = task.title,
+                style = MaterialTheme.typography.titleMedium
+            )
+            if (task.notes.isNotBlank()) {
+                Text(
+                    text = task.notes,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        val priorityText = when (task.priority) {
+            2 -> "High"
+            1 -> "Normal"
+            else -> "Low"
+        }
+        Text(
+            text = priorityText,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(horizontal = 4.dp)
+        )
+
+        OutlinedButton(onClick = onDelete) {
+            Text("Delete")
+        }
+    }
 }
 
 // ===========================================================================
@@ -339,55 +363,80 @@ fun TaskEditScreen(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // =====================================================================
-    // ★ TODO 7 — build the add/edit form ★
-    // (builds on RoomAndPreferences' add-note inputs + hw5's remembered state)
-    //
-    // 1) LOCAL form state, seeded from `existing` (or blank for a new task). KEY each
-    //    remember on `existing` so the fields re-seed if the task arrives a moment later
-    //    (e.g. when the app is killed and reopened directly on this edit screen — without
-    //    the key, the form could stay blank because `remember` caches its first value):
-    //        var title by remember(existing) { mutableStateOf(existing?.title ?: "") }
-    //        var notes by remember(existing) { mutableStateOf(existing?.notes ?: "") }
-    //        var done by remember(existing) { mutableStateOf(existing?.done ?: false) }
-    //        var priority by remember(existing) { mutableStateOf(existing?.priority ?: 1) }
-    // 2) UI: an OutlinedTextField for title and one for notes; a control to change
-    //    priority; a Checkbox for `done`. SIMPLEST priority control — ONE Button that
-    //    cycles AND shows the value (reuses the same mapping as TODO 6):
-    //        Button(onClick = { priority = (priority + 1) % 3 }) {
-    //            Text("Priority: " + when (priority) { 2 -> "High"; 1 -> "Normal"; else -> "Low" })
-    //        }
-    //    (A Row of three Low/Normal/High buttons also works, but then highlight the
-    //    selected one — a filled Button for the active level, OutlinedButton for the rest.)
-    // 3) A "Save" Button that builds a Task and calls onSave(...). PRESERVE the id and
-    //    createdAt when editing so Room UPDATES the same row instead of inserting a new one:
-    //        onSave(
-    //            Task(
-    //                id = existing?.id ?: 0L,                          // 0 = new -> INSERT; non-zero -> UPDATE
-    //                title = title.trim(),
-    //                notes = notes.trim(),
-    //                done = done,
-    //                priority = priority,
-    //                createdAt = existing?.createdAt ?: System.currentTimeMillis(),
-    //            )
-    //        )
-    //    ...and a "Cancel" Button (or OutlinedButton) that calls onCancel().
-    //
-    // The placeholder below shows the title and a working Back button; replace it.
-    // =====================================================================
-    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
+    var title by remember(existing) { mutableStateOf(existing?.title ?: "") }
+    var notes by remember(existing) { mutableStateOf(existing?.notes ?: "") }
+    var done by remember(existing) { mutableStateOf(existing?.done ?: false) }
+    var priority by remember(existing) { mutableStateOf(existing?.priority ?: 1) }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         Text(
             text = if (existing == null) "New task" else "Edit task",
             style = MaterialTheme.typography.headlineSmall,
         )
-        Spacer(Modifier.height(12.dp))
-        Text(
-            "TODO 7 — build the form here (title + notes fields, priority control, " +
-                "done checkbox, Save + Cancel). Build a Task and pass it to onSave(...).",
-            style = MaterialTheme.typography.bodyMedium,
+
+        OutlinedTextField(
+            value = title,
+            onValueChange = { title = it },
+            label = { Text("Title") },
+            modifier = Modifier.fillMaxWidth()
         )
-        Spacer(Modifier.height(20.dp))
-        OutlinedButton(onClick = onCancel) { Text("Back") }
+
+        OutlinedTextField(
+            value = notes,
+            onValueChange = { notes = it },
+            label = { Text("Notes") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(checked = done, onCheckedChange = { done = it })
+            Text("Done")
+        }
+
+        Button(onClick = { priority = (priority + 1) % 3 }) {
+            Text("Priority: " + when (priority) {
+                2 -> "High"
+                1 -> "Normal"
+                else -> "Low"
+            })
+        }
+
+        Spacer(Modifier.weight(1f))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlinedButton(
+                onClick = onCancel,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Cancel")
+            }
+            Button(
+                onClick = {
+                    onSave(
+                        Task(
+                            id = existing?.id ?: 0L,
+                            title = title.trim(),
+                            notes = notes.trim(),
+                            done = done,
+                            priority = priority,
+                            createdAt = existing?.createdAt ?: System.currentTimeMillis(),
+                        )
+                    )
+                },
+                enabled = title.isNotBlank(),
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Save")
+            }
+        }
     }
 }
 

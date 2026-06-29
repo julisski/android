@@ -180,6 +180,10 @@ data class DetailKey(val itemId: Int) : NavKey             // third screen; whic
 @Serializable
 data class FactKey(val itemId: Int) : NavKey               // fourth screen; which item's fun fact to show
 
+// A1: The new key — names the screen AND carries which planet we came from.
+@Serializable
+data class CategoryInfoKey(val itemId: Int) : NavKey
+
 /**
  * MainActivity — the app's single Activity and the entry point Android launches.
  *
@@ -231,7 +235,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     // NavDisplay renders whatever key is on top of the back stack, animating the
     // transition when the top changes.
     NavDisplay(
-        backStack = backStack,
+        backStack = backStack,5u
         modifier = modifier,
         // Called for system back gestures / the hardware back button. Popping the
         // top key returns to the previous screen; removeLastOrNull is a no-op (and
@@ -280,8 +284,14 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                         Log.d("LT", "In entry<CategoriesKey>, categoryId = ${categoryId}")
 //                        Log.d("LT", "tapped category = ${categoryById(categoryId).name}")
                         backStack.add(ItemsKey(categoryId))
+                    },
+                    // A2(b): Hand-seed the stack so Back walks down sensibly: push the WHOLE path, not just the end.
+                    onJumpToFact = {
+                        val item = sampleItems.random()              // pick any planet
+                        backStack.add(ItemsKey(item.categoryId))     // level 2 — its category's planet list
+                        backStack.add(DetailKey(item.id))            // level 3 — its detail
+                        backStack.add(FactKey(item.id))              // level 4 — the fact (top = what's shown)
                     }
-
                 )
             }
             // LEVEL 2 — when an ItemsKey is on top, show that category's planets.
@@ -317,9 +327,31 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                     item = itemById(key.itemId),
                     // "Back" pops one level (back to the detail screen).
                     onBack = { backStack.removeLastOrNull() },
+                    // A3: "Back to planet list" pops exactly two keys (Fact and Detail), landing on Items screen.
+                    onBackToList = {
+                        // removeLastOrNull() is safer than removeLast() because it won't crash if the
+                        // stack is empty (though Nav3's display logic should prevent that).
+                        // If A2(a) only pushed [Categories, Fact], popping two would leave an
+                        // empty stack (or just Categories if we only had two), potentially
+                        // causing an empty screen or unexpected behavior. A2(b) ensures the stack
+                        // is deep enough.
+                        repeat(2) { backStack.removeLastOrNull() }
+                    },
                     // "Start over" pops EVERY key except the first, returning to the
                     // categories screen at the root of the stack.
-                    onStartOver = { while (backStack.size > 1) backStack.removeLastOrNull() }
+                    onStartOver = { while (backStack.size > 1) backStack.removeLastOrNull() },
+                    // A1: Tapping "About its category" pushes a CategoryInfoKey for the same planet
+                    onOpenCategoryInfo = { itemId -> backStack.add(CategoryInfoKey(itemId)) }
+                )
+            }
+
+            // A1: LEVEL 5 — when a CategoryInfoKey is on top, show that planet's category info.
+            entry<CategoryInfoKey> { key ->
+                val item = itemById(key.itemId)               // resolve the planet from the id in the key
+                CategoryInfoScreen(
+                    item = item,
+                    category = categoryById(item.categoryId), // follow the "foreign key" to its category
+                    onBack = { backStack.removeLastOrNull() } // pop one level, back to the fact screen
                 )
             }
         }
@@ -336,17 +368,30 @@ fun AppNavigation(modifier: Modifier = Modifier) {
  *
  * @param categories the rows to render.
  * @param onOpen     invoked with a category's id when its row is tapped.
+ * @param onJumpToFact A2: invoked when "Surprise me" is tapped.
  * @param modifier   optional layout modifier supplied by the caller.
  */
 @Composable
 fun CategoriesScreen(
     categories: List<Category>,
     onOpen: (Int) -> Unit,
+    onJumpToFact: () -> Unit, // A2: new parameter
     modifier: Modifier = Modifier,
 ) {
     // LazyColumn is the Compose equivalent of a RecyclerView: it only composes
     // and lays out the rows currently visible on screen, so long lists stay fast.
     LazyColumn(modifier = modifier.fillMaxSize()) {
+        // A2(a): Add a "Surprise me" button at the top.
+        // If I pushed only FactKey(item.id), pressing Back would land me on the
+        // Categories screen because the stack would be [Categories, Fact].
+        item {
+            Button(
+                onClick = onJumpToFact,
+                modifier = Modifier.padding(16.dp).fillMaxWidth()
+            ) {
+                Text("Surprise me")
+            }
+        }
         // `items(categories) { ... }` emits one block of UI per element.
         items(categories) { category ->                    // draw one row per category
             Column(
@@ -473,14 +518,18 @@ fun DetailScreen(
  *
  * @param item        the fully-resolved item whose fact is shown.
  * @param onBack      invoked when the user taps "Back" (pops one level).
+ * @param onBackToList A3: invoked when "Back to planet list" is tapped (pops two levels).
  * @param onStartOver invoked when the user taps "Start over" (returns to the root).
+ * @param onOpenCategoryInfo A1: invoked when "About its category" is tapped.
  * @param modifier    optional layout modifier supplied by the caller.
  */
 @Composable
 fun FactScreen(
     item: Item,
     onBack: () -> Unit,
+    onBackToList: () -> Unit, // A3: new parameter
     onStartOver: () -> Unit,
+    onOpenCategoryInfo: (Int) -> Unit, // A1: new parameter
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
@@ -493,14 +542,64 @@ fun FactScreen(
         // The fun fact itself, pulled from the item's `fact` field.
         Text(text = item.fact, style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.height(24.dp))
+        // A1: New button to drill forward to the fifth screen.
+        Button(onClick = { onOpenCategoryInfo(item.id) }) {
+            Text("About its category")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
         // The Button the user asked for: pops one level back to the detail screen.
         Button(onClick = onBack) {
             Text("Back")
         }
         Spacer(modifier = Modifier.height(8.dp))
+        // A3: New button between "Back" and "Start over" that pops two levels.
+        Button(onClick = onBackToList) {
+            Text("Back to planet list")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
         // A second Button that clears the whole stack back to the first screen.
         Button(onClick = onStartOver) {
             Text("Start over")
+        }
+    }
+}
+
+/**
+ * CategoryInfoScreen (LEVEL 5 — A1): shows info about the [category] the [item]
+ * belongs to.
+ *
+ * @param item     the planet we came from.
+ * @param category the category to display.
+ * @param onBack   invoked when the user taps "Back" (pops one level).
+ * @param modifier optional layout modifier supplied by the caller.
+ */
+@Composable
+fun CategoryInfoScreen(
+    item: Item,
+    category: Category,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
+        // Headline: the category name.
+        Text(
+            text = category.name,
+            style = MaterialTheme.typography.headlineSmall,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        // Subtitle naming the planet.
+        Text(
+            text = "Category for ${item.title}",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.secondary
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        // The category's description.
+        Text(text = category.description, style = MaterialTheme.typography.bodyLarge)
+        Spacer(modifier = Modifier.height(24.dp))
+        // Back button to return to the fact screen.
+        Button(onClick = onBack) {
+            Text("Back")
         }
     }
 }
@@ -536,7 +635,7 @@ fun FactScreen(
 @Composable
 fun CategoriesScreenPreview() {
     NavFourScreenTheme {
-        CategoriesScreen(categories = sampleCategories, onOpen = {})
+        CategoriesScreen(categories = sampleCategories, onOpen = {}, onJumpToFact = {})
     }
 }
 
@@ -584,6 +683,21 @@ fun FactScreenPreview(
     @PreviewParameter(ItemPreviewProvider::class) item: Item
 ) {
     NavFourScreenTheme {
-        FactScreen(item = item, onBack = {}, onStartOver = {})
+        FactScreen(item = item, onBack = {}, onBackToList = {}, onStartOver = {}, onOpenCategoryInfo = {})
+    }
+}
+
+// LEVEL 5 — A1: preview every state of the new screen
+@Preview(name = "CategoryInfo", showBackground = true, widthDp = 320, heightDp = 480)
+@Composable
+fun CategoryInfoScreenPreview(
+    @PreviewParameter(ItemPreviewProvider::class) item: Item
+) {
+    NavFourScreenTheme {
+        CategoryInfoScreen(
+            item = item,
+            category = categoryById(item.categoryId),
+            onBack = {},
+        )
     }
 }
