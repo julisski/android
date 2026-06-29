@@ -31,11 +31,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -117,14 +123,30 @@ fun MatchManiaScreen() {
             //   cell must look different per tile.state, and a tap must produce a
             //   new board (board = board.flip(index)). Design the rest yourself.
             // ════════════════════════════════════════════════════════════════
-            BoardPlaceholder(board)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(GRID_SIZE),
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                itemsIndexed(board.tiles) { index, tile ->
+                    TileCell(tile = tile, onClick = { board = board.flip(index) })
+                }
+            }
 
             Spacer(Modifier.height(16.dp))
 
             // C3 — TODO: when the board is solved, show a celebratory "You win"
             //   banner here (include the move count). For now we only show the
             //   Check button's message, if any.
-            if (message.isNotEmpty()) {
+            if (board.isSolved()) {
+                Text(
+                    text = "🎉 You win! Solved in ${board.moves} moves.",
+                    style = MaterialTheme.typography.headlineSmall,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(8.dp)
+                )
+            } else if (message.isNotEmpty()) {
                 Text(message, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
             }
 
@@ -164,23 +186,34 @@ fun MatchManiaScreen() {
     }
 }
 
-// ── Temporary placeholder for the board (DELETE once C2 is done) ──────────────
-// A bordered card with a message, just so the starter shows *something* and runs.
+// ── A single tile in the grid ───────────────────────────────────────────
 @Composable
-private fun BoardPlaceholder(board: Board) {
+private fun TileCell(tile: Tile, onClick: () -> Unit) {
     OutlinedCard(
+        onClick = onClick,
         modifier = Modifier
-            .fillMaxWidth()
-            .height(280.dp),
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+            .padding(4.dp)
+            .aspectRatio(1f),
+        border = BorderStroke(
+            2.dp,
+            if (tile.state == TileState.Matched) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.outline
+        ),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = when (tile.state) {
+                TileState.FaceDown -> MaterialTheme.colorScheme.surfaceVariant
+                TileState.FaceUp -> MaterialTheme.colorScheme.surface
+                TileState.Matched -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+            }
+        )
     ) {
-        Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
-            Text(
-                text = "TODO (C2): build the ${GRID_SIZE}×${GRID_SIZE} board grid here.\n" +
-                       "The board already holds ${board.tiles.size} tiles, ready to draw.",
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            if (tile.state != TileState.FaceDown) {
+                Text(text = tile.face, fontSize = 28.sp)
+            }
         }
     }
 }

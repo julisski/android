@@ -36,21 +36,95 @@ class MatchLogicTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    //  ✍️  YOUR TESTS (Part D) — write at least these (see hw7 for the full list).
-    //      These are the behaviors to VERIFY; working out HOW to verify each one is
-    //      part of the assignment.
-    //
-    //   1. composition   — PAIR_COUNT distinct faces, each used exactly twice.
-    //   2. determinism   — the same seed (Random(n)) gives the same board twice.
-    //   3. flip reveals  — flipping a face-down tile makes it FaceUp.
-    //   4. flip matches  — a tile + its twin both become Matched; moves == 1.
-    //   5. flip mismatch — two different tiles both stay FaceUp (moves == 1); the
-    //                      next flip clears them back to FaceDown (moves stays 1).
-    //   6. immutability  — flip() returns a NEW board; the original is unchanged.
-    //   7. win & reset   — a fully-matched board isSolved(); reset() puts every
-    //                      tile FaceDown, moves == 0, same faces in the same order.
-    //
-    //   You'll need to seed Random for repeatable boards, and find a tile's TWIN
-    //   (the other tile sharing its face) to force a guaranteed match — figure it out.
+    //  ✍️  YOUR TESTS (Part D)
     // ═══════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun composition_hasCorrectPairs() {
+        val board = newBoard(DEFAULT_SYMBOLS)
+        val faceCounts = board.tiles.groupBy { it.face }.mapValues { it.value.size }
+        assertEquals(PAIR_COUNT, faceCounts.size)
+        faceCounts.values.forEach { assertEquals(2, it) }
+    }
+
+    @Test
+    fun determinism_sameSeedGivesSameBoard() {
+        val seed = 123L
+        val board1 = newBoard(DEFAULT_SYMBOLS, Random(seed))
+        val board2 = newBoard(DEFAULT_SYMBOLS, Random(seed))
+        assertEquals(board1.tiles, board2.tiles)
+    }
+
+    @Test
+    fun flip_revealsFaceDownTile() {
+        val board = newBoard(DEFAULT_SYMBOLS)
+        val flipped = board.flip(0)
+        assertEquals(TileState.FaceUp, flipped.tiles[0].state)
+        assertEquals(0, flipped.moves)
+    }
+
+    @Test
+    fun flip_matchesTwinTiles() {
+        val board = newBoard(DEFAULT_SYMBOLS, Random(42))
+        val firstIndex = 0
+        val firstFace = board.tiles[firstIndex].face
+        val twinIndex = board.tiles.indices.first { it != firstIndex && board.tiles[it].face == firstFace }
+
+        val board1 = board.flip(firstIndex)
+        val board2 = board1.flip(twinIndex)
+
+        assertEquals(TileState.Matched, board2.tiles[firstIndex].state)
+        assertEquals(TileState.Matched, board2.tiles[twinIndex].state)
+        assertEquals(1, board2.moves)
+    }
+
+    @Test
+    fun flip_mismatchLeavesFaceUp_thenNextFlipClears() {
+        val board = newBoard(DEFAULT_SYMBOLS, Random(42))
+        val firstIndex = 0
+        val firstFace = board.tiles[firstIndex].face
+        val mismatchIndex = board.tiles.indices.first { board.tiles[it].face != firstFace }
+
+        val board1 = board.flip(firstIndex)
+        val board2 = board1.flip(mismatchIndex)
+
+        assertEquals(TileState.FaceUp, board2.tiles[firstIndex].state)
+        assertEquals(TileState.FaceUp, board2.tiles[mismatchIndex].state)
+        assertEquals(1, board2.moves)
+
+        val thirdIndex = board.tiles.indices.first { it != firstIndex && it != mismatchIndex }
+        val board3 = board2.flip(thirdIndex)
+
+        assertEquals(TileState.FaceDown, board3.tiles[firstIndex].state)
+        assertEquals(TileState.FaceDown, board3.tiles[mismatchIndex].state)
+        assertEquals(TileState.FaceUp, board3.tiles[thirdIndex].state)
+        assertEquals(1, board3.moves)
+    }
+
+    @Test
+    fun flip_returnsNewBoard() {
+        val board = newBoard(DEFAULT_SYMBOLS)
+        val flipped = board.flip(0)
+        assertTrue(board !== flipped)
+        assertEquals(TileState.FaceDown, board.tiles[0].state)
+    }
+
+    @Test
+    fun winAndReset_works() {
+        var board = newBoard(DEFAULT_SYMBOLS, Random(42))
+        val symbols = board.tiles.map { it.face }.distinct()
+        symbols.forEach { symbol ->
+            val indices = board.tiles.indices.filter { board.tiles[it].face == symbol }
+            board = board.flip(indices[0]).flip(indices[1])
+        }
+
+        assertTrue(board.isSolved())
+        assertEquals(PAIR_COUNT, board.pairsFound())
+
+        val resetBoard = board.reset()
+        assertFalse(resetBoard.isSolved())
+        assertEquals(0, resetBoard.moves)
+        assertTrue(resetBoard.tiles.all { it.state == TileState.FaceDown })
+        assertEquals(board.tiles.map { it.face }, resetBoard.tiles.map { it.face })
+    }
 }
